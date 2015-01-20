@@ -1,0 +1,325 @@
+Install dependencies and setup maktaba:
+
+  :set nocompatible
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+  :filetype plugin on
+
+
+This plugin allows formatting code via tools like clang-format.
+
+It integrates with vim-repeat if available for improved repeating support. We'll
+stub that out for vroom.
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+
+This plugin defines a :FormatCode command that can be used to reformat buffers.
+It can format C++ code using clang-format.
+
+  :silent file foo.cc
+  :set filetype=cpp
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :FormatCode
+  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
+  void f() {
+    int i;
+    SomeFunction(parameter,  // comment
+                 i);
+  }
+  @end
+
+
+
+To format specific line ranges of C++ code using clang-format, use :FormatLines.
+
+  :silent file foo.cc
+  :set filetype=cpp
+  % void f() {<CR>
+  |  int i = 2+2;<CR>
+  |  int i = 3+3;<CR>
+  |  int i = 4+4;<CR>
+  |}
+
+  :let g:repeat_calls = []
+
+  :3,4FormatLines
+  ! clang-format -style file -assume-filename .*foo.cc -lines 3:4 .*2>.*
+  $ void f() {
+  $   int i = 2+2;
+  $   int i = 3 + 3;
+  $   int i = 4 + 4;
+  $ }
+  void f() {
+    int i = 2+2;
+    int i = 3 + 3;
+    int i = 4 + 4;
+  }
+  @end
+
+It calls repeat#set to configure the repeat mapping (the "." mapping) to format
+the same number of lines again.
+
+  :echomsg string(g:repeat_calls)
+  ~ [[':FormatLines clang-format^M', 2]]
+
+
+
+You might have wondered where the "-style file" above comes from. The
+clang-format tool accepts a "style" option to control the formatting style. By
+default, "file" is used to indicate that clang-format should respect
+configuration in a .clang-format file in the project directory. You can control
+how style is selected via the clang_format_style flag. This flag accepts either
+a string value to use everywhere...
+
+  :Glaive codefmt clang_format_style=WebKit
+
+  % f();
+  :FormatCode clang-format
+  ! clang-format -style WebKit .*2>.*
+  $ f();
+
+...or a callable that takes no arguments and returns a string style name for the
+current buffer.
+
+  :function MaybeWebkitStyle()<CR>
+  |  if stridx(expand('%:p'), '/WebKit/') != -1<CR>
+  |    return 'WebKit'<CR>
+  |  endif<CR>
+  |  return 'file'<CR>
+  |endfunction
+  :Glaive codefmt clang_format_style=`function('MaybeWebkitStyle')`
+
+  :silent file /foo/WebKit/foo.cc
+  :FormatCode clang-format
+  ! clang-format -style WebKit -assume-filename .*foo.cc .*2>.*
+  $ f();
+
+  :silent file /foo/foo.cc
+  :FormatCode clang-format
+  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  $ f();
+
+  :Glaive codefmt clang_format_style=file
+
+
+
+Protocol buffer definitions can also be reformatted, again using clang-format.
+
+  :silent file foo.proto
+  :set filetype=proto
+  % message Foo {message Bar  {<CR>
+  |enum Baz{ X= 1;Y  =2;  } optional int64 a=1; //comment<CR>
+  |           repeated Baz b = 2;<CR>
+  |}}
+
+  :FormatCode
+  ! clang-format -style file -assume-filename .*foo.proto .*2>.*
+  $ message Foo {
+  $   message Bar {
+  $     enum Baz {
+  $       X = 1;
+  $       Y = 2;
+  $     }
+  $     optional int64 a = 1;  // comment
+  $     repeated Baz b = 2;
+  $   }
+  $ }
+  message Foo {
+    message Bar {
+      enum Baz {
+        X = 1;
+        Y = 2;
+      }
+      optional int64 a = 1;  // comment
+      repeated Baz b = 2;
+    }
+  }
+  @end
+
+
+
+It can format Go code using gofmt.
+
+  :silent file foo.go
+  :set filetype=go
+  % package main;import "fmt"<CR>
+  |func main() { fmt.Printf("hello ")<CR>
+  |fmt.Printf("world\n") }
+
+  :FormatCode
+  ! gofmt .*2>.*
+  $ package main
+  $ 
+  $ import "fmt"
+  $ 
+  $ func main() {
+  $ \tfmt.Printf("hello ")
+  $ \tfmt.Printf("world\\n")
+  $ }
+  package main
+  &
+  import "fmt"
+  &
+  func main() {
+  	fmt.Printf("hello ")
+  	fmt.Printf("world\n")
+  }
+  @end
+
+
+
+Go code also supports formatting a range with :FormatLines.
+
+  :silent file foo.go
+  :set filetype=go
+  % package main;import "fmt"<CR>
+  |func main() { fmt.Printf("hello ")<CR>
+  |fmt.Printf("world\n") }
+
+  :2,3FormatLines
+  ! gofmt .*2>.*
+  $ func main() {
+  $ \tfmt.Printf("hello ")
+  $ \tfmt.Printf("world\\n")
+  $ }
+  package main;import "fmt"
+  func main() {
+  	fmt.Printf("hello ")
+  	fmt.Printf("world\n")
+  }
+  @end
+
+
+
+You can also use goimports (or any other gofmt-like binary) to add imports as
+needed by setting the gofmt_executable flag:
+
+  :silent file foo.go
+  :set filetype=go
+  :Glaive codefmt gofmt_executable='goimports'
+  % package main<CR>
+  |func main() { fmt.Printf("hello world\n") }
+
+  :FormatCode
+  ! goimports .*2>.*
+  $ package main
+  $ 
+  $ import "fmt"
+  $ 
+  $ func main() { fmt.Printf("hello world\\n") }
+  package main
+  &
+  import "fmt"
+  &
+  func main() { fmt.Printf("hello world\n") }
+  @end
+
+
+
+Formatting doesn't move the cursor.
+
+  :silent file foo.cc
+  :set filetype=cpp
+  % void f() {int i;<CR>
+  |SomeFunction();<CR>
+  |}
+
+  > /Fun<CR>
+  :echomsg line('.') . ',' . col('.')
+  ~ 2,5
+  :FormatCode
+  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction();
+  $ }
+  :echomsg line('.') . ',' . col('.')
+  ~ 2,5
+  void f() {
+    int i;
+    SomeFunction();
+  }
+
+
+
+Test :FormatCode [formatter] with unavailable formatter
+
+  :silent file BUILD
+  :set filetype=blazebuild
+  % java_package(name="foo", deps=[":bar", ":baz"])
+
+  :FormatCode foo
+  ~ "foo" is not a supported formatter.
+
+
+
+Test :FormatCode for unknown filetype.
+
+  :silent file FOO
+  :set filetype=bar
+  % java_package(name="foo", deps=[":bar", ":baz"])
+
+  :FormatCode
+  ~ Not available. codefmt doesn't have a default formatter for this buffer.
+
+
+
+Test :FormatCode [formatter]
+
+  :silent file foo.cc
+  :set filetype=
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :FormatCode clang-format
+  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
+  void f() {
+    int i;
+    SomeFunction(parameter,  // comment
+                 i);
+  }
+  @end
+
+
+
+Test :FormatCode for unknown filetype with explicitly set formatter.
+
+  :silent file foo.cc
+  :set filetype=bar
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :call maktaba#ensure#IsFalse(codefmt#IsFormatterAvailable())
+  :let b:codefmt_formatter = "clang-format"
+  :call maktaba#ensure#IsTrue(codefmt#IsFormatterAvailable())
+  :FormatCode
+  ! clang-format -style .* -assume-filename .*foo.cc .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
+  void f() {
+    int i;
+    SomeFunction(parameter,  // comment
+                 i);
+  }
+  @end

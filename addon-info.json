@@ -1,0 +1,10 @@
+{
+  "name": "codefmt",
+  "description": "Syntax-aware code formatting for a variety of languages",
+  "author": "Google",
+  "repository": {"type": "git", "url": "git://github.com/google/vim-codefmt"},
+  "dependencies": {
+    "maktaba": {"type": "git", "url": "git://github.com/google/vim-maktaba"},
+    "codefmtlib": {"type": "git", "url": "git://github.com/google/vim-codefmtlib"}
+  }
+}

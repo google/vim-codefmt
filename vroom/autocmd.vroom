@@ -1,0 +1,85 @@
+Install dependencies and setup maktaba:
+
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+  :filetype plugin on
+
+You can use the AutoFormatBuffer command to enable automatic code formatting
+when you save a file with a given filetype.
+
+  :silent file foo.cc
+  :set filetype=cpp
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+By default, this is disabled.
+
+  :doautocmd BufWritePre
+  void f() {int i; SomeFunction(parameter,// comment
+  i);}
+  @end
+
+
+
+You can use the AutoFormatBuffer command.
+
+  :silent file foo.cc
+  :set filetype=cpp
+  :AutoFormatBuffer
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :doautocmd BufWritePre
+  ! clang-format -style .* -assume-filename .*foo.cc .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
+  void f() {
+    int i;
+    SomeFunction(parameter,  // comment
+                 i);
+  }
+  @end
+
+
+
+You can also use the AutoFormatBuffer command with an explicit formatter.
+
+  :silent file foo.cc
+  :set filetype=foo
+  :AutoFormatBuffer clang-format
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :doautocmd BufWritePre
+  ! clang-format -style .* -assume-filename .*foo.cc .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
+  void f() {
+    int i;
+    SomeFunction(parameter,  // comment
+                 i);
+  }
+  @end
+
+
+
+You can disable AutoFormatBuffer with NoAutoFormatBuffer.
+
+  :silent file foo.cc
+  :set filetype=cpp
+  :AutoFormatBuffer
+  :NoAutoFormatBuffer
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :doautocmd BufWritePre
+  void f() {int i; SomeFunction(parameter,// comment
+  i);}
+  @end

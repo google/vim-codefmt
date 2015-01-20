@@ -1,0 +1,135 @@
+*codefmt.txt*	Syntax-aware code formatting
+                                                                     *codefmt*
+
+==============================================================================
+CONTENTS                                                    *codefmt-contents*
+  1. Introduction..............................................|codefmt-intro|
+  2. Configuration............................................|codefmt-config|
+  3. Formatters...........................................|codefmt-formatters|
+  4. Commands...............................................|codefmt-commands|
+  5. Autocommands...........................................|codefmt-autocmds|
+  6. Functions.............................................|codefmt-functions|
+  7. Mappings...............................................|codefmt-mappings|
+
+==============================================================================
+INTRODUCTION                                                   *codefmt-intro*
+
+Provides a |:FormatCode| command to intelligently reformat code.
+
+==============================================================================
+CONFIGURATION                                                 *codefmt-config*
+
+This plugin uses maktaba flags for configuration. Install Glaive
+(https://github.com/google/glaive) and use the |:Glaive| command to configure
+them.
+
+                                             *codefmt:clang_format_executable*
+The path to the clang-format executable.
+Default: 'clang-format' `
+
+                                                  *codefmt:clang_format_style*
+Formatting style for clang-format to use. Either a string or callable that
+takes no args and returns a style name for the current buffer. See
+http://clang.llvm.org/docs/ClangFormatStyleOptions.html for details.
+Default: 'file' `
+
+                                                    *codefmt:gofmt_executable*
+The path to the gofmt executable. For example, this can be changed to
+"goimports" (http://go/goimports) to additionally adjust imports when
+formatting.
+Default: 'gofmt' `
+
+                                                    *codefmt:plugin[autocmds]*
+Configures whether plugin/autocmds.vim should be loaded.
+Default: 1 `
+
+                                                    *codefmt:plugin[commands]*
+Configures whether plugin/commands.vim should be loaded.
+Default: 1 `
+
+                                                    *codefmt:plugin[mappings]*
+Configures whether plugin/mappings.vim should be loaded.
+Default: 0 `
+
+                                                         *b:codefmt_formatter*
+You can override the default formatter by defining this variable. For
+instance, to explicitly select the clang-format formatter for Java, add
+>
+  autocmd FileType java let b:codefmt_formatter = 'clang-format'
+<
+to your vimrc. You can also set the value to an empty string to disable all
+formatting.
+
+==============================================================================
+FORMATTERS                                                *codefmt-formatters*
+
+This plugin has two built-in formatters: clang-format and gofmt. More
+formatters can be registered by other plugins that integrate with codefmt.
+
+DEFAULT FORMATTERS
+Codefmt will automatically use a default formatter for certain filetypes if
+none is explicitly supplied via an explicit arg to |:FormatCode| or the
+|b:codefmt_formatter| variable. The default formatter may also depend on what
+plugins are enabled or what other software is installed on your system.
+
+The current list of defaults by filetype is:
+  * cpp, proto, javascript: clang-format
+  * go: gofmt
+
+==============================================================================
+COMMANDS                                                    *codefmt-commands*
+
+:[range]FormatLines [formatter]                                 *:FormatLines*
+  Format the current line or range using [formatter].
+  [formatter] is the default formatter associated with the current buffer if
+  omitted.
+
+:FormatCode [formatter]                                          *:FormatCode*
+  Format the whole buffer using [formatter]. See |codefmt-formatters| for list
+  of valid formatters.
+  [formatter] is the default formatter associated with the current buffer if
+  omitted.
+
+:AutoFormatBuffer [formatter]                              *:AutoFormatBuffer*
+  Enables format on save for this buffer using [formatter]. Also configures
+  [formatter] as the default formatter for this buffer via the
+  |b:codefmt_formatter| variable.
+  [formatter] is the default formatter associated with the current buffer if
+  omitted.
+
+:NoAutoFormatBuffer                                      *:NoAutoFormatBuffer*
+  Disables format on save for this buffer.
+
+==============================================================================
+AUTOCOMMANDS                                                *codefmt-autocmds*
+
+You can enable automatic formatting on a buffer using |:AutoFormatBuffer|.
+
+==============================================================================
+FUNCTIONS                                                  *codefmt-functions*
+
+codefmt#FormatMap({type})                                *codefmt#FormatMap()*
+  Suitable for use as 'operatorfunc'; see |g@| for details. The type is
+  ignored since formatting only works on complete lines.
+
+==============================================================================
+MAPPINGS                                                    *codefmt-mappings*
+
+This plugin provides default mappings that can be enabled via the
+plugin[mappings] flag. You can enable them under the default prefix of
+<Leader>= (<Leader> being "\" by default) or set the plugin[mappings] flag to
+an explicit prefix to use. Or you can define your own custom mappings; see
+plugin/mappings.vim for inspiration.
+
+To format the whole buffer, use <PREFIX>b.
+
+Some formatters also support formatting ranges. There are several mappings for
+formatting ranges that mimic vim's built-in |operator|s:
+  * Format the current line with the <PREFIX>= mapping.
+  * <PREFIX> by itself acts as an |operator|. Use <PREFIX><MOTION> to format
+    over any motion. For instance, <PREFIX>i{ will format all lines inside the
+    enclosing curly braces.
+  * In visual mode, <PREFIX> will format the visual selection.
+
+
+vim:tw=78:ts=8:ft=help:norl:
