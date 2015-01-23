@@ -23,6 +23,10 @@ This plugin uses maktaba flags for configuration. Install Glaive
 (https://github.com/google/glaive) and use the |:Glaive| command to configure
 them.
 
+                                             *codefmt:autopep8_executable*
+The path to the autopep8 executable.
+Default: 'autopep8' `
+
                                              *codefmt:clang_format_executable*
 The path to the clang-format executable.
 Default: 'clang-format' `
@@ -75,6 +79,7 @@ plugins are enabled or what other software is installed on your system.
 The current list of defaults by filetype is:
   * cpp, proto, javascript: clang-format
   * go: gofmt
+  * python: autopep8
 
 ==============================================================================
 COMMANDS                                                    *codefmt-commands*

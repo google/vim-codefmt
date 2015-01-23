@@ -156,7 +156,67 @@ if !exists('s:gofmt')
   call codefmtlib#AddDefaultFormatter(s:gofmt)
 endif
 
+" Formatter: autopep8
+if !exists('s:autopep8')
+  let s:autopep8 = {
+      \ 'name': 'autopep8',
+      \ 'setup_instructions': 'Install autopep8 and '}
 
+  function s:autopep8.IsAvailable() abort
+    return executable(s:plugin.Flag('autopep8_executable'))
+  endfunction
+
+  function s:autopep8.AppliesToBuffer() abort
+    return &filetype is# 'python'
+  endfunction
+
+
+  ""
+  " Reformat the current buffer with autopep8 or the binary named in
+  " @flag(autopep8_executable), only targeting the range between {startline} and
+  " {endline}.
+  function s:autopep8.FormatRange(startline, endline) abort
+    " Hack range formatting by formatting range individually, ignoring context.
+    let l:cmd = [ s:plugin.Flag('autopep8_executable'), "-"  ]
+    call maktaba#ensure#IsNumber(a:startline)
+    call maktaba#ensure#IsNumber(a:endline)
+    let l:lines = getline(1, line('$'))
+    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+    try
+      let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
+      let l:formatted = split(l:result.stdout, "\n")
+      " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
+      let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
+
+      let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+      call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+    catch /ERROR(ShellError):/
+      " Parse all the errors and stick them in the quickfix list.
+      let l:errors = []
+      for l:line in split(v:exception, "\n")
+        let l:tokens = matchlist(l:line,
+            \ '\C\v^\<standard input\>:(\d+):(\d+):\s*(.*)')
+        if !empty(l:tokens)
+          call add(l:errors, {
+              \ 'filename': @%,
+              \ 'lnum': l:tokens[1] + a:startline - 1,
+              \ 'col': l:tokens[2],
+              \ 'text': l:tokens[3]})
+        endif
+      endfor
+
+      if empty(l:errors)
+        " Couldn't parse autopep8 error format; display it all.
+        call maktaba#error#Shout('Error formatting file: %s', v:exception)
+      else
+        call setqflist(l:errors, 'r')
+        cc 1
+      endif
+    endtry
+  endfunction
+
+  call codefmtlib#AddDefaultFormatter(s:autopep8)
+endif
 ""
 " Detects whether a formatter has been defined for the current buffer/filetype.
 function! codefmt#IsFormatterAvailable() abort
