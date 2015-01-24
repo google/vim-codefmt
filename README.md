@@ -1,5 +1,5 @@
 codefmt is a utility for syntax-aware code formatting.  codefmt relies on
-[codefmtlib](https://github.com/google/vim-codefmtlib) for registeration and
+[codefmtlib](https://github.com/google/vim-codefmtlib) for registration and
 management of formatting plugins.
 
 For details, see the executable documentation in the `vroom/` directory or the
@@ -37,4 +37,3 @@ Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmtlib'
 Plugin 'google/vim-codefmt'
 ```
-

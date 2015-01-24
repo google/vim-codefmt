@@ -1,0 +1,28 @@
+language: generic
+env:
+  matrix:
+    - CI_TARGET=vim
+    - CI_TARGET=neovim
+before_script:
+  - sudo apt-get install python3-dev
+  - if [ $CI_TARGET = vim ]; then
+      sudo apt-get install vim-gnome &&
+      export DISPLAY=:99.0 &&
+      sh -e /etc/init.d/xvfb start;
+    elif [ $CI_TARGET = neovim ]; then
+      eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64" &&
+      wget https://bootstrap.pypa.io/get-pip.py &&
+      sudo python3 get-pip.py --allow-external sudo &&
+      sudo pip3 install neovim;
+    fi
+  - wget https://github.com/google/vroom/releases/download/v0.12.0/vroom_0.12.0-1_all.deb
+  - sudo dpkg -i ./vroom_0.12.0-1_all.deb
+  - git clone https://github.com/google/vim-maktaba.git ../maktaba/
+  - git clone https://github.com/google/vim-glaive.git ../glaive/
+  - git clone https://github.com/google/vim-codefmtlib.git ../codefmtlib/
+script:
+  - '[ $CI_TARGET = neovim ] && VROOM_ARGS="--neovim" || VROOM_ARGS=""'
+  - vroom $VROOM_ARGS --crawl ./vroom/
+matrix:
+  allow_failures:
+    - env: CI_TARGET=neovim
