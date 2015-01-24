@@ -158,10 +158,22 @@ endif
 
 
 ""
+" Checks whether {formatter} is available.
+" NOTE: If @function(#DisableIsAvailableChecksForTesting) has been called, skips
+" the IsAvailable check and always returns true.
+function! s:IsAvailable(formatter) abort
+  if get(s:, 'check_formatters_available', 1)
+    return a:formatter.IsAvailable()
+  endif
+  return 1
+endfunction
+
+
+""
 " Detects whether a formatter has been defined for the current buffer/filetype.
 function! codefmt#IsFormatterAvailable() abort
   let l:formatters = copy(codefmtlib#GetFormatters())
-  let l:is_available = 'v:val.AppliesToBuffer() && v:val.IsAvailable()'
+  let l:is_available = 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)'
   return !empty(filter(l:formatters, l:is_available)) ||
         \ !empty(get(b:, 'codefmt_formatter'))
 endfunction
@@ -187,7 +199,7 @@ function! s:GetFormatter(...) abort
       return
     endif
     let l:formatter = l:selected_formatters[0]
-    if !l:formatter.IsAvailable()
+    if !s:IsAvailable(l:formatter)
       " Not available. Print setup instructions if possible.
       let l:error = 'Formatter "%s" is not available.'
       if has_key(l:formatter, 'setup_instructions')
@@ -199,7 +211,7 @@ function! s:GetFormatter(...) abort
   else
     " No explicit name, use default.
     let l:default_formatters = filter(
-        \ copy(l:formatters), 'v:val.AppliesToBuffer() && v:val.IsAvailable()')
+        \ copy(l:formatters), 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)')
     if !empty(l:default_formatters)
       let l:formatter = l:default_formatters[0]
     else
@@ -272,7 +284,7 @@ endfunction
 " @public
 " Suitable for use as 'operatorfunc'; see |g@| for details.
 " The type is ignored since formatting only works on complete lines.
-function! codefmt#FormatMap(type) range
+function! codefmt#FormatMap(type) range abort
   call codefmt#FormatLines(line("'["), line("']"))
 endfunction
 
@@ -280,7 +292,7 @@ endfunction
 " Generate the completion for supported formatters. Lists available formatters
 " that apply to the current buffer first, then unavailable formatters that
 " apply, then everything else.
-function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos)
+function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos) abort
   let l:groups = [[], [], []]
   for l:formatter in codefmtlib#GetFormatters()
     let l:key = l:formatter.AppliesToBuffer() ? (
@@ -290,3 +302,11 @@ function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos)
   return join(l:groups[0] + l:groups[1] + l:groups[2], "\n")
 endfunction
 
+
+""
+" @private
+" Bypasses FORMATTER.IsAvailable checks and assumes every formatter is available
+" to avoid checking for executables on the path.
+function! codefmt#DisableIsAvailableChecksForTesting() abort
+  let s:check_formatters_available = 0
+endfunction
