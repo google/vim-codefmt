@@ -1,9 +1,16 @@
 Install dependencies and setup maktaba:
 
+  :set nocompatible
   :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
   :execute 'source' g:repo . '/bootstrap.vim'
   :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
   :filetype plugin on
+
+We'll stub out codefmt to not care whether certain executables are installed on
+your system.
+
+  :call codefmt#DisableIsAvailableChecksForTesting()
+
 
 You can use the AutoFormatBuffer command to enable automatic code formatting
 when you save a file with a given filetype.

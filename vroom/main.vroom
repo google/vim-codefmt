@@ -18,6 +18,11 @@ stub that out for vroom.
   :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
 
+We'll also stub it out to not care whether certain executables are installed on
+your system.
+
+  :call codefmt#DisableIsAvailableChecksForTesting()
+
 
 This plugin defines a :FormatCode command that can be used to reformat buffers.
 It can format C++ code using clang-format.
