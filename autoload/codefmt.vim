@@ -161,7 +161,8 @@ endif
 if !exists('s:autopep8')
   let s:autopep8 = {
       \ 'name': 'autopep8',
-      \ 'setup_instructions': 'Install autopep8 and '}
+      \ 'setup_instructions': 'Install autopep8 ' .
+	      \ '(https://pypi.python.org/pypi/autopep8/).'}
 
   function s:autopep8.IsAvailable() abort
     return executable(s:plugin.Flag('autopep8_executable'))
