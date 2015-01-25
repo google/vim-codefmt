@@ -27,6 +27,7 @@
 " The current list of defaults by filetype is:
 "   * cpp, proto, javascript: clang-format
 "   * go: gofmt
+"   * python: autopep8
 
 
 call maktaba#library#Require('codefmtlib')
