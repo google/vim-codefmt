@@ -181,8 +181,10 @@ if !exists('s:autopep8')
     " Hack range formatting by formatting range individually, ignoring context.
     let l:executable = s:plugin.Flag('autopep8_executable')
     if !exists('s:autopep8_supports_range')
+      let l:version_call =
+          \ maktaba#syscall#Create([l:executable, '--version', '1>&2']).Call()
       let l:version_output =
-          \ maktaba#syscall#Create([l:executable, '--version']).Call().stderr
+          \version_call.stderr ? version_call.stderr : version_call.stdout
       let s:autopep8_supports_range =
           \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')[1] >= 1
     endif
