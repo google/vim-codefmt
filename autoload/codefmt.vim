@@ -182,7 +182,7 @@ if !exists('s:autopep8')
     let l:executable = s:plugin.Flag('autopep8_executable')
     if !exists('s:autopep8_supports_range')
       let l:version_call =
-          \ maktaba#syscall#Create([l:executable, '--version', '1>&2']).Call()
+          \ maktaba#syscall#Create([l:executable, '--version']).Call()
       let l:version_output =
           \version_call.stderr ? version_call.stderr : version_call.stdout
       let s:autopep8_supports_range =
