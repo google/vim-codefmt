@@ -33,6 +33,10 @@ endif
 
 
 ""
+" The path to the autopep8 executable.
+call s:plugin.Flag('autopep8_executable', 'autopep8')
+
+""
 " The path to the clang-format executable.
 call s:plugin.Flag('clang_format_executable', 'clang-format')
 

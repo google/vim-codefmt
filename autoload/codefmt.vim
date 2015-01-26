@@ -27,6 +27,7 @@
 " The current list of defaults by filetype is:
 "   * cpp, proto, javascript: clang-format
 "   * go: gofmt
+"   * python: autopep8
 
 
 call maktaba#library#Require('codefmtlib')
@@ -156,6 +157,69 @@ if !exists('s:gofmt')
   call codefmtlib#AddDefaultFormatter(s:gofmt)
 endif
 
+" Formatter: autopep8
+if !exists('s:autopep8')
+  let s:autopep8 = {
+      \ 'name': 'autopep8',
+      \ 'setup_instructions': 'Install autopep8 ' .
+          \ '(https://pypi.python.org/pypi/autopep8/).'}
+
+  function s:autopep8.IsAvailable() abort
+    return executable(s:plugin.Flag('autopep8_executable'))
+  endfunction
+
+  function s:autopep8.AppliesToBuffer() abort
+    return &filetype is# 'python'
+  endfunction
+
+  ""
+  " Reformat the current buffer with autopep8 or the binary named in
+  " @flag(autopep8_executable), only targeting the range between {startline} and
+  " {endline}.
+  " @throws ShellError
+  function s:autopep8.FormatRange(startline, endline) abort
+    let l:executable = s:plugin.Flag('autopep8_executable')
+    if !exists('s:autopep8_supports_range')
+      let l:version_call =
+          \ maktaba#syscall#Create([l:executable, '--version']).Call()
+      " In some cases version is written to stderr, in some to stdout
+      let l:version_output =
+          \ version_call.stderr ? version_call.stderr : version_call.stdout
+      let s:autopep8_supports_range =
+          \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')[1] >= 1
+    endif
+
+    call maktaba#ensure#IsNumber(a:startline)
+    call maktaba#ensure#IsNumber(a:endline)
+    let l:lines = getline(1, line('$'))
+
+    if s:autopep8_supports_range
+      let l:cmd = [ l:executable,
+                  \ '--range', ''.a:startline, ''.a:endline,
+                  \ '-' ]
+      let l:input = join(l:lines, "\n")
+    else
+      let l:cmd = [ l:executable, '-' ]
+      " Hack range formatting by formatting range individually, ignoring context.
+      let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+    endif
+
+    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
+    let l:formatted = split(l:result.stdout, "\n")
+
+    if s:autopep8_supports_range
+      let l:full_formatted = l:formatted
+    else
+      " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
+      let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
+      let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+    endif
+
+    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+  endfunction
+
+  call codefmtlib#AddDefaultFormatter(s:autopep8)
+endif
 
 ""
 " Checks whether {formatter} is available.
