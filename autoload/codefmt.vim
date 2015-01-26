@@ -222,19 +222,17 @@ function! s:GetFormatter(...) abort
       " Report a better error message in that case.
       let l:unavailable_formatters = filter(
             \ copy(l:formatters), 'v:val.AppliesToBuffer()')
+      let l:error = ''
       if !empty(l:unavailable_formatters)
-        let l:error = ''
         for l:formatter in l:unavailable_formatters
           let l:error .= GetSetupInstructions(l:formatter) . '\n'
         endfor
-        call maktaba#error#Shout(l:error)
-        return
       else
-        call maktaba#error#Shout(
-              \ 'Not available. codefmt doesn''t have a default formatter for ' .
-              \ 'this buffer.')
-        return
+        let l:error = 'Not available. codefmt doesn''t have a default ' .
+              \ 'formatter for this buffer.'
       endif
+      call maktaba#error#Shout(l:error)
+      return
     endif
   endif
 
