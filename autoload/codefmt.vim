@@ -179,18 +179,38 @@ if !exists('s:autopep8')
   " @throws ShellError
   function s:autopep8.FormatRange(startline, endline) abort
     " Hack range formatting by formatting range individually, ignoring context.
-    let l:cmd = [ s:plugin.Flag('autopep8_executable'), "-"  ]
+    let l:executable = s:plugin.Flag('autopep8_executable')
+    if !exists('s:autopep8_supports_range')
+      let l:version_output =
+          \ maktaba#syscall#Create([l:executable, '--version']).Call().stderr
+      let s:autopep8_supports_range =
+          \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')[1] >= 1
+    endif
+
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
     let l:lines = getline(1, line('$'))
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+
+    if s:autopep8_supports_range
+      let l:cmd = [ l:executable, '-', '--range',
+                  \ ''.a:startline, ''.a:endline ]
+      let l:input = join(l:lines, "\n")
+    else
+      let l:cmd = [ l:executable, '-' ]
+      let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+    endif
 
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
     let l:formatted = split(l:result.stdout, "\n")
-    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
-    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
 
-    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+    if s:autopep8_supports_range
+      let l:full_formatted = l:formatted
+    else
+      " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
+      let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
+      let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+    endif
+
     call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
   endfunction
 
