@@ -194,8 +194,9 @@ if !exists('s:autopep8')
     let l:lines = getline(1, line('$'))
 
     if s:autopep8_supports_range
-      let l:cmd = [ l:executable, '-', '--range',
-                  \ ''.a:startline, ''.a:endline ]
+      let l:cmd = [ l:executable,
+                  \ '--range', ''.a:startline, ''.a:endline,
+                  \ '-' ]
       let l:input = join(l:lines, "\n")
     else
       let l:cmd = [ l:executable, '-' ]
