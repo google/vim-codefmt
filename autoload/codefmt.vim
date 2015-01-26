@@ -179,7 +179,7 @@ function! codefmt#IsFormatterAvailable() abort
 endfunction
 
 function! s:GetSetupInstructions(formatter) abort
-  let l:error .= 'Formatter "'. a:formatter.name . '" is not available.'
+  let l:error = 'Formatter "'. a:formatter.name . '" is not available.'
   if has_key(a:formatter, 'setup_instructions')
     let l:error .= ' Setup instructions: ' . a:formatter.setup_instructions
   endif
@@ -208,7 +208,7 @@ function! s:GetFormatter(...) abort
     endif
     let l:formatter = l:selected_formatters[0]
     if !s:IsAvailable(l:formatter)
-      call maktaba#error#Shout(GetSetupInstructions(l:formatter))
+      call maktaba#error#Shout(s:GetSetupInstructions(l:formatter))
       return
     endif
   else
@@ -225,7 +225,10 @@ function! s:GetFormatter(...) abort
       let l:error = ''
       if !empty(l:unavailable_formatters)
         for l:formatter in l:unavailable_formatters
-          let l:error .= GetSetupInstructions(l:formatter) . '\n'
+          if !empty(l:error)
+            let l:error .= "\n"
+          endif
+          let l:error .= s:GetSetupInstructions(l:formatter)
         endfor
       else
         let l:error = 'Not available. codefmt doesn''t have a default ' .

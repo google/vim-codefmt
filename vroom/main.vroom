@@ -18,7 +18,30 @@ stub that out for vroom.
   :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
 
-We'll also stub it out to not care whether certain executables are installed on
+
+Before we stub out availability checks, test :FormatCode for unavailable plugins
+returns a decent error.
+
+  :silent file foo.fake
+  :let fake_format = {'name': 'fake_format', 'setup_instructions': 'FAKE OUT'}
+  :function fake_format.IsAvailable()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function fake_format.AppliesToBuffer()<CR>
+  |  return &filetype is# 'fake'<CR>
+  |endfunction
+  :function fake_format.Format()<CR>
+  |endfunction
+  :call codefmtlib#AddFormatter(fake_format)
+  :set filetype=fake
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :FormatCode
+  ~ Formatter "fake_format" is not available. Setup instructions: FAKE OUT
+
+
+Now, we'll stub it out to not care whether certain executables are installed on
 your system.
 
   :call codefmt#DisableIsAvailableChecksForTesting()
