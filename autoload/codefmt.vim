@@ -183,10 +183,17 @@ if !exists('s:autopep8')
       let l:version_call =
           \ maktaba#syscall#Create([l:executable, '--version']).Call()
       " In some cases version is written to stderr, in some to stdout
-      let l:version_output =
-          \ version_call.stderr ? version_call.stderr : version_call.stdout
-      let s:autopep8_supports_range =
-          \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')[1] >= 1
+      let l:version_output = empty(version_call.stderr) ?
+            \ version_call.stdout : version_call.stderr
+      let l:autopep8_version =
+          \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')
+      if empty(l:autopep8_version)
+        throw maktaba#error#Failure(
+              \ 'Unable to parse version from `%s --version`: %s',
+              \ l:executable, l:version_output)
+      else
+        let s:autopep8_supports_range = l:autopep8_version[1] >= 1
+      endif
     endif
 
     call maktaba#ensure#IsNumber(a:startline)
