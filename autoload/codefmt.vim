@@ -242,6 +242,14 @@ function! codefmt#IsFormatterAvailable() abort
         \ !empty(get(b:, 'codefmt_formatter'))
 endfunction
 
+function! s:GetSetupInstructions(formatter) abort
+  let l:error = 'Formatter "'. a:formatter.name . '" is not available.'
+  if has_key(a:formatter, 'setup_instructions')
+    let l:error .= ' Setup instructions: ' . a:formatter.setup_instructions
+  endif
+  return l:error
+endfunction
+
 ""
 " Get formatter based on [name], @setting(b:codefmt_formatter), and defaults.
 " If no formatter is available, shout error and return 0.
@@ -264,12 +272,7 @@ function! s:GetFormatter(...) abort
     endif
     let l:formatter = l:selected_formatters[0]
     if !s:IsAvailable(l:formatter)
-      " Not available. Print setup instructions if possible.
-      let l:error = 'Formatter "%s" is not available.'
-      if has_key(l:formatter, 'setup_instructions')
-        let l:error .= ' Setup instructions: ' . l:formatter.setup_instructions
-      endif
-      call maktaba#error#Shout(l:error, l:explicit_name)
+      call maktaba#error#Shout(s:GetSetupInstructions(l:formatter))
       return
     endif
   else
@@ -279,9 +282,18 @@ function! s:GetFormatter(...) abort
     if !empty(l:default_formatters)
       let l:formatter = l:default_formatters[0]
     else
-      call maktaba#error#Shout(
-          \ 'Not available. codefmt doesn''t have a default formatter for ' .
-          \ 'this buffer.')
+      " Check if we have formatters that are not avialable for some reason.
+      " Report a better error message in that case.
+      let l:unavailable_formatters = filter(
+            \ copy(l:formatters), 'v:val.AppliesToBuffer()')
+      if !empty(l:unavailable_formatters)
+        let l:error = join(map(copy(l:unavailable_formatters),
+              \ 's:GetSetupInstructions(v:val)'), "\n")
+      else
+        let l:error = 'Not available. codefmt doesn''t have a default ' .
+              \ 'formatter for this buffer.'
+      endif
+      call maktaba#error#Shout(l:error)
       return
     endif
   endif
