@@ -51,7 +51,8 @@ if !exists('s:clangformat')
 
   function s:clangformat.AppliesToBuffer() abort
     return &filetype is# 'cpp' || &filetype is# 'proto' ||
-        \ &filetype is# 'javascript'
+        \ (&filetype is# 'javascript' &&
+            \ s:plugin.Flag('javascript_formatter') is# 'clang_format')
   endfunction
 
   ""
@@ -227,6 +228,54 @@ if !exists('s:autopep8')
 
   call codefmtlib#AddDefaultFormatter(s:autopep8)
 endif
+
+
+" Formatter: js-beautify
+if !exists('s:js_beautify')
+  let s:js_beautify = {
+      \ 'name': 'js_beautify',
+      \ 'setup_instructions': 'Install js-beautify ' .
+          \ '(https://www.npmjs.com/package/js-beautify).'}
+
+  function s:js_beautify.IsAvailable() abort
+    return executable(s:plugin.Flag('js_beautify_executable'))
+  endfunction
+
+  function s:js_beautify.AppliesToBuffer() abort
+    return &filetype is# 'css' || &filetype is# 'html' || &filetype is# 'json' ||
+        \ (&filetype is# 'javascript' &&
+            \ s:plugin.Flag('javascript_formatter') is# 'js_beautify')
+  endfunction
+
+  ""
+  " Reformat the current buffer with js-beautify or the binary named in
+  " @flag(js_beautify_executable), only targeting the range between {startline} and
+  " {endline}.
+  " @throws ShellError
+  function s:js_beautify.FormatRange(startline, endline) abort
+    let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
+                \'--type', &filetype,
+                \'-f', '-' ]
+
+    call maktaba#ensure#IsNumber(a:startline)
+    call maktaba#ensure#IsNumber(a:endline)
+
+    let l:lines = getline(1, line('$'))
+    " Hack range formatting by formatting range individually, ignoring context.
+    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+
+    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
+    let l:formatted = split(l:result.stdout, "\n")
+    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
+    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
+    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+
+    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+  endfunction
+
+  call codefmtlib#AddDefaultFormatter(s:js_beautify)
+endif
+
 
 ""
 " Checks whether {formatter} is available.
