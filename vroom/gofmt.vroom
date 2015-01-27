@@ -1,0 +1,115 @@
+The built-in gofmt formatter knows how to format go code.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples. If you haven't seen the setup code below yet, read through main.vroom
+briefly.
+
+  :set nocompatible
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#DisableIsAvailableChecksForTesting()
+
+
+The gofmt formatter expects the gofmt executable to be installed on your system.
+
+  :FormatCode gofmt
+  ! gofmt .*
+  $ 
+
+The name or path of the gofmt executable can be configured via the
+gofmt_executable flag if the default of "gofmt" doesn't work.
+
+  :Glaive codefmt gofmt_executable='mygofmt'
+  :FormatCode gofmt
+  ! mygofmt .*
+  $ 
+  :Glaive codefmt gofmt_executable='gofmt'
+
+
+You can format any buffer with gofmt specifying the formatter explicitly.
+
+  % package main;import "fmt"<CR>
+  |func main() { fmt.Printf("hello ")<CR>
+  |fmt.Printf("world\n") }
+
+  :FormatCode gofmt
+  ! gofmt .*2>.*
+  $ package main
+  $ 
+  $ import "fmt"
+  $ 
+  $ func main() {
+  $ \tfmt.Printf("hello ")
+  $ \tfmt.Printf("world\\n")
+  $ }
+  package main
+  &
+  import "fmt"
+  &
+  func main() {
+  	fmt.Printf("hello ")
+  	fmt.Printf("world\n")
+  }
+  @end
+
+The go filetype will use the gofmt formatter by default.
+
+  :set filetype=go
+  :FormatCode
+  ! gofmt .*
+  $ 
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  % package main;import "fmt"<CR>
+  |func main() { fmt.Printf("hello ")<CR>
+  |fmt.Printf("world\n") }
+
+  :2,3FormatLines gofmt
+  ! gofmt .*2>.*
+  $ func main() {
+  $ \tfmt.Printf("hello ")
+  $ \tfmt.Printf("world\\n")
+  $ }
+  package main;import "fmt"
+  func main() {
+  	fmt.Printf("hello ")
+  	fmt.Printf("world\n")
+  }
+  @end
+
+NOTE: the gofmt formatter does not natively support range formatting, so there
+are certain limitations like not being able to format misaligned braces.
+
+
+
+You can also use goimports (or any other gofmt-like binary) to add imports as
+needed by setting the gofmt_executable flag:
+
+  :Glaive codefmt gofmt_executable='goimports'
+  % package main<CR>
+  |func main() { fmt.Printf("hello world\n") }
+
+  :FormatCode gofmt
+  ! goimports .*2>.*
+  $ package main
+  $ 
+  $ import "fmt"
+  $ 
+  $ func main() { fmt.Printf("hello world\\n") }
+  package main
+  &
+  import "fmt"
+  &
+  func main() { fmt.Printf("hello world\n") }
+  @end

@@ -184,13 +184,13 @@ if !exists('s:autopep8')
           \ maktaba#syscall#Create([l:executable, '--version']).Call()
       " In some cases version is written to stderr, in some to stdout
       let l:version_output = empty(version_call.stderr) ?
-            \ version_call.stdout : version_call.stderr
+          \ version_call.stdout : version_call.stderr
       let l:autopep8_version =
           \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')
       if empty(l:autopep8_version)
         throw maktaba#error#Failure(
-              \ 'Unable to parse version from `%s --version`: %s',
-              \ l:executable, l:version_output)
+            \ 'Unable to parse version from `%s --version`: %s',
+            \ l:executable, l:version_output)
       else
         let s:autopep8_supports_range = l:autopep8_version[1] >= 1
       endif
@@ -289,7 +289,7 @@ function! s:GetFormatter(...) abort
     if !empty(l:default_formatters)
       let l:formatter = l:default_formatters[0]
     else
-      " Check if we have formatters that are not avialable for some reason.
+      " Check if we have formatters that are not available for some reason.
       " Report a better error message in that case.
       let l:unavailable_formatters = filter(
             \ copy(l:formatters), 'v:val.AppliesToBuffer()')
@@ -392,4 +392,22 @@ endfunction
 " to avoid checking for executables on the path.
 function! codefmt#DisableIsAvailableChecksForTesting() abort
   let s:check_formatters_available = 0
+endfunction
+
+
+""
+" @private
+" Undoes the effect of @function(#DisableIsAvailableChecksForTesting), allowing
+" FORMATTER.IsAvailable checks to work normally.
+function! codefmt#DontDisableIsAvailableChecksForTesting() abort
+  let s:check_formatters_available = 1
+endfunction
+
+
+""
+" @private
+" Invalidates the cached autopep8 version detection for testing, forcing the
+" autopep8 formatter to check for it again on the next invocation.
+function! codefmt#ForgetAutopep8VersionForTesting() abort
+  unlet! s:autopep8_supports_range
 endfunction

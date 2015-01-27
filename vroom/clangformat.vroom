@@ -1,0 +1,141 @@
+The built-in clang-format formatter knows how to format code for C/C++ and many
+C-like languages.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples. If you haven't seen the setup code below yet, read through main.vroom
+briefly.
+
+  :set nocompatible
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#DisableIsAvailableChecksForTesting()
+
+
+The clang-format formatter expects the clang-format executable to be installed
+on your system (version 3.4 or newer).
+
+  :FormatCode clang-format
+  ! clang-format .*
+  $ 
+
+The name or path of the clang-format executable can be configured via the
+clang_format_executable flag if the default of "clang-format" doesn't work.
+
+  :Glaive codefmt clang_format_executable='clang-format-3.4'
+  :FormatCode clang-format
+  ! clang-format-3.4 .*
+  $ 
+  :Glaive codefmt clang_format_executable='clang-format'
+
+
+You can format any buffer with clang-format specifying the formatter explicitly.
+
+  % void f() {int i; SomeFunction(parameter,// comment<CR>
+  |i);}
+
+  :FormatCode clang-format
+  ! clang-format -style file .*2>.*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
+  void f() {
+    int i;
+    SomeFunction(parameter,  // comment
+                 i);
+  }
+  @end
+
+Several filetypes will use the clang-format formatter by default:
+cpp, javascript, and proto.
+
+  :set filetype=cpp
+  :FormatCode
+  ! clang-format .*
+  $ 
+
+  :set filetype=javascript
+  :FormatCode
+  ! clang-format .*
+  $ 
+
+  :set filetype=proto
+  :FormatCode
+  ! clang-format .*
+  $ 
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % void f() {<CR>
+  |  int i = 2+2;<CR>
+  |  int i = 3+3;<CR>
+  |  int i = 4+4;<CR>
+  |}
+
+  :3,4FormatLines clang-format
+  ! clang-format -style file -lines 3:4 .*2>.*
+  $ void f() {
+  $   int i = 2+2;
+  $   int i = 3 + 3;
+  $   int i = 4 + 4;
+  $ }
+  void f() {
+    int i = 2+2;
+    int i = 3 + 3;
+    int i = 4 + 4;
+  }
+  @end
+
+
+
+You might have wondered where the "-style file" above comes from. The
+clang-format tool accepts a "style" option to control the formatting style. By
+default, "file" is used to indicate that clang-format should respect
+configuration in a .clang-format file in the project directory. You can control
+how style is selected via the clang_format_style flag. This flag accepts either
+a string value to use everywhere...
+
+  :Glaive codefmt clang_format_style='WebKit'
+
+  % f();
+  :FormatCode clang-format
+  ! clang-format -style WebKit .*2>.*
+  $ f();
+
+...or a callable that takes no arguments and returns a string style name for the
+current buffer.
+
+  :function MaybeWebkitStyle()<CR>
+  |  if stridx(expand('%:p'), '/WebKit/') != -1<CR>
+  |    return 'WebKit'<CR>
+  |  endif<CR>
+  |  return 'file'<CR>
+  |endfunction
+  :Glaive codefmt clang_format_style=`function('MaybeWebkitStyle')`
+
+  :silent file /foo/WebKit/foo.cc
+  :FormatCode clang-format
+  ! clang-format -style WebKit -assume-filename .*foo.cc .*2>.*
+  $ f();
+
+  :silent file /foo/foo.cc
+  :FormatCode clang-format
+  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  $ f();
+
+  :Glaive codefmt clang_format_style='file'
+
+The -assume-filename arg passed above is also related, used by the clang-format
+tool to detect any custom style rules particular to the current file.

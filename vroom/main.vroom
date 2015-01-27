@@ -1,13 +1,28 @@
-Install dependencies and setup maktaba:
+Vim is useful for editing source code and has some primitive features for
+formatting code. Most of these are based on error-prone heuristics and are
+better for getting close-enough formatting quickly as you edit, not for closely
+adhering to particular formatting guidelines.
+
+The utilities in codefmt hook vim up to high-quality external formatters like
+clang-format that you can trigger on-demand or when saving buffers.
+
+This file demonstrates the basics of codefmt usage. Other files in this
+directory cover various topics of codefmt usage:
+
+* autopep8.vroom - Configuring and using the built-in autopep8 formatter
+* clangformat.vroom - Configuring and using the built-in clang-format formatter
+* gofmt.vroom - Configuring and using the built-in gofmt formatter
+* autocmd.vroom - Automatic hooks like format-on-save
+
+In order for these tests to work, maktaba and codefmtlib MUST be in the same
+parent directory as codefmt. Given that that's the case, all we have to do is
+source the codefmt bootstrap file.
 
   :set nocompatible
   :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
   :execute 'source' g:repo . '/bootstrap.vim'
   :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
-  :filetype plugin on
 
-
-This plugin allows formatting code via tools like clang-format.
 
 It integrates with vim-repeat if available for improved repeating support. We'll
 stub that out for vroom.
@@ -18,45 +33,19 @@ stub that out for vroom.
   :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
 
-
-Before we stub out availability checks, test :FormatCode for unavailable plugins
-returns a decent error.
-
-  :silent file foo.fake
-  :let fake_format = {'name': 'fake_format', 'setup_instructions': 'FAKE OUT'}
-  :function fake_format.IsAvailable()<CR>
-  |  return 0<CR>
-  |endfunction
-  :function fake_format.AppliesToBuffer()<CR>
-  |  return &filetype is# 'fake'<CR>
-  |endfunction
-  :function fake_format.Format()<CR>
-  |endfunction
-  :call codefmtlib#AddFormatter(fake_format)
-  :set filetype=fake
-  % void f() {int i; SomeFunction(parameter,// comment<CR>
-  |i);}
-
-  :FormatCode
-  ~ Formatter "fake_format" is not available. Setup instructions: FAKE OUT
-
-
-Now, we'll stub it out to not care whether certain executables are installed on
+We'll also stub it out to not care whether certain executables are installed on
 your system.
 
   :call codefmt#DisableIsAvailableChecksForTesting()
 
 
 This plugin defines a :FormatCode command that can be used to reformat buffers.
-It can format C++ code using clang-format.
 
-  :silent file foo.cc
-  :set filetype=cpp
   % void f() {int i; SomeFunction(parameter,// comment<CR>
   |i);}
 
-  :FormatCode
-  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  :FormatCode clang-format
+  ! clang-format .*
   $ void f() {
   $   int i;
   $   SomeFunction(parameter,  // comment
@@ -73,8 +62,6 @@ It can format C++ code using clang-format.
 
 To format specific line ranges of C++ code using clang-format, use :FormatLines.
 
-  :silent file foo.cc
-  :set filetype=cpp
   % void f() {<CR>
   |  int i = 2+2;<CR>
   |  int i = 3+3;<CR>
@@ -83,8 +70,8 @@ To format specific line ranges of C++ code using clang-format, use :FormatLines.
 
   :let g:repeat_calls = []
 
-  :3,4FormatLines
-  ! clang-format -style file -assume-filename .*foo.cc -lines 3:4 .*2>.*
+  :3,4FormatLines clang-format
+  ! clang-format .* -lines 3:4.*
   $ void f() {
   $   int i = 2+2;
   $   int i = 3 + 3;
@@ -105,249 +92,99 @@ the same number of lines again.
 
 
 
-You might have wondered where the "-style file" above comes from. The
-clang-format tool accepts a "style" option to control the formatting style. By
-default, "file" is used to indicate that clang-format should respect
-configuration in a .clang-format file in the project directory. You can control
-how style is selected via the clang_format_style flag. This flag accepts either
-a string value to use everywhere...
-
-  :Glaive codefmt clang_format_style=WebKit
-
-  % f();
-  :FormatCode clang-format
-  ! clang-format -style WebKit .*2>.*
-  $ f();
-
-...or a callable that takes no arguments and returns a string style name for the
-current buffer.
-
-  :function MaybeWebkitStyle()<CR>
-  |  if stridx(expand('%:p'), '/WebKit/') != -1<CR>
-  |    return 'WebKit'<CR>
-  |  endif<CR>
-  |  return 'file'<CR>
-  |endfunction
-  :Glaive codefmt clang_format_style=`function('MaybeWebkitStyle')`
-
-  :silent file /foo/WebKit/foo.cc
-  :FormatCode clang-format
-  ! clang-format -style WebKit -assume-filename .*foo.cc .*2>.*
-  $ f();
-
-  :silent file /foo/foo.cc
-  :FormatCode clang-format
-  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
-  $ f();
-
-  :Glaive codefmt clang_format_style=file
-
-
-
-Protocol buffer definitions can also be reformatted, again using clang-format.
-
-  :silent file foo.proto
-  :set filetype=proto
-  % message Foo {message Bar  {<CR>
-  |enum Baz{ X= 1;Y  =2;  } optional int64 a=1; //comment<CR>
-  |           repeated Baz b = 2;<CR>
-  |}}
-
-  :FormatCode
-  ! clang-format -style file -assume-filename .*foo.proto .*2>.*
-  $ message Foo {
-  $   message Bar {
-  $     enum Baz {
-  $       X = 1;
-  $       Y = 2;
-  $     }
-  $     optional int64 a = 1;  // comment
-  $     repeated Baz b = 2;
-  $   }
-  $ }
-  message Foo {
-    message Bar {
-      enum Baz {
-        X = 1;
-        Y = 2;
-      }
-      optional int64 a = 1;  // comment
-      repeated Baz b = 2;
-    }
-  }
-  @end
-
-
-
-It can format Go code using gofmt.
-
-  :silent file foo.go
-  :set filetype=go
-  % package main;import "fmt"<CR>
-  |func main() { fmt.Printf("hello ")<CR>
-  |fmt.Printf("world\n") }
-
-  :FormatCode
-  ! gofmt .*2>.*
-  $ package main
-  $ 
-  $ import "fmt"
-  $ 
-  $ func main() {
-  $ \tfmt.Printf("hello ")
-  $ \tfmt.Printf("world\\n")
-  $ }
-  package main
-  &
-  import "fmt"
-  &
-  func main() {
-  	fmt.Printf("hello ")
-  	fmt.Printf("world\n")
-  }
-  @end
-
-
-
-Go code also supports formatting a range with :FormatLines.
-
-  :silent file foo.go
-  :set filetype=go
-  % package main;import "fmt"<CR>
-  |func main() { fmt.Printf("hello ")<CR>
-  |fmt.Printf("world\n") }
-
-  :2,3FormatLines
-  ! gofmt .*2>.*
-  $ func main() {
-  $ \tfmt.Printf("hello ")
-  $ \tfmt.Printf("world\\n")
-  $ }
-  package main;import "fmt"
-  func main() {
-  	fmt.Printf("hello ")
-  	fmt.Printf("world\n")
-  }
-  @end
-
-
-
-You can also use goimports (or any other gofmt-like binary) to add imports as
-needed by setting the gofmt_executable flag:
-
-  :silent file foo.go
-  :set filetype=go
-  :Glaive codefmt gofmt_executable='goimports'
-  % package main<CR>
-  |func main() { fmt.Printf("hello world\n") }
-
-  :FormatCode
-  ! goimports .*2>.*
-  $ package main
-  $ 
-  $ import "fmt"
-  $ 
-  $ func main() { fmt.Printf("hello world\\n") }
-  package main
-  &
-  import "fmt"
-  &
-  func main() { fmt.Printf("hello world\n") }
-  @end
-
-
-
 Formatting doesn't move the cursor.
 
-  :silent file foo.cc
-  :set filetype=cpp
   % void f() {int i;<CR>
   |SomeFunction();<CR>
   |}
 
-  > /Fun<CR>
+  > 1G/Fun<CR>
   :echomsg line('.') . ',' . col('.')
   ~ 2,5
-  :FormatCode
-  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  :FormatCode clang-format
+  ! clang-format .*
   $ void f() {
   $   int i;
   $   SomeFunction();
   $ }
-  :echomsg line('.') . ',' . col('.')
-  ~ 2,5
   void f() {
     int i;
     SomeFunction();
   }
+  @end
+  :echomsg line('.') . ',' . col('.')
+  ~ 2,5
 
 
 
-Test :FormatCode [formatter] with unavailable formatter
+The examples above pass an explicit formatter argument to :FormatCode and
+:FormatLines to select which formatter to use. In day-to-day editing, that would
+get old pretty fast, and you'd probably be invoking it through key mappings that
+won't take arguments, anyway. For several filetypes, codefmt selects an
+appropriate formatter by default. For instance, the built-in gofmt formatter
+will be used by default for the go filetype.
 
-  :silent file BUILD
-  :set filetype=blazebuild
-  % java_package(name="foo", deps=[":bar", ":baz"])
+  :set filetype=go
+  :FormatCode
+  ! gofmt .*
+  $ 
 
-  :FormatCode foo
-  ~ "foo" is not a supported formatter.
+You can also configure which formatter to use on a buffer-by-buffer basis via
+b:codefmt_formatter, which will take precedence over the built-in defaulting.
 
+  :let b:codefmt_formatter = 'clang-format'
+  :FormatCode
+  ! clang-format .*
+  $ 
+  :unlet b:codefmt_formatter
 
+If no default formatter is available for a buffer, you'll just see an error.
 
-Test :FormatCode for unknown filetype.
-
-  :silent file FOO
-  :set filetype=bar
-  % java_package(name="foo", deps=[":bar", ":baz"])
-
+  :set filetype=
   :FormatCode
   ~ Not available. codefmt doesn't have a default formatter for this buffer.
 
+Similarly, you'll see an error if an explicit formatter name isn't recognized.
 
+  :FormatCode nonexistentformatter
+  ~ "nonexistentformatter" is not a supported formatter.
 
-Test :FormatCode [formatter]
+If a formatter name is recognized but the formatter isn't available (isn't
+configured or is missing dependencies), codefmt will print setup instructions
+for that formatter.
 
-  :silent file foo.cc
-  :set filetype=
-  % void f() {int i; SomeFunction(parameter,// comment<CR>
-  |i);}
+  :call codefmt#DontDisableIsAvailableChecksForTesting()
 
-  :FormatCode clang-format
-  ! clang-format -style file -assume-filename .*foo.cc .*2>.*
-  $ void f() {
-  $   int i;
-  $   SomeFunction(parameter,  // comment
-  $                i);
-  $ }
-  void f() {
-    int i;
-    SomeFunction(parameter,  // comment
-                 i);
-  }
-  @end
+  :let fake_format = {'name': 'fake-format', 'setup_instructions': 'RTFM'}
+  :function fake_format.IsAvailable()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function fake_format.AppliesToBuffer()<CR>
+  |  return &filetype is# 'fake'<CR>
+  |endfunction
+  :function fake_format.Format()<CR>
+  |endfunction
+  :call codefmtlib#AddFormatter(fake_format)
 
+  :FormatCode fake-format
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
 
+It will print a similar message if the default formatter for the buffer is not
+available.
 
-Test :FormatCode for unknown filetype with explicitly set formatter.
-
-  :silent file foo.cc
-  :set filetype=bar
-  % void f() {int i; SomeFunction(parameter,// comment<CR>
-  |i);}
-
-  :call maktaba#ensure#IsFalse(codefmt#IsFormatterAvailable())
-  :let b:codefmt_formatter = "clang-format"
-  :call maktaba#ensure#IsTrue(codefmt#IsFormatterAvailable())
+  :silent file foo.fake
+  :set filetype=fake
   :FormatCode
-  ! clang-format -style .* -assume-filename .*foo.cc .*2>.*
-  $ void f() {
-  $   int i;
-  $   SomeFunction(parameter,  // comment
-  $                i);
-  $ }
-  void f() {
-    int i;
-    SomeFunction(parameter,  // comment
-                 i);
-  }
-  @end
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
+
+If there are multiple formatters that apply to the current buffer but none of
+them are available, the message will show a line for each.
+
+  :let fake_format2 = copy(fake_format)
+  :let fake_format2.name = 'fake-format2'
+  :let fake_format2.setup_instructions = 'LMGTFY'
+  :call codefmtlib#AddFormatter(fake_format2)
+
+  :FormatCode
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
+  ~ Formatter "fake-format2" is not available. Setup instructions: LMGTFY
