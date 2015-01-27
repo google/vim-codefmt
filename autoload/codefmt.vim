@@ -286,14 +286,9 @@ function! s:GetFormatter(...) abort
       " Report a better error message in that case.
       let l:unavailable_formatters = filter(
             \ copy(l:formatters), 'v:val.AppliesToBuffer()')
-      let l:error = ''
       if !empty(l:unavailable_formatters)
-        for l:formatter in l:unavailable_formatters
-          if !empty(l:error)
-            let l:error .= "\n"
-          endif
-          let l:error .= s:GetSetupInstructions(l:formatter)
-        endfor
+        let l:error = join(map(copy(l:unavailable_formatters),
+              \ 's:GetSetupInstructions(v:val)'), "\n")
       else
         let l:error = 'Not available. codefmt doesn''t have a default ' .
               \ 'formatter for this buffer.'
