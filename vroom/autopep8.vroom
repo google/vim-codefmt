@@ -1,0 +1,129 @@
+The built-in autopep8 formatter knows how to format python code.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples. If you haven't seen the setup code below yet, read through main.vroom
+briefly.
+
+  :set nocompatible
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The autopep8 formatter expects the autopep8 executable to be installed on your
+system.
+
+  % f()
+  :FormatCode autopep8
+  ! autopep8 --version 2>(.*)
+  $ echo "autopep8 1.0" > \1 (command)
+  ! autopep8 .*
+  $ f()
+
+Notice the "autopep8 --version" syscall. The autopep8 formatter checks the
+version of the autopep8 executable to detect whether it natively supports range
+formatting. It caches the result, so it only does this once per vim session.
+We'll take a closer look at that below.
+
+The name or path of the autopep8 executable can be configured via the
+autopep8_executable flag if the default of "autopep8" doesn't work.
+
+  :Glaive codefmt autopep8_executable='autopep20'
+  :FormatCode autopep8
+  ! autopep20 --version 2>(.*)
+  $ echo "autopep8 1.0" > \1 (command)
+  ! autopep20 .*
+  $ f()
+  :Glaive codefmt autopep8_executable='autopep8'
+
+Any time this flag is changed, the cached version is invalidated and checked
+fresh on the next format invocation.
+
+
+You can format any buffer with autopep8 specifying the formatter explicitly.
+
+  @clear
+  % if True: pass
+
+  :FormatCode autopep8
+  ! autopep8 --version 2>(.*)
+  $ echo "autopep8 1.0" > \1 (command)
+  ! autopep8 .* - .*
+  $ if True:
+  $     pass
+  if True:
+      pass
+  @end
+
+The python filetype will use the autopep8 formatter by default.
+
+  @clear
+  % pass
+
+  :set filetype=python
+  :FormatCode
+  ! autopep8 .*
+  $ pass
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % some_tuple=(   1,2, 3,'a'  );<CR>
+  |if bar : bar+=1;  bar=bar* bar<CR>
+  |else: bar-=1;
+
+  :2,3FormatLines autopep8
+  ! autopep8 --range 2 3 - .*
+  $ some_tuple=(   1,2, 3,'a'  );
+  $ if bar:
+  $     bar += 1
+  $     bar = bar * bar
+  $ else:
+  $     bar -= 1
+  some_tuple=(   1,2, 3,'a'  );
+  if bar:
+      bar += 1
+      bar = bar * bar
+  else:
+      bar -= 1
+  @end
+
+Notice the --range argument. It's only supported by autopep8 1.0 and higher, and
+it appeared in the command line because the formatter detected autopep8 version
+1.0 when it was first invoked, earlier in this file.
+
+Now let's check what it does for older versions of autopep8. Remember, setting
+the autopep8_executable flag makes the formatter forget any cached version.
+
+  @clear
+  :Glaive codefmt autopep8_executable='autopep8'
+  % some_tuple=(   1,2, 3,'a'  );<CR>
+  |if bar : bar+=1;  bar=bar* bar<CR>
+  |else: bar-=1;
+
+  :3,3FormatLines autopep8
+  ! autopep8 --version 2>(.*)
+  $ echo "autopep8 0.9" > \1 (command)
+  ! autopep8 - 2>.*
+  $ else:
+  $     bar -= 1
+  some_tuple=(   1,2, 3,'a'  );
+  if bar : bar+=1;  bar=bar* bar
+  else:
+      bar -= 1
+  @end
+
+It didn't pass the --range arg this time. Notice that it also only output part
+of the file, because this time only the range being formatted was passed to it
+(in this case, just line 3). This fallback range formatting behavior isn't
+perfect, but it does okay for most ranges.

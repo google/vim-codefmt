@@ -1,26 +1,21 @@
-Install dependencies and setup maktaba:
+This file demonstrates hooks for automatically formatting code on save.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples. If you haven't seen the setup code below yet, read through main.vroom
+briefly.
 
   :set nocompatible
   :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
   :execute 'source' g:repo . '/bootstrap.vim'
   :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
-  :filetype plugin on
 
-We'll stub out codefmt to not care whether certain executables are installed on
-your system.
-
-  :call codefmt#DisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
-You can use the AutoFormatBuffer command to enable automatic code formatting
-when you save a file with a given filetype.
+By default, nothing special happens when you save a buffer.
 
-  :silent file foo.cc
-  :set filetype=cpp
   % void f() {int i; SomeFunction(parameter,// comment<CR>
   |i);}
-
-By default, this is disabled.
 
   :doautocmd BufWritePre
   void f() {int i; SomeFunction(parameter,// comment
@@ -29,40 +24,17 @@ By default, this is disabled.
 
 
 
-You can use the AutoFormatBuffer command.
+You can use the AutoFormatBuffer command to enable automatic code formatting
+when you save the current buffer. This combined with vim autocommands gives you
+the flexibility to automatically format certain buffers based on path, filetype,
+or whatever conditions you want to trigger on.
 
-  :silent file foo.cc
-  :set filetype=cpp
-  :AutoFormatBuffer
-  % void f() {int i; SomeFunction(parameter,// comment<CR>
-  |i);}
-
-  :doautocmd BufWritePre
-  ! clang-format -style .* -assume-filename .*foo.cc .*2>.*
-  $ void f() {
-  $   int i;
-  $   SomeFunction(parameter,  // comment
-  $                i);
-  $ }
-  void f() {
-    int i;
-    SomeFunction(parameter,  // comment
-                 i);
-  }
-  @end
-
-
-
-You can also use the AutoFormatBuffer command with an explicit formatter.
-
-  :silent file foo.cc
-  :set filetype=foo
   :AutoFormatBuffer clang-format
   % void f() {int i; SomeFunction(parameter,// comment<CR>
   |i);}
 
   :doautocmd BufWritePre
-  ! clang-format -style .* -assume-filename .*foo.cc .*2>.*
+  ! clang-format .*
   $ void f() {
   $   int i;
   $   SomeFunction(parameter,  // comment
@@ -75,13 +47,21 @@ You can also use the AutoFormatBuffer command with an explicit formatter.
   }
   @end
 
+Subsequent :FormatCode and :FormatLines invocations will also default to this
+same formatter.
 
+  :FormatCode
+  ! clang-format .*
+  $ void f() {
+  $   int i;
+  $   SomeFunction(parameter,  // comment
+  $                i);
+  $ }
 
-You can disable AutoFormatBuffer with NoAutoFormatBuffer.
+You can disable it for the current buffer with :NoAutoFormatBuffer. After that,
+the buffer will go back to doing nothing special when you save.
 
-  :silent file foo.cc
-  :set filetype=cpp
-  :AutoFormatBuffer
+  :%delete
   :NoAutoFormatBuffer
   % void f() {int i; SomeFunction(parameter,// comment<CR>
   |i);}
@@ -90,3 +70,16 @@ You can disable AutoFormatBuffer with NoAutoFormatBuffer.
   void f() {int i; SomeFunction(parameter,// comment
   i);}
   @end
+
+
+
+If you don't specify an explicit formatter as an argument to :AutoFormatBuffer,
+the default for the current buffer will be used.
+
+  :set filetype=go
+  :AutoFormatBuffer
+  % f()
+
+  :doautocmd BufWritePre
+  ! gofmt .*
+  $ f()

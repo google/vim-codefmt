@@ -184,13 +184,13 @@ if !exists('s:autopep8')
           \ maktaba#syscall#Create([l:executable, '--version']).Call()
       " In some cases version is written to stderr, in some to stdout
       let l:version_output = empty(version_call.stderr) ?
-            \ version_call.stdout : version_call.stderr
+          \ version_call.stdout : version_call.stderr
       let l:autopep8_version =
           \ matchlist(l:version_output, '\m\Cautopep8 \(\d\+\)\.')
       if empty(l:autopep8_version)
         throw maktaba#error#Failure(
-              \ 'Unable to parse version from `%s --version`: %s',
-              \ l:executable, l:version_output)
+            \ 'Unable to parse version from `%s --version`: %s',
+            \ l:executable, l:version_output)
       else
         let s:autopep8_supports_range = l:autopep8_version[1] >= 1
       endif
@@ -230,8 +230,9 @@ endif
 
 ""
 " Checks whether {formatter} is available.
-" NOTE: If @function(#DisableIsAvailableChecksForTesting) has been called, skips
-" the IsAvailable check and always returns true.
+" NOTE: If IsAvailable checks are disabled via
+" @function(#SetWhetherToPerformIsAvailableChecksForTesting), skips the
+" IsAvailable check and always returns true.
 function! s:IsAvailable(formatter) abort
   if get(s:, 'check_formatters_available', 1)
     return a:formatter.IsAvailable()
@@ -289,7 +290,7 @@ function! s:GetFormatter(...) abort
     if !empty(l:default_formatters)
       let l:formatter = l:default_formatters[0]
     else
-      " Check if we have formatters that are not avialable for some reason.
+      " Check if we have formatters that are not available for some reason.
       " Report a better error message in that case.
       let l:unavailable_formatters = filter(
             \ copy(l:formatters), 'v:val.AppliesToBuffer()')
@@ -388,8 +389,19 @@ endfunction
 
 ""
 " @private
-" Bypasses FORMATTER.IsAvailable checks and assumes every formatter is available
-" to avoid checking for executables on the path.
-function! codefmt#DisableIsAvailableChecksForTesting() abort
-  let s:check_formatters_available = 0
+" Invalidates the cached autopep8 version detection for testing, forcing the
+" autopep8 formatter to check for it again on the next invocation.
+function! codefmt#InvalidateAutopep8Version() abort
+  unlet! s:autopep8_supports_range
+endfunction
+
+
+""
+" @private
+" Configures whether codefmt should bypass FORMATTER.IsAvailable checks and
+" assume every formatter is available to avoid checking for executables on the
+" path. By default, of course, checks are enabled. If {enable} is 0, they will
+" be disabled. If 1, normal behavior with IsAvailable checking is restored.
+function! codefmt#SetWhetherToPerformIsAvailableChecksForTesting(enable) abort
+  let s:check_formatters_available = a:enable
 endfunction
