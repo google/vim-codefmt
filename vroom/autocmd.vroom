@@ -9,7 +9,7 @@ briefly.
   :execute 'source' g:repo . '/bootstrap.vim'
   :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
 
-  :call codefmt#DisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
 By default, nothing special happens when you save a buffer.

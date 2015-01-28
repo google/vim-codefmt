@@ -15,7 +15,7 @@ briefly.
   :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
 
-  :call codefmt#DisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
 The autopep8 formatter expects the autopep8 executable to be installed on your
@@ -38,9 +38,14 @@ autopep8_executable flag if the default of "autopep8" doesn't work.
 
   :Glaive codefmt autopep8_executable='autopep20'
   :FormatCode autopep8
+  ! autopep20 --version 2>(.*)
+  $ echo "autopep8 1.0" > \1 (command)
   ! autopep20 .*
   $ f()
   :Glaive codefmt autopep8_executable='autopep8'
+
+Any time this flag is changed, the cached version is invalidated and checked
+fresh on the next format invocation.
 
 
 You can format any buffer with autopep8 specifying the formatter explicitly.
@@ -49,6 +54,8 @@ You can format any buffer with autopep8 specifying the formatter explicitly.
   % if True: pass
 
   :FormatCode autopep8
+  ! autopep8 --version 2>(.*)
+  $ echo "autopep8 1.0" > \1 (command)
   ! autopep8 .* - .*
   $ if True:
   $     pass
@@ -93,11 +100,13 @@ It can format specific line ranges of code using :FormatLines.
 
 Notice the --range argument. It's only supported by autopep8 1.0 and higher, and
 it appeared in the command line because the formatter detected autopep8 version
-1.0 when it was first invoked, earlier in this file. Now let's check what it
-does for older versions of autopep8.
+1.0 when it was first invoked, earlier in this file.
+
+Now let's check what it does for older versions of autopep8. Remember, setting
+the autopep8_executable flag makes the formatter forget any cached version.
 
   @clear
-  :call codefmt#ForgetAutopep8VersionForTesting()
+  :Glaive codefmt autopep8_executable='autopep8'
   % some_tuple=(   1,2, 3,'a'  );<CR>
   |if bar : bar+=1;  bar=bar* bar<CR>
   |else: bar-=1;

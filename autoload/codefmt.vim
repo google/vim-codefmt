@@ -230,8 +230,9 @@ endif
 
 ""
 " Checks whether {formatter} is available.
-" NOTE: If @function(#DisableIsAvailableChecksForTesting) has been called, skips
-" the IsAvailable check and always returns true.
+" NOTE: If IsAvailable checks are disabled via
+" @function(#SetWhetherToPerformIsAvailableChecksForTesting), skips the
+" IsAvailable check and always returns true.
 function! s:IsAvailable(formatter) abort
   if get(s:, 'check_formatters_available', 1)
     return a:formatter.IsAvailable()
@@ -388,26 +389,19 @@ endfunction
 
 ""
 " @private
-" Bypasses FORMATTER.IsAvailable checks and assumes every formatter is available
-" to avoid checking for executables on the path.
-function! codefmt#DisableIsAvailableChecksForTesting() abort
-  let s:check_formatters_available = 0
-endfunction
-
-
-""
-" @private
-" Undoes the effect of @function(#DisableIsAvailableChecksForTesting), allowing
-" FORMATTER.IsAvailable checks to work normally.
-function! codefmt#DontDisableIsAvailableChecksForTesting() abort
-  let s:check_formatters_available = 1
-endfunction
-
-
-""
-" @private
 " Invalidates the cached autopep8 version detection for testing, forcing the
 " autopep8 formatter to check for it again on the next invocation.
-function! codefmt#ForgetAutopep8VersionForTesting() abort
+function! codefmt#InvalidateAutopep8Version() abort
   unlet! s:autopep8_supports_range
+endfunction
+
+
+""
+" @private
+" Configures whether codefmt should bypass FORMATTER.IsAvailable checks and
+" assume every formatter is available to avoid checking for executables on the
+" path. By default, of course, checks are enabled. If {enable} is 0, they will
+" be disabled. If 1, normal behavior with IsAvailable checking is restored.
+function! codefmt#SetWhetherToPerformIsAvailableChecksForTesting(enable) abort
+  let s:check_formatters_available = a:enable
 endfunction

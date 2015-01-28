@@ -16,7 +16,7 @@ briefly.
   :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
 
-  :call codefmt#DisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
 The clang-format formatter expects the clang-format executable to be installed

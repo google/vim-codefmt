@@ -36,7 +36,7 @@ stub that out for vroom.
 We'll also stub it out to not care whether certain executables are installed on
 your system.
 
-  :call codefmt#DisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
 This plugin defines a :FormatCode command that can be used to reformat buffers.
@@ -155,7 +155,7 @@ If a formatter name is recognized but the formatter isn't available (isn't
 configured or is missing dependencies), codefmt will print setup instructions
 for that formatter.
 
-  :call codefmt#DontDisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(1)
 
   :let fake_format = {'name': 'fake-format', 'setup_instructions': 'RTFM'}
   :function fake_format.IsAvailable()<CR>

@@ -15,7 +15,7 @@ briefly.
   :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
 
-  :call codefmt#DisableIsAvailableChecksForTesting()
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
 The gofmt formatter expects the gofmt executable to be installed on your system.

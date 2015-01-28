@@ -35,6 +35,10 @@ endif
 ""
 " The path to the autopep8 executable.
 call s:plugin.Flag('autopep8_executable', 'autopep8')
+" Invalidate cache of detected autopep8 version when this is changed, regardless
+" of {value} arg.
+call s:plugin.flags.autopep8_executable.AddCallback(
+    \ maktaba#function#FromExpr('codefmt#InvalidateAutopep8Version()'), 0)
 
 ""
 " The path to the clang-format executable.
