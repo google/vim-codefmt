@@ -22,9 +22,10 @@ briefly.
 The clang-format formatter expects the clang-format executable to be installed
 on your system (version 3.4 or newer).
 
+  % f();
   :FormatCode clang-format
   ! clang-format .*
-  $ 
+  $ f();
 
 The name or path of the clang-format executable can be configured via the
 clang_format_executable flag if the default of "clang-format" doesn't work.
@@ -32,12 +33,13 @@ clang_format_executable flag if the default of "clang-format" doesn't work.
   :Glaive codefmt clang_format_executable='clang-format-3.4'
   :FormatCode clang-format
   ! clang-format-3.4 .*
-  $ 
+  $ f();
   :Glaive codefmt clang_format_executable='clang-format'
 
 
 You can format any buffer with clang-format specifying the formatter explicitly.
 
+  @clear
   % void f() {int i; SomeFunction(parameter,// comment<CR>
   |i);}
 
@@ -58,20 +60,23 @@ You can format any buffer with clang-format specifying the formatter explicitly.
 Several filetypes will use the clang-format formatter by default:
 cpp, javascript, and proto.
 
+  @clear
+  % f();
+
   :set filetype=cpp
   :FormatCode
   ! clang-format .*
-  $ 
+  $ f();
 
   :set filetype=javascript
   :FormatCode
   ! clang-format .*
-  $ 
+  $ f();
 
   :set filetype=proto
   :FormatCode
   ! clang-format .*
-  $ 
+  $ f();
 
   :set filetype=
 

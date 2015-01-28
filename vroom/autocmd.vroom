@@ -78,7 +78,8 @@ the default for the current buffer will be used.
 
   :set filetype=go
   :AutoFormatBuffer
+  % f()
 
   :doautocmd BufWritePre
   ! gofmt .*
-  $ 
+  $ f()

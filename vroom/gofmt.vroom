@@ -20,9 +20,10 @@ briefly.
 
 The gofmt formatter expects the gofmt executable to be installed on your system.
 
+  % f()
   :FormatCode gofmt
   ! gofmt .*
-  $ 
+  $ f()
 
 The name or path of the gofmt executable can be configured via the
 gofmt_executable flag if the default of "gofmt" doesn't work.
@@ -30,12 +31,13 @@ gofmt_executable flag if the default of "gofmt" doesn't work.
   :Glaive codefmt gofmt_executable='mygofmt'
   :FormatCode gofmt
   ! mygofmt .*
-  $ 
+  $ f()
   :Glaive codefmt gofmt_executable='gofmt'
 
 
 You can format any buffer with gofmt specifying the formatter explicitly.
 
+  @clear
   % package main;import "fmt"<CR>
   |func main() { fmt.Printf("hello ")<CR>
   |fmt.Printf("world\n") }
@@ -62,15 +64,19 @@ You can format any buffer with gofmt specifying the formatter explicitly.
 
 The go filetype will use the gofmt formatter by default.
 
+  @clear
+  % f()
+
   :set filetype=go
   :FormatCode
   ! gofmt .*
-  $ 
+  $ f()
 
   :set filetype=
 
 It can format specific line ranges of code using :FormatLines.
 
+  @clear
   % package main;import "fmt"<CR>
   |func main() { fmt.Printf("hello ")<CR>
   |fmt.Printf("world\n") }

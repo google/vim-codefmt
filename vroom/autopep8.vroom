@@ -21,9 +21,17 @@ briefly.
 The autopep8 formatter expects the autopep8 executable to be installed on your
 system.
 
+  % f()
   :FormatCode autopep8
+  ! autopep8 --version 2>(.*)
+  $ echo "autopep8 1.0" > \1 (command)
   ! autopep8 .*
-  $ 
+  $ f()
+
+Notice the "autopep8 --version" syscall. The autopep8 formatter checks the
+version of the autopep8 executable to detect whether it natively supports range
+formatting. It caches the result, so it only does this once per vim session.
+We'll take a closer look at that below.
 
 The name or path of the autopep8 executable can be configured via the
 autopep8_executable flag if the default of "autopep8" doesn't work.
@@ -31,17 +39,16 @@ autopep8_executable flag if the default of "autopep8" doesn't work.
   :Glaive codefmt autopep8_executable='autopep20'
   :FormatCode autopep8
   ! autopep20 .*
-  $ 
+  $ f()
   :Glaive codefmt autopep8_executable='autopep8'
 
 
 You can format any buffer with autopep8 specifying the formatter explicitly.
 
+  @clear
   % if True: pass
 
   :FormatCode autopep8
-  ! autopep8 --version 2>(.*)
-  $ echo "autopep8 1.0" > \1 (command)
   ! autopep8 .* - .*
   $ if True:
   $     pass
@@ -49,23 +56,21 @@ You can format any buffer with autopep8 specifying the formatter explicitly.
       pass
   @end
 
-Notice the "autopep8 --version" syscall. The autopep8 formatter checks the
-version of the autopep8 executable to detect whether it natively supports range
-formatting. It caches the result, so it only does this once per vim session.
-We'll take a closer look at that below.
-
-
 The python filetype will use the autopep8 formatter by default.
+
+  @clear
+  % pass
 
   :set filetype=python
   :FormatCode
   ! autopep8 .*
-  $ 
+  $ pass
 
   :set filetype=
 
 It can format specific line ranges of code using :FormatLines.
 
+  @clear
   % some_tuple=(   1,2, 3,'a'  );<CR>
   |if bar : bar+=1;  bar=bar* bar<CR>
   |else: bar-=1;

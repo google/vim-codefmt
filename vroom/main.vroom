@@ -124,10 +124,12 @@ won't take arguments, anyway. For several filetypes, codefmt selects an
 appropriate formatter by default. For instance, the built-in gofmt formatter
 will be used by default for the go filetype.
 
+  @clear
+  % f()
   :set filetype=go
   :FormatCode
   ! gofmt .*
-  $ 
+  $ f()
 
 You can also configure which formatter to use on a buffer-by-buffer basis via
 b:codefmt_formatter, which will take precedence over the built-in defaulting.
@@ -135,7 +137,7 @@ b:codefmt_formatter, which will take precedence over the built-in defaulting.
   :let b:codefmt_formatter = 'clang-format'
   :FormatCode
   ! clang-format .*
-  $ 
+  $ f()
   :unlet b:codefmt_formatter
 
 If no default formatter is available for a buffer, you'll just see an error.
