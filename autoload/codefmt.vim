@@ -233,7 +233,7 @@ endif
 " Formatter: js-beautify
 if !exists('s:js_beautify')
   let s:js_beautify = {
-      \ 'name': 'js_beautify',
+      \ 'name': 'js-beautify',
       \ 'setup_instructions': 'Install js-beautify ' .
           \ '(https://www.npmjs.com/package/js-beautify).'}
 
