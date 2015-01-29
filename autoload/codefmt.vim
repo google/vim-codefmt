@@ -254,8 +254,10 @@ if !exists('s:js_beautify')
   " @throws ShellError
   function s:js_beautify.FormatRange(startline, endline) abort
     let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
-                \'--type', &filetype,
                 \'-f', '-' ]
+    if &filetype != ""
+      let l:cmd = l:cmd + ['--type', &filetype]
+    endif
 
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
