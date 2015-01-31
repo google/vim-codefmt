@@ -36,4 +36,31 @@ plugin-adding command is `Plugin`.
 Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmtlib'
 Plugin 'google/vim-codefmt'
+" Also add Glaive, which is used to configure codefmt's maktaba flags. See
+" `:help :Glaive` for usage.
+Plugin 'google/vim-glaive'
+call glaive#Install()
+" Optional: Enable codefmt's default mappings on the <Leader>= prefix.
+Glaive codefmt plugin[mappings]
 ```
+
+Make sure you have updated maktaba recently. Older versions had an issue
+detecting installed libraries.
+
+# Installing and configuring formatters
+
+Codefmt defines several built-in formatters. The easiest way to see the list of
+available formatters is via tab completion: Type `:FormatCode <TAB>` in vim.
+Formatters that apply to the current filetype will be listed first.
+
+To use a particular formatter, type `:FormatCode FORMATTER-NAME`. This will
+either format the current buffer using the selected formatter or show an error
+message with basic setup instructions for this formatter. Normally you will
+trigger formatters via key mappings and/or autocommand hooks. See
+vroom/main.vroom to learn more about formatting features, and see
+vroom/FORMATTER-NAME.vroom to learn more about usage for individual formatters.
+
+Most formatters have some options available that can be configured via Glaive.
+You can get a quick view of all codefmt flags by executing `:Glaive codefmt`, or
+start typing flag names and use tab completion. See `:help Glaive` for usage
+details.
