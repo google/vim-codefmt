@@ -51,8 +51,7 @@ if !exists('s:clangformat')
 
   function s:clangformat.AppliesToBuffer() abort
     return &filetype is# 'cpp' || &filetype is# 'proto' ||
-        \ (&filetype is# 'javascript' &&
-            \ s:plugin.Flag('javascript_formatter') is# 'clang_format')
+        \ &filetype is# 'javascript'
   endfunction
 
   ""
@@ -243,8 +242,7 @@ if !exists('s:js_beautify')
 
   function s:js_beautify.AppliesToBuffer() abort
     return &filetype is# 'css' || &filetype is# 'html' || &filetype is# 'json' ||
-        \ (&filetype is# 'javascript' &&
-            \ s:plugin.Flag('javascript_formatter') is# 'js_beautify')
+        \ &filetype is# 'javascript'
   endfunction
 
   ""

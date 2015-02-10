@@ -47,10 +47,6 @@ Default: 'gofmt' `
 The path to the js-beautify executable.
 Default: 'js-beautify' `
 
-                                                *codefmt:javascript_formatter*
-Default formatter for javascript files, 'clang_format' or 'js_beautify'.
-Default: 'clang_format' `
-
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `

@@ -55,7 +55,3 @@ call s:plugin.Flag('gofmt_executable', 'gofmt')
 ""
 " The path to the js-beautify executable.
 call s:plugin.Flag('js_beautify_executable', 'js-beautify')
-
-""
-" Default formatter for javascript files, 'clang_format' or 'js_beautify'.
-call s:plugin.Flag('javascript_formatter', 'clang_format')
