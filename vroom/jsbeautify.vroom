@@ -1,0 +1,109 @@
+The built-in js-beautify formatter knows how to format javascript, json, html
+and css code.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples. If you haven't seen the setup code below yet, read through main.vroom
+briefly.
+
+  :set nocompatible
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The js-beautify formatter expects the js-beautify executable to be installed
+on your system.
+
+  % f()
+  :FormatCode js-beautify
+  ! js-beautify .*
+  $ f()
+
+The name or path of the js-beautify executable can be configured via the
+js_beautify_executable flag if the default of "js-beautify" doesn't work.
+
+  :Glaive codefmt js_beautify_executable='myjsb'
+  :FormatCode js-beautify
+  ! myjsb .*
+  $ f()
+  :Glaive codefmt js_beautify_executable='js-beautify'
+
+
+You can format any buffer with js-beautify specifying the formatter explicitly.
+
+  @clear
+  %    for (i = 0; i < max; i++) {<CR>
+  |a=1234 + 5678 + i; b = 1234*5678+i; c=1234/2+i;}
+
+  :FormatCode js-beautify
+  ! js-beautify .*2>.*
+  $ for (i = 0; i < max; i++) {
+  $   a = 1234 + 5678 + i;
+  $   b = 1234 * 5678 + i;
+  $   c = 1234 / 2 + i;
+  $ }
+  for (i = 0; i < max; i++) {
+    a = 1234 + 5678 + i;
+    b = 1234 * 5678 + i;
+    c = 1234 / 2 + i;
+  }
+  @end
+
+# @TODO: fix default formatter for javascript
+Several filetypes will use the js-beautify formatter by default:
+javascript, json, html and css.
+
+  @clear
+  % f();
+
+  :set filetype=javascript
+  :FormatCode
+  ! clang-format .*
+  $ f();
+
+  :set filetype=json
+  :FormatCode
+  ! js-beautify .*
+  $ f();
+
+  :set filetype=html
+  :FormatCode
+  ! js-beautify .*
+  $ f();
+
+  :set filetype=css
+  :FormatCode
+  ! js-beautify .*
+  $ f();
+
+  :set filetype=
+
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % for (i = 0; i < max; i++) {<CR>
+  |a=1234 + 5678 + i; b = 1234*5678+i;<CR>
+  |c=1234/2+i;}
+
+  :2,2FormatLines js-beautify
+  ! js-beautify .*2>.*
+  $ a = 1234 + 5678 + i;
+  $ b = 1234 * 5678 + i;
+  for (i = 0; i < max; i++) {
+  a = 1234 + 5678 + i;
+  b = 1234 * 5678 + i;
+  c=1234/2+i;}
+  @end
+
+NOTE: the js-beautify formatter does not natively support range formatting,
+so there are certain limitations like not being able to format misaligned
+braces.
