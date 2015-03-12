@@ -58,7 +58,7 @@ You can format any buffer with clang-format specifying the formatter explicitly.
   @end
 
 Several filetypes will use the clang-format formatter by default:
-cpp, javascript, and proto.
+c, cpp, javascript, and proto.
 
   @clear
   % f();
