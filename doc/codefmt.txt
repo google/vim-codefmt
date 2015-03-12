@@ -81,7 +81,7 @@ none is explicitly supplied via an explicit arg to |:FormatCode| or the
 plugins are enabled or what other software is installed on your system.
 
 The current list of defaults by filetype is:
-  * cpp, proto, javascript: clang-format
+  * c, cpp, proto, javascript: clang-format
   * go: gofmt
   * python: autopep8
 

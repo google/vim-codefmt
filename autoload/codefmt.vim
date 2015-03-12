@@ -25,7 +25,7 @@
 " system.
 "
 " The current list of defaults by filetype is:
-"   * cpp, proto, javascript: clang-format
+"   * c, cpp, proto, javascript: clang-format
 "   * go: gofmt
 "   * python: autopep8
 
@@ -50,8 +50,8 @@ if !exists('s:clangformat')
   endfunction
 
   function s:clangformat.AppliesToBuffer() abort
-    return &filetype is# 'cpp' || &filetype is# 'proto' ||
-        \ &filetype is# 'javascript'
+    return &filetype is# 'c' || &filetype is# 'cpp' ||
+         \ &filetype is# 'proto' || &filetype is# 'javascript'
   endfunction
 
   ""
