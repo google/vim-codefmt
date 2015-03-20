@@ -1,7 +1,8 @@
 language: generic
 env:
   matrix:
-    - CI_TARGET=vim
+    - CI_TARGET=vim MAKTABA_VERSION=1.1.0
+    - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim
 before_script:
   - sudo apt-get install python3-dev
@@ -17,7 +18,7 @@ before_script:
     fi
   - wget https://github.com/google/vroom/releases/download/v0.12.0/vroom_0.12.0-1_all.deb
   - sudo dpkg -i ./vroom_0.12.0-1_all.deb
-  - git clone https://github.com/google/vim-maktaba.git ../maktaba/
+  - git clone -b ${MAKTABA_VERSION} https://github.com/google/vim-maktaba.git ../maktaba/
   - git clone https://github.com/google/vim-glaive.git ../glaive/
   - git clone https://github.com/google/vim-codefmtlib.git ../codefmtlib/
 script:
