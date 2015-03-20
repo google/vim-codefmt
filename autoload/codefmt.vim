@@ -30,11 +30,120 @@
 "   * python: autopep8
 
 
-call maktaba#library#Require('codefmtlib')
-
-
 let s:plugin = maktaba#plugin#Get('codefmt')
 let s:plugin_root = expand('<sfile>:p:h:h:h')
+let s:registry = s:plugin.GetExtensionRegistry()
+
+call s:registry.SetValidator('codefmt#EnsureFormatter')
+
+
+""
+" @dict Formatter
+" Interface for applying formatting to lines of code.  Formatters are
+" registered with codefmt using maktaba's standard extension registry:
+" >
+"   let l:codefmt_registry = maktaba#extension#GetRegistry('codefmt')
+"   call l:codefmt_registry.AddExtension(l:formatter)
+" <
+"
+" Formatters define these fields:
+"   * name (string): The formatter name that will be exposed to users.
+"   * setup_instructions (string, optional): A string explaining to users how to
+"     make the plugin available if not already available.
+" and these functions:
+"   * IsAvailable() -> boolean: Whether the formatter is fully functional with
+"     all dependencies available. Returns 0 only if setup_instructions have not
+"     been followed.
+"   * AppliesToBuffer() -> boolean: Whether the current buffer is of a type
+"     normally formatted by this formatter. Normally based on 'filetype', but
+"     could depend on buffer name or other properties.
+" and should implement at least one of the following functions:
+"   * Format(): Formats the current buffer directly.
+"   * FormatRange({startline}, {endline}): Formats the current buffer, focusing
+"     on the range of lines from {startline} to {endline}.
+"   * FormatRanges({ranges}): Formats the current buffer, focusing on the given
+"     ranges of lines. Each range should be a 2-item list of
+"     [startline,endline].
+" Formatters should implement the most specific format method that is supported.
+
+
+""
+" @private
+" Ensures that {formatter} is a valid formatter, and then prepares it for use by
+" codefmt.  See @dict(Formatter) for the API {formatter} must implement.
+" @throws BadValue if {formatter} is missing required fields.
+" Returns the fully prepared formatter.
+function! codefmt#EnsureFormatter(formatter) abort
+  let l:required_fields = ['name', 'IsAvailable', 'AppliesToBuffer']
+  " Throw BadValue if any required fields are missing.
+  let l:missing_fields =
+      \ filter(copy(l:required_fields), '!has_key(a:formatter, v:val)')
+  if !empty(l:missing_fields)
+    throw maktaba#error#BadValue('a:formatter is missing fields: ' .
+        \ join(l:missing_fields, ', '))
+  endif
+
+  " Throw BadValue if the wrong number of format functions are provided.
+  let l:available_format_functions = ['Format', 'FormatRange', 'FormatRanges']
+  let l:format_functions = filter(copy(l:available_format_functions),
+        \ 'has_key(a:formatter, v:val)')
+  if empty(l:format_functions)
+    throw maktaba#error#BadValue('Formatter ' . a:formatter.name .
+          \ ' has no format functions.  It must have at least one of ' .
+          \ join(l:available_format_functions, ', '))
+  endif
+
+  " TODO(dbarnett): Check types.
+
+endfunction
+
+
+" Formatter: js-beautify
+if !exists('s:js_beautify')
+  let s:js_beautify = {
+      \ 'name': 'js-beautify',
+      \ 'setup_instructions': 'Install js-beautify ' .
+          \ '(https://www.npmjs.com/package/js-beautify).'}
+
+  function s:js_beautify.IsAvailable() abort
+    return executable(s:plugin.Flag('js_beautify_executable'))
+  endfunction
+
+  function s:js_beautify.AppliesToBuffer() abort
+    return &filetype is# 'css' || &filetype is# 'html' || &filetype is# 'json' ||
+        \ &filetype is# 'javascript'
+  endfunction
+
+  ""
+  " Reformat the current buffer with js-beautify or the binary named in
+  " @flag(js_beautify_executable), only targeting the range between {startline} and
+  " {endline}.
+  " @throws ShellError
+  function s:js_beautify.FormatRange(startline, endline) abort
+    let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
+                \'-f', '-' ]
+    if &filetype != ""
+      let l:cmd = l:cmd + ['--type', &filetype]
+    endif
+
+    call maktaba#ensure#IsNumber(a:startline)
+    call maktaba#ensure#IsNumber(a:endline)
+
+    let l:lines = getline(1, line('$'))
+    " Hack range formatting by formatting range individually, ignoring context.
+    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+
+    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
+    let l:formatted = split(l:result.stdout, "\n")
+    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
+    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
+    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+
+    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+  endfunction
+
+  call s:registry.AddExtension(s:js_beautify)
+endif
 
 
 " Formatter: clang-format
@@ -90,7 +199,7 @@ if !exists('s:clangformat')
     call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
   endfunction
 
-  call codefmtlib#AddDefaultFormatter(s:clangformat)
+  call s:registry.AddExtension(s:clangformat)
 endif
 
 
@@ -154,7 +263,7 @@ if !exists('s:gofmt')
     endtry
   endfunction
 
-  call codefmtlib#AddDefaultFormatter(s:gofmt)
+  call s:registry.AddExtension(s:gofmt)
 endif
 
 " Formatter: autopep8
@@ -225,55 +334,7 @@ if !exists('s:autopep8')
     call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
   endfunction
 
-  call codefmtlib#AddDefaultFormatter(s:autopep8)
-endif
-
-
-" Formatter: js-beautify
-if !exists('s:js_beautify')
-  let s:js_beautify = {
-      \ 'name': 'js-beautify',
-      \ 'setup_instructions': 'Install js-beautify ' .
-          \ '(https://www.npmjs.com/package/js-beautify).'}
-
-  function s:js_beautify.IsAvailable() abort
-    return executable(s:plugin.Flag('js_beautify_executable'))
-  endfunction
-
-  function s:js_beautify.AppliesToBuffer() abort
-    return &filetype is# 'css' || &filetype is# 'html' || &filetype is# 'json' ||
-        \ &filetype is# 'javascript'
-  endfunction
-
-  ""
-  " Reformat the current buffer with js-beautify or the binary named in
-  " @flag(js_beautify_executable), only targeting the range between {startline} and
-  " {endline}.
-  " @throws ShellError
-  function s:js_beautify.FormatRange(startline, endline) abort
-    let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
-                \'-f', '-' ]
-    if &filetype != ""
-      let l:cmd = l:cmd + ['--type', &filetype]
-    endif
-
-    call maktaba#ensure#IsNumber(a:startline)
-    call maktaba#ensure#IsNumber(a:endline)
-
-    let l:lines = getline(1, line('$'))
-    " Hack range formatting by formatting range individually, ignoring context.
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
-
-    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
-    let l:formatted = split(l:result.stdout, "\n")
-    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
-    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
-
-    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
-  endfunction
-
-  call codefmtlib#AddDefaultFormatter(s:js_beautify)
+  call s:registry.AddExtension(s:autopep8)
 endif
 
 
@@ -293,7 +354,7 @@ endfunction
 ""
 " Detects whether a formatter has been defined for the current buffer/filetype.
 function! codefmt#IsFormatterAvailable() abort
-  let l:formatters = copy(codefmtlib#GetFormatters())
+  let l:formatters = copy(s:registry.GetExtensions())
   let l:is_available = 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)'
   return !empty(filter(l:formatters, l:is_available)) ||
         \ !empty(get(b:, 'codefmt_formatter'))
@@ -316,7 +377,7 @@ function! s:GetFormatter(...) abort
   elseif !empty(get(b:, 'codefmt_formatter'))
     let l:explicit_name = b:codefmt_formatter
   endif
-  let l:formatters = codefmtlib#GetFormatters()
+  let l:formatters = s:registry.GetExtensions()
   if exists('l:explicit_name')
     " Explicit name passed.
     let l:selected_formatters = filter(
@@ -427,7 +488,7 @@ endfunction
 " apply, then everything else.
 function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos) abort
   let l:groups = [[], [], []]
-  for l:formatter in codefmtlib#GetFormatters()
+  for l:formatter in s:registry.GetExtensions()
     let l:key = l:formatter.AppliesToBuffer() ? (
         \ l:formatter.IsAvailable() ? 0 : 1) : 2
     call add(l:groups[l:key], l:formatter.name)

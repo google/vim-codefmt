@@ -6,10 +6,11 @@ CONTENTS                                                    *codefmt-contents*
   1. Introduction..............................................|codefmt-intro|
   2. Configuration............................................|codefmt-config|
   3. Formatters...........................................|codefmt-formatters|
-  4. Commands...............................................|codefmt-commands|
-  5. Autocommands...........................................|codefmt-autocmds|
-  6. Functions.............................................|codefmt-functions|
-  7. Mappings...............................................|codefmt-mappings|
+  4. Dictionaries..............................................|codefmt-dicts|
+  5. Commands...............................................|codefmt-commands|
+  6. Autocommands...........................................|codefmt-autocmds|
+  7. Functions.............................................|codefmt-functions|
+  8. Mappings...............................................|codefmt-mappings|
 
 ==============================================================================
 INTRODUCTION                                                   *codefmt-intro*
@@ -84,6 +85,37 @@ The current list of defaults by filetype is:
   * c, cpp, proto, javascript: clang-format
   * go: gofmt
   * python: autopep8
+
+==============================================================================
+DICTIONARIES                                                   *codefmt-dicts*
+
+                                                           *codefmt.Formatter*
+Interface for applying formatting to lines of code.  Formatters are registered
+with codefmt using maktaba's standard extension registry:
+>
+  let l:codefmt_registry = maktaba#extension#GetRegistry('codefmt')
+  call l:codefmt_registry.AddExtension(l:formatter)
+<
+
+Formatters define these fields:
+  * name (string): The formatter name that will be exposed to users.
+  * setup_instructions (string, optional): A string explaining to users how to
+    make the plugin available if not already available.
+and these functions:
+  * IsAvailable() -> boolean: Whether the formatter is fully functional with
+    all dependencies available. Returns 0 only if setup_instructions have not
+    been followed.
+  * AppliesToBuffer() -> boolean: Whether the current buffer is of a type
+    normally formatted by this formatter. Normally based on 'filetype', but
+    could depend on buffer name or other properties.
+and should implement at least one of the following functions:
+  * Format(): Formats the current buffer directly.
+  * FormatRange({startline}, {endline}): Formats the current buffer, focusing
+    on the range of lines from {startline} to {endline}.
+  * FormatRanges({ranges}): Formats the current buffer, focusing on the given
+    ranges of lines. Each range should be a 2-item list of
+    [startline,endline].
+Formatters should implement the most specific format method that is supported.
 
 ==============================================================================
 COMMANDS                                                    *codefmt-commands*

@@ -14,9 +14,9 @@ directory cover various topics of codefmt usage:
 * gofmt.vroom - Configuring and using the built-in gofmt formatter
 * autocmd.vroom - Automatic hooks like format-on-save
 
-In order for these tests to work, maktaba and codefmtlib MUST be in the same
-parent directory as codefmt. Given that that's the case, all we have to do is
-source the codefmt bootstrap file.
+In order for these tests to work, maktaba MUST be in the same parent directory
+as codefmt. Given that that's the case, all we have to do is source the codefmt
+bootstrap file.
 
   :set nocompatible
   :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
@@ -151,6 +151,41 @@ Similarly, you'll see an error if an explicit formatter name isn't recognized.
   :FormatCode nonexistentformatter
   ~ "nonexistentformatter" is not a supported formatter.
 
+Formatters are registered with maktaba's extension registry. Each formatter
+must be a dict that has certain fields defined, as described in the codefmt
+docs.
+
+  :let formatter1 = {'name': 'formatter1'}
+  :function formatter1.IsAvailable()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function formatter1.AppliesToBuffer()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function formatter1.Format()<CR>
+  |endfunction
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(formatter1)
+
+If it isn't a dict, ERROR(WrongType) will be thrown.  If it's missing fields,
+ERROR(BadValue) will be shouted to the user.
+
+  :let registry = maktaba#extension#GetRegistry('codefmt')
+  :let add = maktaba#function#Method(registry, 'AddExtension')
+  :call maktaba#error#Try(add.WithArgs(0))
+  ~ ERROR(WrongType): Expected a dictionary. Got a number.
+
+  :call registry.AddExtension({})
+  ~ ERROR(BadValue): a:formatter is missing fields: name, IsAvailable,
+  | AppliesToBuffer
+
+If it doesn't have the right format functions, ERROR(BadValue) will be shouted.
+
+  :let formatter = deepcopy(formatter1)
+  :unlet formatter.Format
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(formatter)
+  ~ ERROR(BadValue): Formatter formatter1 has no format functions.  It must have
+  | at least one of Format, FormatRange, FormatRanges
+
 If a formatter name is recognized but the formatter isn't available (isn't
 configured or is missing dependencies), codefmt will print setup instructions
 for that formatter.
@@ -166,7 +201,7 @@ for that formatter.
   |endfunction
   :function fake_format.Format()<CR>
   |endfunction
-  :call codefmtlib#AddFormatter(fake_format)
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(fake_format)
 
   :FormatCode fake-format
   ~ Formatter "fake-format" is not available. Setup instructions: RTFM
@@ -185,8 +220,8 @@ them are available, the message will show a line for each.
   :let fake_format2 = copy(fake_format)
   :let fake_format2.name = 'fake-format2'
   :let fake_format2.setup_instructions = 'LMGTFY'
-  :call codefmtlib#AddFormatter(fake_format2)
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(fake_format2)
 
   :FormatCode
-  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
   ~ Formatter "fake-format2" is not available. Setup instructions: LMGTFY
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM

@@ -54,7 +54,7 @@ if !exists('*maktaba#compatibility#Disable')
       unlet s:rtpsave
       " We'd like to use maktaba#error#Shout, but maktaba doesn't exist yet.
       echohl ErrorMsg
-      echomsg 'Maktaba not found, but codefmtlib requires it. Please either:'
+      echomsg 'Maktaba not found, but codefmt requires it. Please either:'
       echomsg '1. Place maktaba in the same directory as this plugin.'
       echomsg '2. Add maktaba to your runtimepath before using this plugin.'
       echomsg 'Maktaba can be found at https://github.com/google/vim-maktaba.'
@@ -63,8 +63,8 @@ if !exists('*maktaba#compatibility#Disable')
     endtry
   endtry
 endif
-if !maktaba#IsAtLeastVersion('1.8.0')
-  call maktaba#error#Shout('Codefmt requires maktaba version 1.8.0.')
+if !maktaba#IsAtLeastVersion('1.9.0')
+  call maktaba#error#Shout('Codefmt requires maktaba version 1.9.0.')
   call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
   call maktaba#error#Shout('Please update your maktaba install.')
 endif
@@ -81,7 +81,6 @@ function! s:InstallFromLocalDirs(plugin) abort
 endfunction
 
 call s:InstallFromLocalDirs('glaive')
-call s:InstallFromLocalDirs('codefmtlib')
 
 let s:codefmt_plugin = maktaba#plugin#GetOrInstall(s:codefmt_path)
 call s:codefmt_plugin.Load()
