@@ -1,7 +1,8 @@
 language: generic
 env:
   matrix:
-    - CI_TARGET=vim MAKTABA_VERSION=1.1.0
+    # This Maktaba version should match the minimum required in bootstrap.vim.
+    - CI_TARGET=vim MAKTABA_VERSION=1.8.0
     - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim
 before_script:

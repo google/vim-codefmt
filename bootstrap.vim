@@ -57,14 +57,14 @@ if !exists('*maktaba#compatibility#Disable')
       echomsg 'Maktaba not found, but codefmtlib requires it. Please either:'
       echomsg '1. Place maktaba in the same directory as this plugin.'
       echomsg '2. Add maktaba to your runtimepath before using this plugin.'
-      echomsg 'Maktaba can be found at http://github.com/google/vim-maktaba.'
+      echomsg 'Maktaba can be found at https://github.com/google/vim-maktaba.'
       echohl NONE
       finish
     endtry
   endtry
 endif
-if !maktaba#IsAtLeastVersion('1.1.0')
-  call maktaba#error#Shout('Codefmt requires maktaba version 1.1.0.')
+if !maktaba#IsAtLeastVersion('1.8.0')
+  call maktaba#error#Shout('Codefmt requires maktaba version 1.8.0.')
   call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
   call maktaba#error#Shout('Please update your maktaba install.')
 endif
