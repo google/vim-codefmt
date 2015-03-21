@@ -14,7 +14,7 @@
 
 ""
 " @section Introduction, intro
-" @order intro config formatters commands autocmds functions mappings
+" @order intro config formatters dicts commands autocmds functions mappings
 " Provides a @command(FormatCode) command to intelligently reformat code.
 
 ""

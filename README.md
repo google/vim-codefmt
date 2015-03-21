@@ -1,6 +1,6 @@
-codefmt is a utility for syntax-aware code formatting.  codefmt relies on
-[codefmtlib](https://github.com/google/vim-codefmtlib) for registration and
-management of formatting plugins.
+codefmt is a utility for syntax-aware code formatting.  It contains several
+built-in formatters, and allows new formatters to be registered by other
+plugins.
 
 For details, see the executable documentation in the `vroom/` directory or the
 helpfiles in the `doc/` directory. The helpfiles are also available via
@@ -34,7 +34,6 @@ plugin-adding command is `Plugin`.
 " Add maktaba and codefmt to the runtimepath.
 " (The latter must be installed before it can be used.)
 Plugin 'google/vim-maktaba'
-Plugin 'google/vim-codefmtlib'
 Plugin 'google/vim-codefmt'
 " Also add Glaive, which is used to configure codefmt's maktaba flags. See
 " `:help :Glaive` for usage.
@@ -44,8 +43,8 @@ call glaive#Install()
 Glaive codefmt plugin[mappings]
 ```
 
-Make sure you have updated maktaba recently. Older versions had an issue
-detecting installed libraries.
+Make sure you have updated maktaba recently. Codefmt depends upon maktaba
+to register formatters.
 
 # Installing and configuring formatters
 
