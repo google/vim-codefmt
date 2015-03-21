@@ -1,8 +1,10 @@
 language: generic
 env:
   matrix:
-    - CI_TARGET=vim
-    - CI_TARGET=neovim
+    # This Maktaba version should match the minimum required in bootstrap.vim.
+    - CI_TARGET=vim MAKTABA_VERSION=1.8.0
+    - CI_TARGET=vim MAKTABA_VERSION=master
+    - CI_TARGET=neovim MAKTABA_VERSION=master
 before_script:
   - sudo apt-get install python3-dev
   - if [ $CI_TARGET = vim ]; then
@@ -17,7 +19,7 @@ before_script:
     fi
   - wget https://github.com/google/vroom/releases/download/v0.12.0/vroom_0.12.0-1_all.deb
   - sudo dpkg -i ./vroom_0.12.0-1_all.deb
-  - git clone https://github.com/google/vim-maktaba.git ../maktaba/
+  - git clone -b ${MAKTABA_VERSION} https://github.com/google/vim-maktaba.git ../maktaba/
   - git clone https://github.com/google/vim-glaive.git ../glaive/
   - git clone https://github.com/google/vim-codefmtlib.git ../codefmtlib/
 script:
@@ -25,4 +27,4 @@ script:
   - vroom $VROOM_ARGS --crawl ./vroom/
 matrix:
   allow_failures:
-    - env: CI_TARGET=neovim
+    - env: CI_TARGET=neovim MAKTABA_VERSION=master
