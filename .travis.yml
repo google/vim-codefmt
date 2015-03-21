@@ -4,7 +4,7 @@ env:
     # This Maktaba version should match the minimum required in bootstrap.vim.
     - CI_TARGET=vim MAKTABA_VERSION=1.8.0
     - CI_TARGET=vim MAKTABA_VERSION=master
-    - CI_TARGET=neovim
+    - CI_TARGET=neovim MAKTABA_VERSION=master
 before_script:
   - sudo apt-get install python3-dev
   - if [ $CI_TARGET = vim ]; then
@@ -27,4 +27,4 @@ script:
   - vroom $VROOM_ARGS --crawl ./vroom/
 matrix:
   allow_failures:
-    - env: CI_TARGET=neovim
+    - env: CI_TARGET=neovim MAKTABA_VERSION=master
