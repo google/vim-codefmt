@@ -25,5 +25,6 @@ script:
   - '[ $CI_TARGET = neovim ] && VROOM_ARGS="--neovim" || VROOM_ARGS=""'
   - vroom $VROOM_ARGS --crawl ./vroom/
 matrix:
+  fast_finish: true
   allow_failures:
     - env: CI_TARGET=neovim MAKTABA_VERSION=master
