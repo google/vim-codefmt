@@ -13,6 +13,7 @@ directory cover various topics of codefmt usage:
 * clangformat.vroom - Configuring and using the built-in clang-format formatter
 * gofmt.vroom - Configuring and using the built-in gofmt formatter
 * autocmd.vroom - Automatic hooks like format-on-save
+* extensions.vroom - Adding additional formatters for codefmt to use
 
 In order for these tests to work, maktaba MUST be in the same parent directory
 as codefmt. Given that that's the case, all we have to do is source the codefmt

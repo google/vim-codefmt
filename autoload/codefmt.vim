@@ -95,18 +95,20 @@ function! codefmt#EnsureFormatter(formatter) abort
 endfunction
 
 
+""
+" @private
 " Formatter: js-beautify
-if !exists('s:js_beautify')
-  let s:js_beautify = {
+function! codefmt#GetJsBeautifyFormatter() abort
+  let l:formatter = {
       \ 'name': 'js-beautify',
       \ 'setup_instructions': 'Install js-beautify ' .
           \ '(https://www.npmjs.com/package/js-beautify).'}
 
-  function s:js_beautify.IsAvailable() abort
+  function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('js_beautify_executable'))
   endfunction
 
-  function s:js_beautify.AppliesToBuffer() abort
+  function l:formatter.AppliesToBuffer() abort
     return &filetype is# 'css' || &filetype is# 'html' || &filetype is# 'json' ||
         \ &filetype is# 'javascript'
   endfunction
@@ -116,7 +118,7 @@ if !exists('s:js_beautify')
   " @flag(js_beautify_executable), only targeting the range between {startline} and
   " {endline}.
   " @throws ShellError
-  function s:js_beautify.FormatRange(startline, endline) abort
+  function l:formatter.FormatRange(startline, endline) abort
     let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
                 \'-f', '-' ]
     if &filetype != ""
@@ -139,30 +141,32 @@ if !exists('s:js_beautify')
     call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
   endfunction
 
-  call s:registry.AddExtension(s:js_beautify)
-endif
+  return l:formatter
+endfunction
 
 
+""
+" @private
 " Formatter: clang-format
-if !exists('s:clangformat')
-  let s:clangformat = {
+function! codefmt#GetClangFormatFormatter() abort
+  let l:formatter = {
       \ 'name': 'clang-format',
       \ 'setup_instructions': 'Install clang-format from ' .
           \ 'http://clang.llvm.org/docs/ClangFormat.html and ' .
           \ 'configure the clang_format_executable flag'}
 
-  function s:clangformat.IsAvailable() abort
+  function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('clang_format_executable'))
   endfunction
 
-  function s:clangformat.AppliesToBuffer() abort
+  function l:formatter.AppliesToBuffer() abort
     return &filetype is# 'c' || &filetype is# 'cpp' ||
          \ &filetype is# 'proto' || &filetype is# 'javascript'
   endfunction
 
   ""
   " Reformat buffer with clang-format, only targeting [ranges] if given.
-  function s:clangformat.FormatRanges(ranges) abort
+  function l:formatter.FormatRanges(ranges) abort
     let l:Style_value = s:plugin.Flag('clang_format_style')
     if type(l:Style_value) is# type('')
       let l:style = l:Style_value
@@ -196,22 +200,24 @@ if !exists('s:clangformat')
     call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
   endfunction
 
-  call s:registry.AddExtension(s:clangformat)
-endif
+  return l:formatter
+endfunction
 
 
+""
+" @private
 " Formatter: gofmt
-if !exists('s:gofmt')
-  let s:gofmt = {
+function! codefmt#GetGofmtFormatter() abort
+  let l:formatter = {
       \ 'name': 'gofmt',
       \ 'setup_instructions': 'Install gofmt or goimports and ' .
           \ 'configure the gofmt_executable flag'}
 
-  function s:gofmt.IsAvailable() abort
+  function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('gofmt_executable'))
   endfunction
 
-  function s:gofmt.AppliesToBuffer() abort
+  function l:formatter.AppliesToBuffer() abort
     return &filetype is# 'go'
   endfunction
 
@@ -220,7 +226,7 @@ if !exists('s:gofmt')
   " Reformat the current buffer with gofmt or the binary named in
   " @flag(gofmt_executable), only targeting the range between {startline} and
   " {endline}.
-  function s:gofmt.FormatRange(startline, endline) abort
+  function l:formatter.FormatRange(startline, endline) abort
     " Hack range formatting by formatting range individually, ignoring context.
     let l:cmd = [ s:plugin.Flag('gofmt_executable') ]
     call maktaba#ensure#IsNumber(a:startline)
@@ -260,21 +266,24 @@ if !exists('s:gofmt')
     endtry
   endfunction
 
-  call s:registry.AddExtension(s:gofmt)
-endif
+  return l:formatter
+endfunction
 
+
+""
+" @private
 " Formatter: autopep8
-if !exists('s:autopep8')
-  let s:autopep8 = {
+function! codefmt#GetAutopep8Formatter() abort
+  let l:formatter = {
       \ 'name': 'autopep8',
       \ 'setup_instructions': 'Install autopep8 ' .
           \ '(https://pypi.python.org/pypi/autopep8/).'}
 
-  function s:autopep8.IsAvailable() abort
+  function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('autopep8_executable'))
   endfunction
 
-  function s:autopep8.AppliesToBuffer() abort
+  function l:formatter.AppliesToBuffer() abort
     return &filetype is# 'python'
   endfunction
 
@@ -283,7 +292,7 @@ if !exists('s:autopep8')
   " @flag(autopep8_executable), only targeting the range between {startline} and
   " {endline}.
   " @throws ShellError
-  function s:autopep8.FormatRange(startline, endline) abort
+  function l:formatter.FormatRange(startline, endline) abort
     let l:executable = s:plugin.Flag('autopep8_executable')
     if !exists('s:autopep8_supports_range')
       let l:version_call =
@@ -331,8 +340,8 @@ if !exists('s:autopep8')
     call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
   endfunction
 
-  call s:registry.AddExtension(s:autopep8)
-endif
+  return l:formatter
+endfunction
 
 
 ""
