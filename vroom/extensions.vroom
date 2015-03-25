@@ -1,0 +1,75 @@
+Codefmt can be extended to support new formatters, using maktaba's extension
+registry.
+
+First, we need to set up the vroom environment and install codefmt.
+
+  :set nocompatible
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
+  :execute 'source' g:repo . '/bootstrap.vim'
+  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+
+Formatters are described as a dict that has certain fields defined, as
+described in the codefmt docs.
+
+  :let formatter1 = {'name': 'formatter1'}
+  :function formatter1.IsAvailable()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function formatter1.AppliesToBuffer()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function formatter1.Format()<CR>
+  |endfunction
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(formatter1)
+
+If a formatter name is recognized but the formatter isn't available (isn't
+configured or is missing dependencies), codefmt will print setup instructions
+for that formatter.
+
+  :let fake_format = {'name': 'fake-format', 'setup_instructions': 'RTFM'}
+  :function fake_format.IsAvailable()<CR>
+  |  return 0<CR>
+  |endfunction
+  :function fake_format.AppliesToBuffer()<CR>
+  |  return &filetype is# 'fake'<CR>
+  |endfunction
+  :function fake_format.Format()<CR>
+  |endfunction
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(fake_format)
+
+  :FormatCode fake-format
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
+
+It will print a similar message if the default formatter for the buffer is not
+available.
+
+  :silent file foo.fake
+  :set filetype=fake
+  :FormatCode
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
+
+If there are multiple formatters that apply to the current buffer but none of
+them are available, the message will show a line for each.
+
+  :let fake_format2 = copy(fake_format)
+  :let fake_format2.name = 'fake-format2'
+  :let fake_format2.setup_instructions = 'LMGTFY'
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(fake_format2)
+
+  :FormatCode
+  ~ Formatter "fake-format2" is not available. Setup instructions: LMGTFY
+  ~ Formatter "fake-format" is not available. Setup instructions: RTFM
+
+If the extension is missing fields or doesn't have the right format functions,
+ERROR(BadValue) will be shouted to the user when the extension is registered
+(or, if codefmt hasn't yet been loaded, when codefmt is loaded).
+
+  :let registry = maktaba#extension#GetRegistry('codefmt')
+  :call registry.AddExtension({})
+  ~ ERROR(BadValue): a:formatter is missing fields: name, IsAvailable,
+  | AppliesToBuffer
+  :let formatter = deepcopy(formatter1)
+  :unlet formatter.Format
+  :call maktaba#extension#GetRegistry('codefmt').AddExtension(formatter)
+  ~ ERROR(BadValue): Formatter formatter1 has no format functions.  It must have
+  | at least one of Format, FormatRange, FormatRanges

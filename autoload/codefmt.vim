@@ -31,10 +31,7 @@
 
 
 let s:plugin = maktaba#plugin#Get('codefmt')
-let s:plugin_root = expand('<sfile>:p:h:h:h')
 let s:registry = s:plugin.GetExtensionRegistry()
-
-call s:registry.SetValidator('codefmt#EnsureFormatter')
 
 
 ""

@@ -60,6 +60,10 @@ Default: 1 `
 Configures whether plugin/mappings.vim should be loaded.
 Default: 0 `
 
+                                                    *codefmt:plugin[register]*
+Configures whether plugin/register.vim should be loaded.
+Default: 1 `
+
                                                          *b:codefmt_formatter*
 You can override the default formatter by defining this variable. For
 instance, to explicitly select the clang-format formatter for Java, add
