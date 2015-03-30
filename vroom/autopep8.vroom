@@ -4,10 +4,7 @@ We'll set up codefmt and configure the vroom environment, then jump into some
 examples. If you haven't seen the setup code below yet, read through main.vroom
 briefly.
 
-  :set nocompatible
-  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
-  :execute 'source' g:repo . '/bootstrap.vim'
-  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+  :source $VROOMDIR/setupvroom.vim
 
   :let g:repeat_calls = []
   :function FakeRepeat(...)<CR>

@@ -3,10 +3,7 @@ registry.
 
 First, we need to set up the vroom environment and install codefmt.
 
-  :set nocompatible
-  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
-  :execute 'source' g:repo . '/bootstrap.vim'
-  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+  :source $VROOMDIR/setupvroom.vim
 
 Formatters are described as a dict that has certain fields defined, as
 described in the codefmt docs.
