@@ -51,9 +51,4 @@ if !exists('*maktaba#compatibility#Disable')
     endtry
   endtry
 endif
-if !maktaba#IsAtLeastVersion('1.9.0')
-  call maktaba#error#Shout('Codefmt requires maktaba version 1.9.0.')
-  call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
-  call maktaba#error#Shout('Please update your maktaba install.')
-endif
 call maktaba#plugin#GetOrInstall(s:codefmt_path)
