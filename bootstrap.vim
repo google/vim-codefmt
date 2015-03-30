@@ -12,6 +12,9 @@
 " See the License for the specific language governing permissions and
 " limitations under the License.
 
+" This file can be sourced to install the plugin and its dependencies if no
+" plugin manager is available.
+
 let s:codefmt_path = expand('<sfile>:p:h')
 
 if !exists('*maktaba#compatibility#Disable')

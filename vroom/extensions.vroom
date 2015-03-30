@@ -1,5 +1,6 @@
 Codefmt can be extended to support new formatters, using maktaba's extension
 registry.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
 
 First, we need to set up the vroom environment and install codefmt.
 

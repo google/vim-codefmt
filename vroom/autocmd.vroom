@@ -1,8 +1,8 @@
 This file demonstrates hooks for automatically formatting code on save.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
 
 We'll set up codefmt and configure the vroom environment, then jump into some
-examples. If you haven't seen the setup code below yet, read through main.vroom
-briefly.
+examples.
 
   :source $VROOMDIR/setupvroom.vim
 
