@@ -16,13 +16,11 @@ directory cover various topics of codefmt usage:
 * extensions.vroom - Adding additional formatters for codefmt to use
 
 In order for these tests to work, maktaba MUST be in the same parent directory
-as codefmt. Given that that's the case, all we have to do is source the codefmt
-bootstrap file.
+as codefmt. Given that that's the case, all we have to do is source the
+setupvroom.vim file, which bootstraps the codefmt plugin and configures it to
+work properly under vroom.
 
-  :set nocompatible
-  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h')
-  :execute 'source' g:repo . '/bootstrap.vim'
-  :call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+  :source $VROOMDIR/setupvroom.vim
 
 
 It integrates with vim-repeat if available for improved repeating support. We'll

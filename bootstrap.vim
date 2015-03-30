@@ -12,19 +12,10 @@
 " See the License for the specific language governing permissions and
 " limitations under the License.
 
-let s:codefmt_path = expand('<sfile>:p:h')
+" This file can be sourced to install the plugin and its dependencies if no
+" plugin manager is available.
 
-function! s:FindAndAppendToRuntimePath(dir) abort
-    " We'd like to use maktaba#path#Join, but maktaba doesn't exist yet.
-    let s:slash = exists('+shellslash') && !&shellslash ? '\' : '/'
-    let s:guess1 = fnamemodify(s:codefmt_path, ':h') . s:slash . a:dir
-    let s:guess2 = fnamemodify(s:codefmt_path, ':h') . s:slash . 'vim-' . a:dir
-    if isdirectory(s:guess1)
-      let &runtimepath .= ',' . s:guess1
-    elseif isdirectory(s:guess2)
-      let &runtimepath .= ',' . s:guess2
-    endif
-endfunction
+let s:codefmt_path = expand('<sfile>:p:h')
 
 if !exists('*maktaba#compatibility#Disable')
   try
@@ -63,24 +54,4 @@ if !exists('*maktaba#compatibility#Disable')
     endtry
   endtry
 endif
-if !maktaba#IsAtLeastVersion('1.9.0')
-  call maktaba#error#Shout('Codefmt requires maktaba version 1.9.0.')
-  call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
-  call maktaba#error#Shout('Please update your maktaba install.')
-endif
-
-function! s:InstallFromLocalDirs(plugin) abort
-  let l:parent_dir = fnamemodify(s:codefmt_path, ':h')
-  let l:guess1 = maktaba#path#Join([l:parent_dir, a:plugin])
-  let l:guess2 = maktaba#path#Join([l:parent_dir, 'vim-' . a:plugin])
-  if maktaba#path#Exists(s:guess1)
-    call maktaba#plugin#GetOrInstall(l:guess1).Load()
-  elseif maktaba#path#Exists(s:guess2)
-    call maktaba#plugin#GetOrInstall(l:guess2).Load()
-  endif
-endfunction
-
-call s:InstallFromLocalDirs('glaive')
-
-let s:codefmt_plugin = maktaba#plugin#GetOrInstall(s:codefmt_path)
-call s:codefmt_plugin.Load()
+call maktaba#plugin#GetOrInstall(s:codefmt_path)

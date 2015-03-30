@@ -1,7 +1,7 @@
 language: generic
 env:
   matrix:
-    # This Maktaba version should match the minimum required in bootstrap.vim.
+    # This Maktaba version should match the minimum required in instant/flags.vim.
     - CI_TARGET=vim MAKTABA_VERSION=1.9.0
     - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim MAKTABA_VERSION=master

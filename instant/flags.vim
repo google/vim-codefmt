@@ -32,6 +32,14 @@ if !s:enter
 endif
 
 
+" Shout if maktaba is too old. Done here to ensure it's always triggered.
+if !maktaba#IsAtLeastVersion('1.9.0')
+  call maktaba#error#Shout('Codefmt requires maktaba version 1.9.0.')
+  call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
+  call maktaba#error#Shout('Please update your maktaba install.')
+endif
+
+
 ""
 " The path to the autopep8 executable.
 call s:plugin.Flag('autopep8_executable', 'autopep8')
