@@ -14,8 +14,9 @@
 
 ""
 " @section Formatters, formatters
-" This plugin has two built-in formatters: clang-format and gofmt. More
-" formatters can be registered by other plugins that integrate with codefmt.
+" This plugin has three built-in formatters: clang-format, gofmt, and autopep8.
+" More formatters can be registered by other plugins that integrate with
+" codefmt.
 "
 " @subsection Default formatters
 " Codefmt will automatically use a default formatter for certain filetypes if
