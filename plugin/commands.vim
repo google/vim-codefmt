@@ -27,19 +27,30 @@ function! s:AutoFormatBuffer(...) abort
   let b:codefmt_auto_format_buffer = 1
 endfunction
 
+function! s:FormatLinesAndSetRepeat(startline, endline, ...) abort
+  call call('codefmt#FormatLines', [a:startline, a:endline] + a:000)
+  let l:cmd = ":FormatLines " . join(a:000, ' ') . "\<CR>"
+  silent! call repeat#set(l:cmd)
+endfunction
+
+function! s:FormatBufferAndSetRepeat(...) abort
+  call call('codefmt#FormatBuffer', a:000)
+  let l:cmd = ":FormatCode " . join(a:000, ' ') . "\<CR>"
+  silent! call repeat#set(l:cmd)
+endfunction
 
 ""
 " Format the current line or range using [formatter].
 " @default formatter=the default formatter associated with the current buffer
 command -nargs=? -range -complete=custom,codefmt#GetSupportedFormatters
-    \ FormatLines call codefmt#FormatLines(<line1>, <line2>, <f-args>)
+    \ FormatLines call s:FormatLinesAndSetRepeat(<line1>, <line2>, <f-args>)
 
 ""
 " Format the whole buffer using [formatter].
 " See @section(formatters) for list of valid formatters.
 " @default formatter=the default formatter associated with the current buffer
 command -nargs=? -complete=custom,codefmt#GetSupportedFormatters
-    \ FormatCode call codefmt#FormatBuffer(1, <f-args>)
+    \ FormatCode call s:FormatBufferAndSetRepeat(<f-args>)
 
 ""
 " Enables format on save for this buffer using [formatter]. Also configures

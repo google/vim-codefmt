@@ -32,6 +32,6 @@ augroup END
 
 function! s:FmtIfAutoEnabled() abort
   if get(b:, 'codefmt_auto_format_buffer')
-    call codefmt#FormatBuffer(0)
+    call codefmt#FormatBuffer()
   endif
 endfunction
