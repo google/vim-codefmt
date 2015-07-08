@@ -445,9 +445,6 @@ function! codefmt#FormatBuffer(...) abort
   catch
     call maktaba#error#Shout('Error formatting file: %s', v:exception)
   endtry
-
-  let l:cmd = ":FormatCode " . l:formatter.name . "\<CR>"
-  silent! call repeat#set(l:cmd)
 endfunction
 
 ""
@@ -476,9 +473,6 @@ function! codefmt#FormatLines(startline, endline, ...) abort
   catch
     call maktaba#error#Shout('Error formatting file: %s', v:exception)
   endtry
-  let l:cmd = ":FormatLines " . l:formatter.name . "\<CR>"
-  let l:lines_formatted = a:endline - a:startline + 1
-  silent! call repeat#set(l:cmd, l:lines_formatted)
 endfunction
 
 ""
