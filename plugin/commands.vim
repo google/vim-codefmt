@@ -39,7 +39,7 @@ command -nargs=? -range -complete=custom,codefmt#GetSupportedFormatters
 " See @section(formatters) for list of valid formatters.
 " @default formatter=the default formatter associated with the current buffer
 command -nargs=? -complete=custom,codefmt#GetSupportedFormatters
-    \ FormatCode call codefmt#FormatBuffer(<f-args>)
+    \ FormatCode call codefmt#FormatBuffer(1, <f-args>)
 
 ""
 " Enables format on save for this buffer using [formatter]. Also configures

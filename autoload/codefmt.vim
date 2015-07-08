@@ -428,7 +428,7 @@ endfunction
 
 ""
 " Applies [formatter] to the current buffer.
-function! codefmt#FormatBuffer(...) abort
+function! codefmt#FormatBuffer(repeat, ...) abort
   let l:formatter = a:0 >= 1 ? s:GetFormatter(a:1) : s:GetFormatter()
   if l:formatter is# 0
     return
@@ -446,8 +446,10 @@ function! codefmt#FormatBuffer(...) abort
     call maktaba#error#Shout('Error formatting file: %s', v:exception)
   endtry
 
-  let l:cmd = ":FormatCode " . l:formatter.name . "\<CR>"
-  silent! call repeat#set(l:cmd)
+  if a:repeat
+    let l:cmd = ":FormatCode " . l:formatter.name . "\<CR>"
+    silent! call repeat#set(l:cmd)
+  endif
 endfunction
 
 ""
@@ -476,6 +478,7 @@ function! codefmt#FormatLines(startline, endline, ...) abort
   catch
     call maktaba#error#Shout('Error formatting file: %s', v:exception)
   endtry
+
   let l:cmd = ":FormatLines " . l:formatter.name . "\<CR>"
   let l:lines_formatted = a:endline - a:startline + 1
   silent! call repeat#set(l:cmd, l:lines_formatted)
