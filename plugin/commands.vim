@@ -30,7 +30,8 @@ endfunction
 function! s:FormatLinesAndSetRepeat(startline, endline, ...) abort
   call call('codefmt#FormatLines', [a:startline, a:endline] + a:000)
   let l:cmd = ":FormatLines " . join(a:000, ' ') . "\<CR>"
-  silent! call repeat#set(l:cmd)
+  let l:lines_formatted = a:endline - a:startline + 1
+  silent! call repeat#set(l:cmd, l:lines_formatted)
 endfunction
 
 function! s:FormatBufferAndSetRepeat(...) abort
