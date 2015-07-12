@@ -6,6 +6,7 @@ env:
     - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim MAKTABA_VERSION=master
 before_script:
+  - sudo apt-get update
   - sudo apt-get install python3-dev
   - if [ $CI_TARGET = vim ]; then
       sudo apt-get install vim-gnome &&
