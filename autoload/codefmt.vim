@@ -146,6 +146,26 @@ function! codefmt#GetJsBeautifyFormatter() abort
 endfunction
 
 
+function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
+  if !exists('s:clang_format_version')
+    let l:executable = s:plugin.Flag('clang_format_executable')
+    let l:version_output =
+          \ maktaba#syscall#Create([l:executable, '--version']).Call().stdout
+    let l:version_string = matchstr(l:version_output, '\v\d+(.\d+)+')
+    let s:clang_format_version = map(split(l:version_string, '\.'), 'v:val + 0')
+  endif
+  let l:length = min([len(a:minimum_version), len(s:clang_format_version)])
+  for i in range(l:length)
+    if a:minimum_version[i] < s:clang_format_version[i]
+      return 1
+    elseif a:minimum_version[i] > s:clang_format_version[i]
+      return 0
+    endif
+  endfor
+  return len(a:minimum_version) <= len(s:clang_format_version)
+endfunction
+
+
 ""
 " @private
 " Formatter: clang-format
@@ -161,9 +181,14 @@ function! codefmt#GetClangFormatFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'c' || &filetype is# 'cpp' ||
+    if &filetype is# 'c' || &filetype is# 'cpp' ||
          \ &filetype is# 'proto' || &filetype is# 'javascript'
-  endfunction
+      return 1
+    endif
+    " Version 3.6 adds support for java
+    " http://llvm.org/releases/3.6.0/tools/clang/docs/ReleaseNotes.html
+    return &filetype is# 'java' && s:ClangFormatHasAtLeastVersion([3, 6])
+  endfunction:
 
   ""
   " Reformat buffer with clang-format, only targeting [ranges] if given.
@@ -178,6 +203,10 @@ function! codefmt#GetClangFormatFormatter() abort
           \ 'clang_format_style flag must be string or callable. Found %s',
           \ string(l:Style_value))
     endif
+    if empty(a:ranges)
+      return
+    endif
+
     let l:cmd = [
         \ s:plugin.Flag('clang_format_executable'),
         \ '-style', l:style]
@@ -186,19 +215,39 @@ function! codefmt#GetClangFormatFormatter() abort
       let l:cmd += ['-assume-filename', l:fname]
     endif
 
-    if empty(a:ranges)
-      return
-    endif
     for [l:startline, l:endline] in a:ranges
       call maktaba#ensure#IsNumber(l:startline)
       call maktaba#ensure#IsNumber(l:endline)
       let l:cmd += ['-lines', l:startline . ':' . l:endline]
     endfor
 
+    " Version 3.4 introduced support for cursor tracking
+    " http://llvm.org/releases/3.4/tools/clang/docs/ClangFormat.html
+    let l:supports_cursor = s:ClangFormatHasAtLeastVersion([3, 4])
+    if l:supports_cursor
+      " line2byte counts bytes from 1, and col counts from 1, so -2 
+      let l:cursor_pos = line2byte(line(".")) + col(".") - 2
+      let l:cmd += ['-cursor', string(l:cursor_pos)]
+    endif
+
     let l:input = join(getline(1, line('$')), "\n")
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
     let l:formatted = split(l:result.stdout, "\n")
-    call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
+
+    if !l:supports_cursor
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted[0:])
+    else
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted[1:])
+      try
+        let l:clang_format_output_json = maktaba#json#Parse(l:formatted[0])
+        let l:new_cursor_pos =
+              \ maktaba#ensure#IsNumber(l:clang_format_output_json.Cursor) + 1
+        exec "goto " . l:new_cursor_pos
+      catch
+        call maktaba#error#Warn('Unable to parse clang-format cursor pos: %s',
+              \ v:exception)
+      endtry
+    endif
   endfunction
 
   return l:formatter
