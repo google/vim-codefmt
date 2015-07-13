@@ -33,8 +33,8 @@ endif
 
 
 " Shout if maktaba is too old. Done here to ensure it's always triggered.
-if !maktaba#IsAtLeastVersion('1.9.0')
-  call maktaba#error#Shout('Codefmt requires maktaba version 1.9.0.')
+if !maktaba#IsAtLeastVersion('1.10.0')
+  call maktaba#error#Shout('Codefmt requires maktaba version 1.10.0.')
   call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
   call maktaba#error#Shout('Please update your maktaba install.')
 endif
@@ -51,6 +51,10 @@ call s:plugin.flags.autopep8_executable.AddCallback(
 ""
 " The path to the clang-format executable.
 call s:plugin.Flag('clang_format_executable', 'clang-format')
+" Invalidate cache of detected clang-format version when this is changed, regardless
+" of {value} arg.
+call s:plugin.flags.clang_format_executable.AddCallback(
+    \ maktaba#function#FromExpr('codefmt#InvalidateClangFormatVersion()'), 0)
 
 ""
 " Formatting style for clang-format to use. Either a string or callable that

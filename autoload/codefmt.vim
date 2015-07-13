@@ -168,6 +168,14 @@ endfunction
 
 ""
 " @private
+" Invalidates the cached clang-format version.
+function! codefmt#InvalidateClangFormatVersion() abort
+  unlet! s:clang_format_version
+endfunction
+
+
+""
+" @private
 " Formatter: clang-format
 function! codefmt#GetClangFormatFormatter() abort
   let l:formatter = {
@@ -549,8 +557,7 @@ endfunction
 
 ""
 " @private
-" Invalidates the cached autopep8 version detection for testing, forcing the
-" autopep8 formatter to check for it again on the next invocation.
+" Invalidates the cached autopep8 version detection info.
 function! codefmt#InvalidateAutopep8Version() abort
   unlet! s:autopep8_supports_range
 endfunction

@@ -18,21 +18,40 @@ briefly.
 
 
 The clang-format formatter expects the clang-format executable to be installed
-on your system (version 3.4 or newer).
+on your system.
 
   % f();
   :FormatCode clang-format
+  ! clang-format --version .*
+  $ clang-format version 3.7.0 (tags/testing)
   ! clang-format .*
+  $ { "Cursor": 0 }
   $ f();
 
-The name or path of the clang-format executable can be configured via the
-clang_format_executable flag if the default of "clang-format" doesn't work.
+Notice the "clang-format --version" syscall. The clang-format formatter checks
+the version of the clang-format executable to detect what features it supports.
+It caches the result, so it only does this once per vim session.  We'll take a
+closer look at that below.
 
-  :Glaive codefmt clang_format_executable='clang-format-3.4'
+Any time this flag is changed, the cached version is invalidated and checked
+fresh on the next format invocation.  The name or path of the clang-format
+executable can be configured via the clang_format_executable flag if the
+default of "clang-format" doesn't work.
+
+  :Glaive codefmt clang_format_executable='clang-format-3.9'
   :FormatCode clang-format
-  ! clang-format-3.4 .*
+  ! clang-format-3.9 --version .*
+  $ clang-format version 3.9.0 (tags/testing)
+  ! clang-format-3.9 .*
+  $ { "Cursor": 0 }
   $ f();
   :Glaive codefmt clang_format_executable='clang-format'
+  :FormatCode clang-format
+  ! clang-format --version .*
+  $ clang-format version 3.9.0 (tags/testing)
+  ! clang-format .*
+  $ { "Cursor": 0 }
+  $ f();
 
 
 You can format any buffer with clang-format specifying the formatter explicitly.
@@ -43,6 +62,7 @@ You can format any buffer with clang-format specifying the formatter explicitly.
 
   :FormatCode clang-format
   ! clang-format -style file .*2>.*
+  $ { "Cursor": 0 }
   $ void f() {
   $   int i;
   $   SomeFunction(parameter,  // comment
@@ -55,8 +75,9 @@ You can format any buffer with clang-format specifying the formatter explicitly.
   }
   @end
 
-Several filetypes will use the clang-format formatter by default:
-c, cpp, javascript, and proto.
+Several filetypes will use the clang-format formatter by default: c, cpp,
+javascript, and proto.  If the version of clang-format is >= 3.6, then it will
+also format java files.
 
   @clear
   % f();
@@ -64,16 +85,25 @@ c, cpp, javascript, and proto.
   :set filetype=cpp
   :FormatCode
   ! clang-format .*
+  $ { "Cursor": 0 }
   $ f();
 
   :set filetype=javascript
   :FormatCode
   ! clang-format .*
+  $ { "Cursor": 0 }
   $ f();
 
   :set filetype=proto
   :FormatCode
   ! clang-format .*
+  $ { "Cursor": 0 }
+  $ f();
+
+  :set filetype=java
+  :FormatCode
+  ! clang-format .*
+  $ { "Cursor": 0 }
   $ f();
 
   :set filetype=
@@ -89,6 +119,7 @@ It can format specific line ranges of code using :FormatLines.
 
   :3,4FormatLines clang-format
   ! clang-format -style file -lines 3:4 .*2>.*
+  $ { "Cursor": 0 }
   $ void f() {
   $   int i = 2+2;
   $   int i = 3 + 3;
@@ -100,6 +131,52 @@ It can format specific line ranges of code using :FormatLines.
     int i = 4 + 4;
   }
   @end
+
+
+
+It will keep the cursor in the correct position when formatting code (assuming
+that clang-format has a version >= 3.4).
+
+  :Glaive codefmt clang_format_executable='clang-format-3.2'
+  @clear
+  % int f() { int i = 1; return 1234567890; }
+
+  :FormatCode clang-format
+  ! clang-format-3.2 --version .*
+  $ clang-format version 3.2.0 (tags/testing)
+  ! clang-format-3.2 -style file .*2>.*
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  int f() {
+    int i = 1;
+    return 1234567890;
+  }
+  @end
+  :Glaive codefmt clang_format_executable='clang-format'
+  @clear
+  % int f() { int i = 1; return 1234567890; }
+
+  :goto 33
+  :echomsg getline('.')[col('.')-1]
+  ~ 5
+  :FormatCode clang-format
+  ! clang-format --version .*
+  $ clang-format version 3.7.0 (tags/testing)
+  ! clang-format -style file .* -cursor 32 .*2>.*
+  $ { "Cursor": 36 }
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  int f() {
+    int i = 1;
+    return 1234567890;
+  }
+  @end
+  :echomsg getline('.')[col('.')-1]
+  ~ 5
 
 
 
@@ -115,6 +192,7 @@ a string value to use everywhere...
   % f();
   :FormatCode clang-format
   ! clang-format -style WebKit .*2>.*
+  $ { "Cursor": 0 }
   $ f();
 
 ...or a callable that takes no arguments and returns a string style name for the
@@ -131,11 +209,13 @@ current buffer.
   :silent file /foo/WebKit/foo.cc
   :FormatCode clang-format
   ! clang-format -style WebKit -assume-filename .*foo.cc .*2>.*
+  $ { "Cursor": 0 }
   $ f();
 
   :silent file /foo/foo.cc
   :FormatCode clang-format
   ! clang-format -style file -assume-filename .*foo.cc .*2>.*
+  $ { "Cursor": 0 }
   $ f();
 
   :Glaive codefmt clang_format_style='file'
