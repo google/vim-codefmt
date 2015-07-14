@@ -189,13 +189,8 @@ function! codefmt#GetClangFormatFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    if &filetype is# 'c' || &filetype is# 'cpp' ||
+    return &filetype is# 'c' || &filetype is# 'cpp' ||
          \ &filetype is# 'proto' || &filetype is# 'javascript'
-      return 1
-    endif
-    " Version 3.6 adds support for java
-    " http://llvm.org/releases/3.6.0/tools/clang/docs/ReleaseNotes.html
-    return &filetype is# 'java' && s:ClangFormatHasAtLeastVersion([3, 6])
   endfunction:
 
   ""
