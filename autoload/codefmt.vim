@@ -84,11 +84,11 @@ function! codefmt#EnsureFormatter(formatter) abort
   " Throw BadValue if the wrong number of format functions are provided.
   let l:available_format_functions = ['Format', 'FormatRange', 'FormatRanges']
   let l:format_functions = filter(copy(l:available_format_functions),
-        \ 'has_key(a:formatter, v:val)')
+      \ 'has_key(a:formatter, v:val)')
   if empty(l:format_functions)
     throw maktaba#error#BadValue('Formatter ' . a:formatter.name .
-          \ ' has no format functions.  It must have at least one of ' .
-          \ join(l:available_format_functions, ', '))
+        \ ' has no format functions.  It must have at least one of ' .
+        \ join(l:available_format_functions, ', '))
   endif
 
   " TODO(dbarnett): Check types.
@@ -120,8 +120,7 @@ function! codefmt#GetJsBeautifyFormatter() abort
   " {endline}.
   " @throws ShellError
   function l:formatter.FormatRange(startline, endline) abort
-    let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
-                \'-f', '-' ]
+    let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-f', '-']
     if &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif
@@ -190,8 +189,8 @@ function! codefmt#GetClangFormatFormatter() abort
 
   function l:formatter.AppliesToBuffer() abort
     return &filetype is# 'c' || &filetype is# 'cpp' ||
-         \ &filetype is# 'proto' || &filetype is# 'javascript'
-  endfunction:
+        \ &filetype is# 'proto' || &filetype is# 'javascript'
+  endfunction
 
   ""
   " Reformat buffer with clang-format, only targeting [ranges] if given.
@@ -244,11 +243,11 @@ function! codefmt#GetClangFormatFormatter() abort
       try
         let l:clang_format_output_json = maktaba#json#Parse(l:formatted[0])
         let l:new_cursor_pos =
-              \ maktaba#ensure#IsNumber(l:clang_format_output_json.Cursor) + 1
+            \ maktaba#ensure#IsNumber(l:clang_format_output_json.Cursor) + 1
         execute 'goto' l:new_cursor_pos
       catch
         call maktaba#error#Warn('Unable to parse clang-format cursor pos: %s',
-              \ v:exception)
+            \ v:exception)
       endtry
     endif
   endfunction
@@ -369,12 +368,10 @@ function! codefmt#GetAutopep8Formatter() abort
     let l:lines = getline(1, line('$'))
 
     if s:autopep8_supports_range
-      let l:cmd = [ l:executable,
-                  \ '--range', ''.a:startline, ''.a:endline,
-                  \ '-' ]
+      let l:cmd = [l:executable, '--range', ''.a:startline, ''.a:endline, '-']
       let l:input = join(l:lines, "\n")
     else
-      let l:cmd = [ l:executable, '-' ]
+      let l:cmd = [l:executable, '-']
       " Hack range formatting by formatting range individually, ignoring context.
       let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
     endif
@@ -416,7 +413,7 @@ function! codefmt#IsFormatterAvailable() abort
   let l:formatters = copy(s:registry.GetExtensions())
   let l:is_available = 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)'
   return !empty(filter(l:formatters, l:is_available)) ||
-        \ !empty(get(b:, 'codefmt_formatter'))
+      \ !empty(get(b:, 'codefmt_formatter'))
 endfunction
 
 function! s:GetSetupInstructions(formatter) abort
@@ -462,13 +459,13 @@ function! s:GetFormatter(...) abort
       " Check if we have formatters that are not available for some reason.
       " Report a better error message in that case.
       let l:unavailable_formatters = filter(
-            \ copy(l:formatters), 'v:val.AppliesToBuffer()')
+          \ copy(l:formatters), 'v:val.AppliesToBuffer()')
       if !empty(l:unavailable_formatters)
         let l:error = join(map(copy(l:unavailable_formatters),
-              \ 's:GetSetupInstructions(v:val)'), "\n")
+            \ 's:GetSetupInstructions(v:val)'), "\n")
       else
         let l:error = 'Not available. codefmt doesn''t have a default ' .
-              \ 'formatter for this buffer.'
+            \ 'formatter for this buffer.'
       endif
       call maktaba#error#Shout(l:error)
       return
