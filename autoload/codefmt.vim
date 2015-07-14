@@ -234,7 +234,7 @@ function! codefmt#GetClangFormatFormatter() abort
     let l:supports_cursor = s:ClangFormatHasAtLeastVersion([3, 4])
     if l:supports_cursor
       " line2byte counts bytes from 1, and col counts from 1, so -2 
-      let l:cursor_pos = line2byte(line(".")) + col(".") - 2
+      let l:cursor_pos = line2byte(line('.')) + col('.') - 2
       let l:cmd += ['-cursor', string(l:cursor_pos)]
     endif
 
@@ -250,7 +250,7 @@ function! codefmt#GetClangFormatFormatter() abort
         let l:clang_format_output_json = maktaba#json#Parse(l:formatted[0])
         let l:new_cursor_pos =
               \ maktaba#ensure#IsNumber(l:clang_format_output_json.Cursor) + 1
-        exec "goto " . l:new_cursor_pos
+        execute 'goto' l:new_cursor_pos
       catch
         call maktaba#error#Warn('Unable to parse clang-format cursor pos: %s',
               \ v:exception)
