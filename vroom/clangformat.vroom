@@ -76,7 +76,8 @@ You can format any buffer with clang-format specifying the formatter explicitly.
   @end
 
 Several filetypes will use the clang-format formatter by default: c, cpp,
-javascript, and proto.
+javascript, and proto.  If the version of clang-format is >= 3.6, then it will
+also format java files.
 
   @clear
   % f();
@@ -94,6 +95,12 @@ javascript, and proto.
   $ f();
 
   :set filetype=proto
+  :FormatCode
+  ! clang-format .*
+  $ { "Cursor": 0 }
+  $ f();
+
+  :set filetype=java
   :FormatCode
   ! clang-format .*
   $ { "Cursor": 0 }
