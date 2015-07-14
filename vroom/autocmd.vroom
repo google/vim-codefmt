@@ -31,6 +31,8 @@ or whatever conditions you want to trigger on.
   |i);}
 
   :doautocmd BufWritePre
+  ! clang-format --version .*
+  $ clang-format version 3.3.0 (tags/testing)
   ! clang-format .*
   $ void f() {
   $   int i;
