@@ -137,14 +137,14 @@ It can format specific line ranges of code using :FormatLines.
 It will keep the cursor in the correct position when formatting code (assuming
 that clang-format has a version >= 3.4).
 
-  :Glaive codefmt clang_format_executable='clang-format-3.2'
+  :Glaive codefmt clang_format_executable='clang-format-3.3'
   @clear
   % int f() { int i = 1; return 1234567890; }
 
   :FormatCode clang-format
-  ! clang-format-3.2 --version .*
-  $ clang-format version 3.2.0 (tags/testing)
-  ! clang-format-3.2 -style file .*2>.*
+  ! clang-format-3.3 --version .*
+  $ clang-format version 3.3.0 (tags/testing)
+  ! clang-format-3.3 -style file .*2>.*
   $ int f() {
   $   int i = 1;
   $   return 1234567890;
