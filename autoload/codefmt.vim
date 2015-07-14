@@ -84,11 +84,11 @@ function! codefmt#EnsureFormatter(formatter) abort
   " Throw BadValue if the wrong number of format functions are provided.
   let l:available_format_functions = ['Format', 'FormatRange', 'FormatRanges']
   let l:format_functions = filter(copy(l:available_format_functions),
-        \ 'has_key(a:formatter, v:val)')
+      \ 'has_key(a:formatter, v:val)')
   if empty(l:format_functions)
     throw maktaba#error#BadValue('Formatter ' . a:formatter.name .
-          \ ' has no format functions.  It must have at least one of ' .
-          \ join(l:available_format_functions, ', '))
+        \ ' has no format functions.  It must have at least one of ' .
+        \ join(l:available_format_functions, ', '))
   endif
 
   " TODO(dbarnett): Check types.
@@ -120,8 +120,7 @@ function! codefmt#GetJsBeautifyFormatter() abort
   " {endline}.
   " @throws ShellError
   function l:formatter.FormatRange(startline, endline) abort
-    let l:cmd = [ s:plugin.Flag('js_beautify_executable'),
-                \'-f', '-' ]
+    let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-f', '-']
     if &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif
@@ -146,6 +145,34 @@ function! codefmt#GetJsBeautifyFormatter() abort
 endfunction
 
 
+function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
+  if !exists('s:clang_format_version')
+    let l:executable = s:plugin.Flag('clang_format_executable')
+    let l:version_output =
+          \ maktaba#syscall#Create([l:executable, '--version']).Call().stdout
+    let l:version_string = matchstr(l:version_output, '\v\d+(.\d+)+')
+    let s:clang_format_version = map(split(l:version_string, '\.'), 'v:val + 0')
+  endif
+  let l:length = min([len(a:minimum_version), len(s:clang_format_version)])
+  for i in range(l:length)
+    if a:minimum_version[i] < s:clang_format_version[i]
+      return 1
+    elseif a:minimum_version[i] > s:clang_format_version[i]
+      return 0
+    endif
+  endfor
+  return len(a:minimum_version) <= len(s:clang_format_version)
+endfunction
+
+
+""
+" @private
+" Invalidates the cached clang-format version.
+function! codefmt#InvalidateClangFormatVersion() abort
+  unlet! s:clang_format_version
+endfunction
+
+
 ""
 " @private
 " Formatter: clang-format
@@ -162,7 +189,7 @@ function! codefmt#GetClangFormatFormatter() abort
 
   function l:formatter.AppliesToBuffer() abort
     return &filetype is# 'c' || &filetype is# 'cpp' ||
-         \ &filetype is# 'proto' || &filetype is# 'javascript'
+        \ &filetype is# 'proto' || &filetype is# 'javascript'
   endfunction
 
   ""
@@ -178,6 +205,10 @@ function! codefmt#GetClangFormatFormatter() abort
           \ 'clang_format_style flag must be string or callable. Found %s',
           \ string(l:Style_value))
     endif
+    if empty(a:ranges)
+      return
+    endif
+
     let l:cmd = [
         \ s:plugin.Flag('clang_format_executable'),
         \ '-style', l:style]
@@ -186,19 +217,39 @@ function! codefmt#GetClangFormatFormatter() abort
       let l:cmd += ['-assume-filename', l:fname]
     endif
 
-    if empty(a:ranges)
-      return
-    endif
     for [l:startline, l:endline] in a:ranges
       call maktaba#ensure#IsNumber(l:startline)
       call maktaba#ensure#IsNumber(l:endline)
       let l:cmd += ['-lines', l:startline . ':' . l:endline]
     endfor
 
+    " Version 3.4 introduced support for cursor tracking
+    " http://llvm.org/releases/3.4/tools/clang/docs/ClangFormat.html
+    let l:supports_cursor = s:ClangFormatHasAtLeastVersion([3, 4])
+    if l:supports_cursor
+      " line2byte counts bytes from 1, and col counts from 1, so -2 
+      let l:cursor_pos = line2byte(line('.')) + col('.') - 2
+      let l:cmd += ['-cursor', string(l:cursor_pos)]
+    endif
+
     let l:input = join(getline(1, line('$')), "\n")
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
     let l:formatted = split(l:result.stdout, "\n")
-    call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
+
+    if !l:supports_cursor
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted[0:])
+    else
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted[1:])
+      try
+        let l:clang_format_output_json = maktaba#json#Parse(l:formatted[0])
+        let l:new_cursor_pos =
+            \ maktaba#ensure#IsNumber(l:clang_format_output_json.Cursor) + 1
+        execute 'goto' l:new_cursor_pos
+      catch
+        call maktaba#error#Warn('Unable to parse clang-format cursor pos: %s',
+            \ v:exception)
+      endtry
+    endif
   endfunction
 
   return l:formatter
@@ -317,12 +368,10 @@ function! codefmt#GetAutopep8Formatter() abort
     let l:lines = getline(1, line('$'))
 
     if s:autopep8_supports_range
-      let l:cmd = [ l:executable,
-                  \ '--range', ''.a:startline, ''.a:endline,
-                  \ '-' ]
+      let l:cmd = [l:executable, '--range', ''.a:startline, ''.a:endline, '-']
       let l:input = join(l:lines, "\n")
     else
-      let l:cmd = [ l:executable, '-' ]
+      let l:cmd = [l:executable, '-']
       " Hack range formatting by formatting range individually, ignoring context.
       let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
     endif
@@ -364,7 +413,7 @@ function! codefmt#IsFormatterAvailable() abort
   let l:formatters = copy(s:registry.GetExtensions())
   let l:is_available = 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)'
   return !empty(filter(l:formatters, l:is_available)) ||
-        \ !empty(get(b:, 'codefmt_formatter'))
+      \ !empty(get(b:, 'codefmt_formatter'))
 endfunction
 
 function! s:GetSetupInstructions(formatter) abort
@@ -410,13 +459,13 @@ function! s:GetFormatter(...) abort
       " Check if we have formatters that are not available for some reason.
       " Report a better error message in that case.
       let l:unavailable_formatters = filter(
-            \ copy(l:formatters), 'v:val.AppliesToBuffer()')
+          \ copy(l:formatters), 'v:val.AppliesToBuffer()')
       if !empty(l:unavailable_formatters)
         let l:error = join(map(copy(l:unavailable_formatters),
-              \ 's:GetSetupInstructions(v:val)'), "\n")
+            \ 's:GetSetupInstructions(v:val)'), "\n")
       else
         let l:error = 'Not available. codefmt doesn''t have a default ' .
-              \ 'formatter for this buffer.'
+            \ 'formatter for this buffer.'
       endif
       call maktaba#error#Shout(l:error)
       return
@@ -500,8 +549,7 @@ endfunction
 
 ""
 " @private
-" Invalidates the cached autopep8 version detection for testing, forcing the
-" autopep8 formatter to check for it again on the next invocation.
+" Invalidates the cached autopep8 version detection info.
 function! codefmt#InvalidateAutopep8Version() abort
   unlet! s:autopep8_supports_range
 endfunction

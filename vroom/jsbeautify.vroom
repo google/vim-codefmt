@@ -63,6 +63,8 @@ javascript, json, html and css.
 
   :set filetype=javascript
   :FormatCode
+  ! clang-format --version .*
+  $ clang-format version 3.3.0 (tags/testing)
   ! clang-format .*
   $ f();
 

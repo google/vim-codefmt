@@ -44,6 +44,8 @@ This plugin defines a :FormatCode command that can be used to reformat buffers.
   |i);}
 
   :FormatCode clang-format
+  ! clang-format --version .*
+  $ clang-format version 3.3.0 (tags/testing)
   ! clang-format .*
   $ void f() {
   $   int i;
