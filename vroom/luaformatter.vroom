@@ -1,0 +1,97 @@
+The built-in luaformatter formatter knows how to format lua code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The luaformatter formatter expects the luaformatter executable to be installed
+on your system.
+
+  % f()
+  :FormatCode luaformatter
+  ! luaformatter .*
+  $ f()
+
+The name or path of the luaformatter executable can be configured via the
+luaformatter_executable flag if the default of "luaformatter" doesn't work.
+
+  :Glaive codefmt luaformatter_executable='myjsb'
+  :FormatCode luaformatter
+  ! myjsb .*
+  $ f()
+  :Glaive codefmt luaformatter_executable='luaformatter'
+
+
+You can format any buffer with luaformatter specifying the formatter explicitly.
+
+  @clear
+  %  for i = 0,max do<CR>
+  |a=1234 + 5678 + i<CR>
+  |    b = 1234*5678+i<CR>
+  |    c=1234/2+i<CR>
+  |           end
+
+
+  :FormatCode luaformatter
+  ! luaformatter .*2>.*
+  $ for i = 0,max do
+  $   a=1234 + 5678 + i
+  $   b = 1234*5678+i
+  $   c=1234/2+i
+  $ end
+  for i = 0,max do
+    a=1234 + 5678 + i
+    b = 1234*5678+i
+    c=1234/2+i
+  end
+  @end
+
+NOTE: unfortunately luaformatter don't format punctuation.
+
+Lua filetype will use the luaformatter formatter by default:
+
+  @clear
+  % f();
+
+  :set filetype=lua
+  :FormatCode
+  ! luaformatter .*
+  $ f();
+
+  :set filetype=
+
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  %  for i = 0,max do<CR>
+  |a=1234 + 5678 + i<CR>
+  |    b = 1234*5678+i<CR>
+  |    c=1234/2+i<CR>
+  |           end
+
+  :2,2FormatLines luaformatter
+  ! luaformatter .*2>.*
+  $ a=1234 + 5678 + i
+  $ b = 1234*5678+i
+      for i = 0,max do
+  a=1234 + 5678 + i
+  b = 1234*5678+i
+      c=1234/2+i
+             end
+  @end
+
+NOTE: the luaformatter formatter does not natively support range formatting,
+so there are certain limitations like not being able to format misaligned
+braces.
