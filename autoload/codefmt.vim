@@ -120,7 +120,7 @@ function! codefmt#GetJsBeautifyFormatter() abort
   " {endline}.
   " @throws ShellError
   function l:formatter.FormatRange(startline, endline) abort
-    let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-f', '-']
+    let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-s', string(&shiftwidth), '-f', '-']
     if &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif
@@ -424,7 +424,7 @@ function! codefmt#GetLuaFormatter() abort
   function l:formatter.FormatRange(startline, endline) abort
     " Use temporary file because luaformatter don't accept stdin.
     let l:tempfile = tempname()
-    let l:cmd = [s:plugin.Flag('luaformatter_executable'), l:tempfile]
+    let l:cmd = [s:plugin.Flag('luaformatter_executable'), '-s', string(&shiftwidth), l:tempfile ]
 
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
