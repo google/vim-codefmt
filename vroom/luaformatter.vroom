@@ -81,7 +81,7 @@ It can format specific line ranges of code using :FormatLines.
   |    c=1234/2+i<CR>
   |           end
 
-  :2,2FormatLines luaformatter
+  :2,3FormatLines luaformatter
   ! luaformatter .*2>.*
   $ a=1234 + 5678 + i
   $ b = 1234*5678+i
@@ -97,7 +97,7 @@ so there are certain limitations like not being able to format misaligned
 braces.
 
 
-Shitftwidth will be used for indentation:
+Shiftwidth will be used for indentation:
 
   @clear
   %  for i = 0,max do<CR>
@@ -107,7 +107,7 @@ Shitftwidth will be used for indentation:
   |           end
 
 
-  :sw=8
+  :set shiftwidth=8
   :FormatCode luaformatter
   ! luaformatter .*2>.*
   $ for i = 0,max do
