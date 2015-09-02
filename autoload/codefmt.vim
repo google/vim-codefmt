@@ -120,7 +120,7 @@ function! codefmt#GetJsBeautifyFormatter() abort
   " {endline}.
   " @throws ShellError
   function l:formatter.FormatRange(startline, endline) abort
-    let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-f', '-']
+    let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-s', string(&shiftwidth), '-f', '-']
     if &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif
@@ -391,6 +391,53 @@ function! codefmt#GetAutopep8Formatter() abort
       let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
       let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
     endif
+
+    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+  endfunction
+
+  return l:formatter
+endfunction
+
+
+""
+" @private
+" Formatter: luaformatter
+function! codefmt#GetLuaFormatter() abort
+  let l:formatter = {
+      \ 'name': 'luaformatter',
+      \ 'setup_instructions': 'Install luaformatter ' .
+          \ '(https://luarocks.org/modules/luarocks/formatter).'}
+
+  function l:formatter.IsAvailable() abort
+    return executable(s:plugin.Flag('luaformatter_executable'))
+  endfunction
+
+  function l:formatter.AppliesToBuffer() abort
+    return &filetype is# 'lua'
+  endfunction
+
+  ""
+  " Reformat the current buffer with js-beautify or the binary named in
+  " @flag(js_beautify_executable), only targeting the range between {startline} and
+  " {endline}.
+  " @throws ShellError
+  function l:formatter.FormatRange(startline, endline) abort
+    " Use temporary file because luaformatter don't accept stdin.
+    let l:tempfile = tempname()
+    let l:cmd = [s:plugin.Flag('luaformatter_executable'), '-s', string(&shiftwidth), l:tempfile ]
+
+    call maktaba#ensure#IsNumber(a:startline)
+    call maktaba#ensure#IsNumber(a:endline)
+
+    let l:lines = getline(1, line('$'))
+    " Hack range formatting by formatting range individually, ignoring context.
+    call writefile(l:lines[a:startline - 1 : a:endline - 1], l:tempfile)
+
+    let l:result = maktaba#syscall#Create(l:cmd).Call()
+    let l:formatted = split(l:result.stdout, "\n")
+    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
+    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
+    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
 
     call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
   endfunction

@@ -48,6 +48,10 @@ Default: 'gofmt' `
 The path to the js-beautify executable.
 Default: 'js-beautify' `
 
+                                             *codefmt:luaformatter_executable*
+The path to the luaformatter executable.
+Default: 'luaformatter' `
+
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `

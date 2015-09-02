@@ -106,3 +106,25 @@ It can format specific line ranges of code using :FormatLines.
 NOTE: the js-beautify formatter does not natively support range formatting,
 so there are certain limitations like not being able to format misaligned
 braces.
+
+
+Shiftwidth will be used for indentation:
+
+  @clear
+  %    for (i = 0; i < max; i++) {<CR>
+  |a=1234 + 5678 + i; b = 1234*5678+i; c=1234/2+i;}
+
+  :set shiftwidth=8
+  :FormatCode js-beautify
+  ! js-beautify .*2>.*
+  $ for (i = 0; i < max; i++) {
+  $         a = 1234 + 5678 + i;
+  $         b = 1234 * 5678 + i;
+  $         c = 1234 / 2 + i;
+  $ }
+  for (i = 0; i < max; i++) {
+          a = 1234 + 5678 + i;
+          b = 1234 * 5678 + i;
+          c = 1234 / 2 + i;
+  }
+  @end
