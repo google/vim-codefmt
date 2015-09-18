@@ -28,7 +28,7 @@
 " The current list of defaults by filetype is:
 "   * c, cpp, proto, javascript: clang-format
 "   * go: gofmt
-"   * python: autopep8
+"   * python: autopep8, yapf
 
 
 let s:plugin = maktaba#plugin#Get('codefmt')
@@ -391,6 +391,50 @@ function! codefmt#GetAutopep8Formatter() abort
       let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
       let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
     endif
+
+    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+  endfunction
+
+  return l:formatter
+endfunction
+
+
+""
+" @private
+" Formatter: yapf
+function! codefmt#GetYAPFFormatter() abort
+  let l:formatter = {
+      \ 'name': 'yapf',
+      \ 'setup_instructions': 'Install yapf ' .
+          \ '(https://pypi.python.org/pypi/yapf/).'}
+
+  function l:formatter.IsAvailable() abort
+    return executable(s:plugin.Flag('yapf_executable'))
+  endfunction
+
+  function l:formatter.AppliesToBuffer() abort
+    return &filetype is# 'python'
+  endfunction
+
+  ""
+  " Reformat the current buffer with yapf or the binary named in
+  " @flag(yapf_executable), only targeting the range between {startline} and
+  " {endline}.
+  " @throws ShellError
+  function l:formatter.FormatRange(startline, endline) abort
+    let l:executable = s:plugin.Flag('yapf_executable')
+
+    call maktaba#ensure#IsNumber(a:startline)
+    call maktaba#ensure#IsNumber(a:endline)
+    let l:lines = getline(1, line('$'))
+
+    let l:cmd = [l:executable, '--lines=' . a:startline . '-' . a:endline]
+    let l:input = join(l:lines, "\n")
+
+    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call(0)
+    let l:formatted = split(l:result.stdout, "\n")
+
+    let l:full_formatted = l:formatted
 
     call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
   endfunction
