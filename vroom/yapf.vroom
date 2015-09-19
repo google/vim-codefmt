@@ -1,0 +1,70 @@
+The built-in yapf formatter knows how to format python code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The yapf formatter expects the yapf executable to be installed on your
+system.
+
+  % f()
+  :FormatCode yapf
+  ! yapf .*
+  $ f()
+
+The name or path of the yapf executable can be configured via the
+yapf_executable flag if the default of "yapf" doesn't work.
+
+  :Glaive codefmt yapf_executable='yapfpy3'
+  :FormatCode yapf
+  ! yapfpy3 .*
+  $ f()
+  :Glaive codefmt yapf_executable='yapf'
+
+
+You can format any buffer with yapf specifying the formatter explicitly.
+
+  @clear
+  % if True: pass
+
+  :FormatCode yapf
+  ! yapf .*
+  $ if True:
+  $     pass
+  if True:
+      pass
+  @end
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % some_tuple=(   1,2, 3,'a'  );<CR>
+  |if bar : bar+=1;  bar=bar* bar<CR>
+  |else: bar-=1;
+
+  :2,3FormatLines yapf
+  ! yapf --lines=2-3 .*
+  $ some_tuple=(   1,2, 3,'a'  );
+  $ if bar:
+  $     bar += 1
+  $     bar = bar * bar
+  $ else:
+  $     bar -= 1
+  some_tuple=(   1,2, 3,'a'  );
+  if bar:
+      bar += 1
+      bar = bar * bar
+  else:
+      bar -= 1
+  @end
