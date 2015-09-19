@@ -39,7 +39,7 @@ You can format any buffer with yapf specifying the formatter explicitly.
   % if True: pass
 
   :FormatCode yapf
-  ! yapf .* .*
+  ! yapf .*
   $ if True:
   $     pass
   if True:
