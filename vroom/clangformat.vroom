@@ -144,7 +144,7 @@ that clang-format has a version >= 3.4).
   :FormatCode clang-format
   ! clang-format-3.3 --version .*
   $ clang-format version 3.3.0 (tags/testing)
-  ! clang-format-3.3 -style file .*2>.*
+  ! clang-format-3.3 -style file -lines 1:1 2>.*
   $ int f() {
   $   int i = 1;
   $   return 1234567890;
@@ -177,6 +177,60 @@ that clang-format has a version >= 3.4).
   @end
   :echomsg getline('.')[col('.')-1]
   ~ 5
+
+
+
+For clang-format versions 3.8 and above, it will sort #include lines (using the
+-sort-includes option).
+
+  :Glaive codefmt clang_format_executable='clang-format-3.7'
+  @clear
+  % #include <stdlib.h><CR>
+  |#include <stdio.h><CR>
+  |int f() { int i = 1; return 1234567890; }
+
+  :FormatCode clang-format
+  ! clang-format-3.7 --version .*
+  $ clang-format version 3.7.0 (tags/testing)
+  ! clang-format-3.7 -style file -lines 1:3 -cursor \d+ 2>.*
+  $ { "Cursor": 0 }
+  $ #include <stdlib.h>
+  $ #include <stdio.h>
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  #include <stdlib.h>
+  #include <stdio.h>
+  int f() {
+    int i = 1;
+    return 1234567890;
+  }
+  @end
+  :Glaive codefmt clang_format_executable='clang-format'
+  @clear
+  % #include <stdlib.h><CR>
+  |#include <stdio.h><CR>
+  |int f() { int i = 1; return 1234567890; }
+
+  :FormatCode clang-format
+  ! clang-format --version .*
+  $ clang-format version 3.8.0 (tags/testing)
+  ! clang-format -style file .* -sort-includes .*2>.*
+  $ { "Cursor": 0 }
+  $ #include <stdio.h>
+  $ #include <stdlib.h>
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  #include <stdio.h>
+  #include <stdlib.h>
+  int f() {
+    int i = 1;
+    return 1234567890;
+  }
+  @end
 
 
 

@@ -237,6 +237,12 @@ function! codefmt#GetClangFormatFormatter() abort
       let l:cmd += ['-cursor', string(l:cursor_pos)]
     endif
 
+    " Version 3.8 added support for the -sort-includes option.
+    " http://llvm.org/viewvc/llvm-project?view=revision&revision=248367
+    if s:ClangFormatHasAtLeastVersion([3, 8])
+      let l:cmd += ['-sort-includes']
+    endif
+
     let l:input = join(getline(1, line('$')), "\n")
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
     let l:formatted = split(l:result.stdout, "\n")
