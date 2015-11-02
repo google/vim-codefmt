@@ -441,9 +441,7 @@ function! codefmt#GetYAPFFormatter() abort
       let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
       let l:formatted = split(l:result.stdout, "\n")
 
-      let l:full_formatted = l:formatted
-
-      call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
     catch /ERROR(ShellError):/
       call maktaba#error#Shout('Error formatting file: %s', v:exception)
     endtry
