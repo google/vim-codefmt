@@ -438,11 +438,13 @@ function! codefmt#GetYAPFFormatter() abort
     let l:input = join(l:lines, "\n")
 
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call(0)
+    if v:shell_error == 1 " Indicates an error with parsing
+      call maktaba#error#Shout('Error formatting file: %s', l:result.stderr)
+      return
+    endif
     let l:formatted = split(l:result.stdout, "\n")
 
-    let l:full_formatted = l:formatted
-
-    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+    call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
   endfunction
 
   return l:formatter
