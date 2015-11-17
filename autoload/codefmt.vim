@@ -155,9 +155,7 @@ function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
   endif
   let l:length = min([len(a:minimum_version), len(s:clang_format_version)])
   for i in range(l:length)
-    if a:minimum_version[i] < s:clang_format_version[i]
-      return 1
-    elseif a:minimum_version[i] > s:clang_format_version[i]
+    if a:minimum_version[i] > s:clang_format_version[i]
       return 0
     endif
   endfor
