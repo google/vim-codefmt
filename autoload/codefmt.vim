@@ -349,15 +349,24 @@ function! codefmt#GetDartfmtFormatter() abort
   " @flag{dartfmt_executable}.
   function l:formatter.Format() abort
     let l:executable = s:plugin.Flag('dartfmt_executable')
-    let l:cmd = [l:executable, @%]
 
+    " Because dartfmt only works on files on disk, and we likely haven't
+    " saved the current buffer yet, we need to write the current buffer to
+    " a temp file.
+    let l:tmpfile = tempname()
+    let l:lines = getline(1, line('$'))
+    call writefile(l:lines, l:tmpfile)
+
+    let l:cmd = [l:executable, l:tmpfile]
     let l:result = maktaba#syscall#Create(l:cmd).Call(0)
+
+    call delete(l:tmpfile) " Clean up after ourselves.
+
     if v:shell_error != 0 " There was an error formatting
       call maktaba#error#Shout('Error formatting file: %s', l:result.stderr)
       return
     endif
     let l:formatted = split(l:result.stdout, "\n")
-
     call maktaba#buffer#Overwrite(1, line("$"), l:formatted)
   endfunction
 
