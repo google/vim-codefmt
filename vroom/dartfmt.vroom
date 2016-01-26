@@ -36,18 +36,18 @@ dartfmt_executable flag if the default of "dartfmt" doesn't work.
 You can format any buffer with dartfmt specifying the formatter explicitly.
 
   @clear
-  % main() { print("hello ");
+  % main() { print("hello ");<CR>
   |print("world\n");}
 
   :FormatCode dartfmt
   ! dartfmt .*2>.*
   $ main() {
-  $ \tprint("hello ")
-  $ \tprint("world\\n")
+  $ \tprint("hello ");
+  $ \tprint("world\\n");
   $ }
   main() {
-  	print("hello ")
-  	print("world\n")
+  	print("hello ");
+  	print("world\n");
   }
   @end
 
@@ -63,6 +63,23 @@ The dart filetype will use the dartfmt formatter by default.
 
   :set filetype=
 
-NOTE: the dartfmt formatter does not support range formatting, and will always
-reformat the entire buffer.
+It can format specific line ranges of code using :FormatLines.
 
+  @clear
+  % main () {<CR>
+  |Print("hello "); Print("world\n");}
+
+  :1,2FormatLines dartfmt
+  ! dartfmt .*2>.*
+  $ main() {
+  $ \tprint("hello ");
+  $ \tprint("world\\n");
+  $ }
+  main() {
+  	print("hello ");
+  	print("world\n");
+  }
+  @end
+
+NOTE: the dartfmt formatter does not natively support range formatting, so there
+are certain limitations like not being able to format misaligned braces.

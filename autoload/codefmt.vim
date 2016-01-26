@@ -345,11 +345,13 @@ function! codefmt#GetDartfmtFormatter() abort
 
   ""
   " Reformat the current buffer with dartfmt or the binary named in
-  " @flag{dartfmt_executable}, only targetting the range from {startline} to
+  " @flag(dartfmt_executable}, only targetting the range from {startline} to
   " {endline}
   function l:formatter.FormatRange(startline, endline) abort
     " Hack range formatting by formatting range individually, ignoring context.
     let l:cmd = [ s:plugin.Flag('dartfmt_executable') ]
+    " TODO When https://github.com/dart-lang/dart_style/issues/92 is implemented
+    " use those options.
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
     let l:lines = getline(1, line('$'))
@@ -367,7 +369,7 @@ function! codefmt#GetDartfmtFormatter() abort
       let l:errors = []
       for l:line in split(v:exception, "\n")
         let l:tokens = matchlist(l:line,
-            \ '\C\v^\<standard input\>:(\d+):(\d+):\s*(.*)')
+            \ '\C\v^line (\d+), column (\d+) of stdin: (.*)')
         if !empty(l:tokens)
           call add(l:errors, {
               \ 'filename': @%,
@@ -378,9 +380,14 @@ function! codefmt#GetDartfmtFormatter() abort
       endfor
 
       if empty(l:errors)
-        " Couldn't parse gofmt error format; display it all.
-        call maktaba#error#Shout('Error formatting file: %s', v:exception)
+        " Couldn't parse dartfmt error format; display it all.
+        call maktaba#error#Shout('Failed to format range; showing all errors: %s', v:exception)
       else
+        let l:errorHeaderLines = split(v:exception, "\n")[1 : 5]
+        let l:errorHeader = join(l:errorHeaderLines, "\n")
+        call maktaba#error#Shout(
+            \ "Error formatting file:\n%s\n\nMore errors in the fixlist.",
+            \ l:errorHeader)
         call setqflist(l:errors, 'r')
         cc 1
       endif
