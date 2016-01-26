@@ -346,8 +346,8 @@ function! codefmt#GetDartfmtFormatter() abort
 
   ""
   " Reformat the current buffer with dartfmt or the binary named in
-  " @flag{dartfmt_executable}. At this time, does not handle ranges of lines.
-  function l:formatter.FormatRange(startline, endline) abort
+  " @flag{dartfmt_executable}.
+  function l:formatter.Format() abort
     let l:executable = s:plugin.Flag('dartfmt_executable')
     let l:cmd = [l:executable, @%]
 
