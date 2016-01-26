@@ -29,6 +29,7 @@
 "   * c, cpp, proto, javascript: clang-format
 "   * go: gofmt
 "   * python: autopep8, yapf
+"   * dart: dartfmt
 
 
 let s:plugin = maktaba#plugin#Get('codefmt')
@@ -326,6 +327,42 @@ function! codefmt#GetGofmtFormatter() abort
   return l:formatter
 endfunction
 
+""
+" @private
+" Formatter: dartfmt
+function! codefmt#GetDartfmtFormatter() abort
+  let l:formatter = {
+      \ 'name': 'dartfmt',
+      \ 'setup_instructions': 'Install the Dart SDK from ' .
+          \ 'https://www.dartlang.org/tools/sdk/'}
+
+  function l:formatter.IsAvailable() abort
+    return executable(s:plugin.Flag('dartfmt_executable'))
+  endfunction
+
+  function l:formatter.AppliesToBuffer() abort
+    return &filetype is# 'dart'
+  endfunction
+
+  ""
+  " Reformat the current buffer with dartfmt or the binary named in
+  " @flag{dartfmt_executable}. At this time, does not handle ranges of lines.
+  function l:formatter.FormatRange(startline, endline) abort
+    let l:executable = s:plugin.Flag('dartfmt_executable')
+    let l:cmd = [l:executable, @%]
+
+    let l:result = maktaba#syscall#Create(l:cmd).Call(0)
+    if v:shell_error != 0 " There was an error formatting
+      call maktaba#error#Shout('Error formatting file: %s', l:result.stderr)
+      return
+    endif
+    let l:formatted = split(l:result.stdout, "\n")
+
+    call maktaba#buffer#Overwrite(1, line("$"), l:formatted)
+  endfunction
+
+  return l:formatter
+endfunction
 
 ""
 " @private
