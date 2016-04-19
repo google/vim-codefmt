@@ -1,0 +1,63 @@
+The built-in gn formatter knows how to format gn build files.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The gn formatter expects the gn executable to be installed on your system.
+
+  % buildconfig = "//build/config/BUILDCONFIG.gn"
+  :FormatCode gn
+  ! gn .*
+  $ buildconfig = "//build/config/BUILDCONFIG.gn"
+
+The name or path of the gn executable can be configured via the
+gn_executable flag if the default of "gn" doesn't work.
+
+  :Glaive codefmt gn_executable='mygn'
+  :FormatCode gn
+  ! mygn .*
+  $ buildconfig = "//build/config/BUILDCONFIG.gn"
+  :Glaive codefmt gn_executable='gn'
+
+
+You can format any buffer with gn specifying the formatter explicitly.
+
+  @clear
+  % executable("hello") { sources = ["hello.c"] }
+  :FormatCode gn
+  ! gn format --stdin .*2>.*
+  $ executable("hello") {
+  $   sources = [
+  $     "hello.c",
+  $   ]
+  $ }
+  executable("hello") {
+    sources = [
+      "hello.c",
+    ]
+  }
+  @end
+
+The gn filetype will use the gn formatter by default.
+
+  @clear
+  % buildconfig = "//build/config/BUILDCONFIG.gn"
+
+  :set filetype=gn
+  :FormatCode
+  ! gn .*
+  $ buildconfig = "//build/config/BUILDCONFIG.gn"
+
+  :set filetype=

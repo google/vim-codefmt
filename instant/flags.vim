@@ -75,3 +75,7 @@ call s:plugin.Flag('js_beautify_executable', 'js-beautify')
 ""
 " The path to the yapf executable.
 call s:plugin.Flag('yapf_executable', 'yapf')
+
+""
+" The path to the gn executable.
+call s:plugin.Flag('gn_executable', 'gn')
