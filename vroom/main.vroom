@@ -13,6 +13,7 @@ directory cover various topics of codefmt usage:
 * clangformat.vroom - Configuring and using the built-in clang-format formatter
 * gofmt.vroom - Configuring and using the built-in gofmt formatter
 * yapf.vroom - Configuring and using the built-in yapf formatter
+* gn.vroom - Configuring and using the built-in gn formatter
 * autocmd.vroom - Automatic hooks like format-on-save
 * extensions.vroom - Adding additional formatters for codefmt to use
 

@@ -52,6 +52,10 @@ Default: 'js-beautify' `
 The path to the yapf executable.
 Default: 'yapf' `
 
+                                                       *codefmt:gn_executable*
+The path to the gn executable.
+Default: 'gn' `
+
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `
@@ -94,6 +98,7 @@ The current list of defaults by filetype is:
   * c, cpp, proto, javascript: clang-format
   * go: gofmt
   * python: autopep8, yapf
+  * gn: gn
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*
