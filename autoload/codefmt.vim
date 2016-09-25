@@ -29,6 +29,7 @@
 "   * c, cpp, proto, javascript: clang-format
 "   * go: gofmt
 "   * python: autopep8, yapf
+"   * gn: gn
 "   * dart: dartfmt
 
 
