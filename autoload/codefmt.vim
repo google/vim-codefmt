@@ -26,7 +26,7 @@
 " system.
 "
 " The current list of defaults by filetype is:
-"   * c, cpp, proto, javascript: clang-format
+"   * c, cpp, proto, javascript, typescript: clang-format
 "   * go: gofmt
 "   * python: autopep8, yapf
 "   * gn: gn
