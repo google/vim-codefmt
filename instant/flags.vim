@@ -63,10 +63,14 @@ call s:plugin.flags.clang_format_executable.AddCallback(
 call s:plugin.Flag('clang_format_style', 'file')
 
 ""
-" The path to the gofmt executable.  For example, this can be changed to
+" The path to the gofmt executable. For example, this can be changed to
 " "goimports" (https://godoc.org/golang.org/x/tools/cmd/goimports) to
 " additionally adjust imports when formatting.
 call s:plugin.Flag('gofmt_executable', 'gofmt')
+
+""
+" The path to the dartfmt executable.
+call s:plugin.Flag('dartfmt_executable', 'dartfmt')
 
 ""
 " The path to the js-beautify executable.

@@ -39,10 +39,14 @@ http://clang.llvm.org/docs/ClangFormatStyleOptions.html for details.
 Default: 'file' `
 
                                                     *codefmt:gofmt_executable*
-The path to the gofmt executable.  For example, this can be changed to
+The path to the gofmt executable. For example, this can be changed to
 "goimports" (https://godoc.org/golang.org/x/tools/cmd/goimports) to
 additionally adjust imports when formatting.
 Default: 'gofmt' `
+
+                                                  *codefmt:dartfmt_executable*
+The path to the dartfmt executable.
+Default: 'dartfmt' `
 
                                               *codefmt:js_beautify_executable*
 The path to the js-beautify executable.
@@ -99,6 +103,7 @@ The current list of defaults by filetype is:
   * go: gofmt
   * python: autopep8, yapf
   * gn: gn
+  * dart: dartfmt
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*

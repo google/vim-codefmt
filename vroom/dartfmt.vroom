@@ -1,0 +1,85 @@
+The built-in dartfmt formatter knows how to format dart code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The dartfmt formatter expects the dartfmt executable to be installed on your
+system.
+
+  % main(){}
+  :FormatCode dartfmt
+  ! dartfmt .*
+  $ main(){}
+
+The name or path of the dartfmt executable can be configured via the
+dartfmt_executable flag if the default of "dartfmt" doesn't work.
+
+  :Glaive codefmt dartfmt_executable='mydartfmt'
+  :FormatCode dartfmt
+  ! mydartfmt .*
+  $ main(){}
+  :Glaive codefmt dartfmt_executable='dartfmt'
+
+
+You can format any buffer with dartfmt specifying the formatter explicitly.
+
+  @clear
+  % main() { print("hello ");<CR>
+  |print("world\n");}
+
+  :FormatCode dartfmt
+  ! dartfmt .*2>.*
+  $ main() {
+  $ \tprint("hello ");
+  $ \tprint("world\\n");
+  $ }
+  main() {
+  	print("hello ");
+  	print("world\n");
+  }
+  @end
+
+The dart filetype will use the dartfmt formatter by default.
+
+  @clear
+  % main(){}
+
+  :set filetype=dart
+  :FormatCode
+  ! dartfmt .*
+  $ main(){}
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % main () {<CR>
+  |Print("hello "); Print("world\n");}
+
+  :1,2FormatLines dartfmt
+  ! dartfmt .*2>.*
+  $ main() {
+  $ \tprint("hello ");
+  $ \tprint("world\\n");
+  $ }
+  main() {
+  	print("hello ");
+  	print("world\n");
+  }
+  @end
+
+NOTE: the dartfmt formatter does not natively support range formatting, so there
+are certain limitations like not being able to format misaligned braces.
