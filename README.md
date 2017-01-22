@@ -8,6 +8,22 @@ For details, see the executable documentation in the `vroom/` directory or the
 helpfiles in the `doc/` directory. The helpfiles are also available via
 `:help codefmt` if codefmt is installed (and helptags have been generated).
 
+# Supported File-types
+
+* [Bazel](https://www.github.com/bazelbuild/bazel) BUILD files (buildifier)
+* C, C++ (clang-format)
+* CSS (js-beautify)
+* Chrome GN files (gn)
+* Dart (dartfmt)
+* Go (gofmt)
+* [GN](https://www.chromium.org/developers/gn-build-configuration) (gn)
+* HTML (js-beautify)
+* JavaScript (clang-format)
+* JSON (js-beautify)
+* Proto (clang-format)
+* Python (Autopep8 or YAPF)
+* TypeScript (clang-format)
+
 # Commands
 
 Use `:FormatLines` to format a range of lines or use `:FormatCode` to format
@@ -51,6 +67,25 @@ Glaive codefmt plugin[mappings]
 Make sure you have updated maktaba recently. Codefmt depends upon maktaba
 to register formatters.
 
+# Autoformatting
+
+Want to just sit back and let autoformat happen automatically? Add this to your
+`vimrc` (or any subset):
+
+```vim
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,json AutoFormatBuffer js-beautify
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+augroup END
+```
+
+
 # Installing and configuring formatters
 
 Codefmt defines several built-in formatters. The easiest way to see the list of
@@ -68,3 +103,38 @@ Most formatters have some options available that can be configured via Glaive.
 You can get a quick view of all codefmt flags by executing `:Glaive codefmt`, or
 start typing flag names and use tab completion. See `:help Glaive` for usage
 details.
+
+## Creating a New Formatter
+
+Assume a filetype `myft` and a formatter called `MyFormatter`. Our detailed
+guide to creating a formatter [lives
+here](https://github.com/google/vim-codefmt/wiki/Formatter-Integration-Guide).
+
+*   Create an issue for your new formatter and discuss! Once there's consensus,
+    continue onward.
+
+*   Create a new file in `autoload/codefmt/myformatter.vim` See
+    `autoload/codefmt/buildifier.vim for an example. This is where all the
+    logic for formatting goes.
+
+*   Register the formatter with:
+
+    ```vim
+    call s:registry.AddExtension(codefmt#myformatter#GetFormatter())
+    ```
+
+*   Create a flag in instant/flags.vim
+
+    ```vim
+    ""
+    " The path to the buildifier executable.
+    call s:plugin.Flag('myformatter_executable', 'myformatter')
+    ```
+
+*   Create a [vroom](https://github.com/google/vim-vroom) test named
+    `vroom/myformatter.vroom` to ensure your formatter works properly.
+
+That's it! Of course, the complicated step is in the details of
+`myformatter.vim`.
+
+// TODO(kashomon): Create a worked example formatter.

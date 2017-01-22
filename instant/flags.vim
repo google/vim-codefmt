@@ -83,3 +83,7 @@ call s:plugin.Flag('yapf_executable', 'yapf')
 ""
 " The path to the gn executable.
 call s:plugin.Flag('gn_executable', 'gn')
+
+""
+" The path to the buildifier executable.
+call s:plugin.Flag('buildifier_executable', 'buildifier')

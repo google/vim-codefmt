@@ -26,6 +26,7 @@
 " system.
 "
 " The current list of defaults by filetype is:
+"   * bzl (Bazel): buildifier
 "   * c, cpp, proto, javascript, typescript: clang-format
 "   * go: gofmt
 "   * python: autopep8, yapf

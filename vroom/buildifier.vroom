@@ -1,0 +1,54 @@
+The built-in buildifier formatter knows how to format Bazel BUILD files.  If you
+aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The buildifer formatter expects the buildifier executable to be installed on
+your system.
+
+  % foo_library(name = "foo", srcs = ["bar.js"],)
+  :FormatCode buildifier
+  ! buildifier .*
+  $ foo_library(
+  $     name = "foo",
+  $     srcs = ["bar.js"],
+  $ )
+
+The name or path of the buildifier executable can be configured via the
+buildifier_executable flag if the default of "buildifier" doesn't work.
+
+  :Glaive codefmt buildifier_executable='mybuildifier'
+  :FormatCode buildifier
+  ! mybuildifier .*
+  $ foo_library(
+  $     name = "foo",
+  $     srcs = ["bar.js"],
+  $ )
+  :Glaive codefmt buildifier_executable='buildifier'
+
+The bzl filetype will use the buildifier formatter by default.
+
+  @clear
+  % foo_library(name = "foo", srcs = ["bar.js"],)
+
+  :set filetype=bzl
+  :FormatCode
+  ! buildifier .*
+  $ foo_library(
+  $     name = "foo",
+  $     srcs = ["bar.js"],
+  $ )
+
+  :set filetype=
