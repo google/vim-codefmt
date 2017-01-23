@@ -46,7 +46,7 @@ call s:plugin.Flag('autopep8_executable', 'autopep8')
 " Invalidate cache of detected autopep8 version when this is changed, regardless
 " of {value} arg.
 call s:plugin.flags.autopep8_executable.AddCallback(
-    \ maktaba#function#FromExpr('codefmt#InvalidateAutopep8Version()'), 0)
+    \ maktaba#function#FromExpr('codefmt#autopep8#InvalidateVersion()'), 0)
 
 ""
 " The path to the clang-format executable.
@@ -54,7 +54,7 @@ call s:plugin.Flag('clang_format_executable', 'clang-format')
 " Invalidate cache of detected clang-format version when this is changed, regardless
 " of {value} arg.
 call s:plugin.flags.clang_format_executable.AddCallback(
-    \ maktaba#function#FromExpr('codefmt#InvalidateClangFormatVersion()'), 0)
+    \ maktaba#function#FromExpr('codefmt#clangformat#InvalidateVersion()'), 0)
 
 ""
 " Formatting style for clang-format to use. Either a string or callable that
