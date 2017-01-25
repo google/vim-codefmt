@@ -14,7 +14,6 @@
 
 
 let s:plugin = maktaba#plugin#Get('codefmt')
-let s:registry = s:plugin.GetExtensionRegistry()
 
 
 ""
