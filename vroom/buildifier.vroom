@@ -15,7 +15,7 @@ examples.
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
-The buildifer formatter expects the buildifier executable to be installed on
+The buildifier formatter expects the buildifier executable to be installed on
 your system.
 
   % foo_library(name = "foo", srcs = ["bar.js"],)

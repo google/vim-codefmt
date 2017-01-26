@@ -87,3 +87,9 @@ call s:plugin.Flag('gn_executable', 'gn')
 ""
 " The path to the buildifier executable.
 call s:plugin.Flag('buildifier_executable', 'buildifier')
+
+""
+" The path to the google-java executable.  Generally, this should have the
+" form:
+" `java -jar /path/to/google-java`
+call s:plugin.Flag('google_java_executable', 'google-java-format')
