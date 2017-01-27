@@ -24,7 +24,7 @@ function! codefmt#googlejava#GetFormatter() abort
       \ 'setup_instructions': 'Install google-java formatter ' .
           \ "(https://github.com/google/google-java-format). \n" .
           \ 'Enable with "Glaive codefmt google_java_executable=' .
-          \ '"java -jar /path/to/google-java-format-1.2-all-deps.jar" ' .
+          \ '"java -jar /path/to/google-java-format-VERSION-all-deps.jar" ' .
           \ 'in your vimrc' }
 
   function l:formatter.IsAvailable() abort
@@ -56,7 +56,7 @@ function! codefmt#googlejava#GetFormatter() abort
       call maktaba#ensure#IsNumber(l:startline)
       call maktaba#ensure#IsNumber(l:endline)
     endfor
-    let l:ranges_str = join(map(a:ranges, 'v:val[0] . ":" . v:val[1]'), ',')
+    let l:ranges_str = join(map(copy(a:ranges), 'v:val[0] . ":" . v:val[1]'), ',')
     let l:cmd += ['--lines', l:ranges_str, '-']
 
     let l:input = join(getline(1, line('$')), "\n")
@@ -65,7 +65,6 @@ function! codefmt#googlejava#GetFormatter() abort
     call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
   endfunction
 
-  let s:google_java_format = l:formatter
   return l:formatter
 endfunction
 

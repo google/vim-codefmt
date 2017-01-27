@@ -88,7 +88,7 @@ augroup autoformat_settings
 augroup END
 ```
 
-# Configuring formatters.
+# Configuring formatters
 
 Most formatters have some options available that can be configured via
 [Glaive](https://www.github.com/google/vim-glaive)
@@ -96,7 +96,7 @@ You can get a quick view of all codefmt flags by executing `:Glaive codefmt`, or
 start typing flag names and use tab completion. See `:help Glaive` for usage
 details.
 
-# Installing and configuring formatters
+# Installing formatters
 
 Codefmt defines several built-in formatters. The easiest way to see the list of
 available formatters is via tab completion: Type `:FormatCode <TAB>` in vim.
@@ -130,7 +130,7 @@ here](https://github.com/google/vim-codefmt/wiki/Formatter-Integration-Guide).
     ```
 
 *   Create a flag in
-    [instant/flags.vim](https://github.com/Kashomon/vim-codefmt/blob/master/instant/flags.vim)
+    [instant/flags.vim](https://github.com/google/vim-codefmt/blob/master/instant/flags.vim)
 
     ```vim
     ""

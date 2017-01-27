@@ -12,7 +12,11 @@ briefly.
   :function FakeRepeat(...)<CR>
   |  call add(g:repeat_calls, a:000)<CR>
   :endfunction
+  :function ClangExec(...)<CR>
+  |  return 1<CR>
+  :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+  :call maktaba#test#Override('codefmt#clangformat#IsExecutable', 'ClangExec')
 
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
@@ -77,7 +81,7 @@ You can format any buffer with clang-format specifying the formatter explicitly.
 
 Several filetypes will use the clang-format formatter by default: c, cpp,
 javascript, and proto.  If the version of clang-format is >= 3.6, then it will
-also format java files.
+also format java files, but google-java-format is the default.
 
   @clear
   % f();
@@ -101,7 +105,7 @@ also format java files.
   $ f();
 
   :set filetype=java
-  :FormatCode
+  :FormatCode clang-format
   ! clang-format .*
   $ { "Cursor": 0 }
   $ f();
