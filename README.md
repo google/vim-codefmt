@@ -122,7 +122,7 @@ here](https://github.com/google/vim-codefmt/wiki/Formatter-Integration-Guide).
     logic for formatting goes.
 
 *   Register the formatter in
-    [plugin/register.vim](https://github.com/google/vim-codefmt/blob/master/plugin/register.vim) 
+    [plugin/register.vim](plugin/register.vim)
     with:
 
     ```vim
@@ -130,7 +130,7 @@ here](https://github.com/google/vim-codefmt/wiki/Formatter-Integration-Guide).
     ```
 
 *   Create a flag in
-    [instant/flags.vim](https://github.com/google/vim-codefmt/blob/master/instant/flags.vim)
+    [instant/flags.vim](instant/flags.vim)
 
     ```vim
     ""
