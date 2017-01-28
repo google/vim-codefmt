@@ -19,6 +19,10 @@ let s:plugin = maktaba#plugin#Get('codefmt')
 function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
   if !exists('s:clang_format_version')
     let l:executable = s:plugin.Flag('clang_format_executable')
+    if codefmt#ShouldPerformIsAvailableChecks() && !executable(l:executable)
+      return 0
+    endif
+
     let l:version_output =
           \ maktaba#syscall#Create([l:executable, '--version']).Call().stdout
     let l:version_string = matchstr(l:version_output, '\v\d+(.\d+)+')

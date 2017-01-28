@@ -105,7 +105,7 @@ endfunction
 " @function(#SetWhetherToPerformIsAvailableChecksForTesting), skips the
 " IsAvailable check and always returns true.
 function! s:IsAvailable(formatter) abort
-  if get(s:, 'check_formatters_available', 1)
+  if codefmt#ShouldPerformIsAvailableChecks()
     return a:formatter.IsAvailable()
   endif
   return 1
@@ -252,6 +252,14 @@ function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos) abort
   return join(l:groups[0] + l:groups[1] + l:groups[2], "\n")
 endfunction
 
+
+""
+" @private
+" Returns whether to perform Availability checks, which is normall set for
+" testing. Defaults to 1 (enable availablity checks).
+function! codefmt#ShouldPerformIsAvailableChecks() abort
+  return get(s:, 'check_formatters_available', 1)
+endfunction
 
 ""
 " @private

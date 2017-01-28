@@ -1,0 +1,44 @@
+The built-in google-java formatter knows how to format Java BUILD files.  If you
+aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The google-java formatter expects a google-java executable to be installed on
+your system.
+
+  % class Foo { public String getFoo() { return "bar"; } }
+  :FormatCode google-java-format
+  ! google-java-format .*
+  $ class Foo {
+  $   public String getFoo() {
+  $     return "bar";
+  $   }
+  $ }
+
+The name or path of the google-java executable can be configured via the
+google_java_executable flag if the default of "google-java" doesn't work.
+
+  :Glaive codefmt google_java_executable='java -jar /path/to/google-java.jar'
+  :FormatCode google-java-format
+  ! java -jar /path/to/google-java.jar .*
+  $ class Foo {
+  $   public String getFoo() {
+  $     return "bar";
+  $   }
+  $ }
+  :Glaive codefmt google_java_executable='google-java-format'
+
+The java filetype will use the clang formatter by default, so the default
+functionality is tested there.
