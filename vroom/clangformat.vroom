@@ -12,11 +12,7 @@ briefly.
   :function FakeRepeat(...)<CR>
   |  call add(g:repeat_calls, a:000)<CR>
   :endfunction
-  :function ClangExec(...)<CR>
-  |  return 1<CR>
-  :endfunction
   :call maktaba#test#Override('repeat#set', 'FakeRepeat')
-  :call maktaba#test#Override('codefmt#clangformat#IsExecutable', 'ClangExec')
 
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 

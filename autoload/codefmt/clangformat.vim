@@ -15,14 +15,11 @@
 
 let s:plugin = maktaba#plugin#Get('codefmt')
 
-function! codefmt#clangformat#IsExecutable(exec) abort
-  return executable(a:exec)
-endfunction
 
 function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
   if !exists('s:clang_format_version')
     let l:executable = s:plugin.Flag('clang_format_executable')
-    if !codefmt#clangformat#IsExecutable(l:executable)
+    if codefmt#ShouldPerformIsAvailableChecks() && !executable(l:executable)
       return 0
     endif
 
