@@ -40,18 +40,5 @@ google_java_executable flag if the default of "google-java" doesn't work.
   $ }
   :Glaive codefmt google_java_executable='google-java-format'
 
-The java filetype will use the google-java formatter by default.
-
-  @clear
-  % class Foo { public String getFoo() { return "bar"; } }
-
-  :set filetype=java
-  :FormatCode
-  ! google-java-format .*
-  $ class Foo {
-  $   public String getFoo() {
-  $     return "bar";
-  $   }
-  $ }
-
-  :set filetype=
+The java filetype will use the clang formatter by default, so the default
+functionality is tested there.
