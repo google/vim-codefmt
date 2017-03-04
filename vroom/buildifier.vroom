@@ -57,7 +57,7 @@ Errors are reported using the quickfix list.
 
   @clear
   % #<CR>
-  |java_package(])
+  % java_package(])
 
   :FormatCode buildifier
   ! buildifier .*2> (.*)
