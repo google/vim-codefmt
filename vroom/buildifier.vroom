@@ -52,3 +52,22 @@ The bzl filetype will use the buildifier formatter by default.
   $ )
 
   :set filetype=
+
+Errors are reported using the quickfix list.
+
+  @clear
+  % #<CR>
+  % java_package(])
+
+  :FormatCode buildifier
+  ! buildifier .*2> (.*)
+  $ echo 'stdin:2:15: syntax error near ]' >\1 (command)
+  $ 1 (status)
+  #
+  java_package(])
+  @end
+  :echomsg line('.') . ',' . col('.')
+  ~ 2,15
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
+  ~ ['2,15,syntax error near ]']
