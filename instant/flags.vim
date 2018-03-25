@@ -94,5 +94,5 @@ call s:plugin.Flag('buildifier_executable', 'buildifier')
 " `java -jar /path/to/google-java`
 call s:plugin.Flag('google_java_executable', 'google-java-format')
 
-" The pasth to the xmllint executable xmllint --format -
+" The path to the xmllint executable xmllint --format -
 call s:plugin.Flag('xmllint_executable', 'xmllint')
