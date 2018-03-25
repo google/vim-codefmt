@@ -15,7 +15,6 @@
 
 let s:plugin = maktaba#plugin#Get('codefmt')
 
-
 ""
 " @private
 "
