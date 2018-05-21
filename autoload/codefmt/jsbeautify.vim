@@ -41,7 +41,9 @@ function! codefmt#jsbeautify#GetFormatter() abort
   " @throws ShellError
   function l:formatter.FormatRange(startline, endline) abort
     let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-f', '-']
-    if &filetype != ""
+    if &filetype is# 'javascript'
+      let l:cmd = l:cmd + ['--type', 'js']
+    elseif &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif
 
