@@ -54,26 +54,34 @@ You can format any buffer with js-beautify specifying the formatter explicitly.
   }
   @end
 
-# @TODO: fix default formatter for javascript
 Several filetypes will use the js-beautify formatter by default:
 javascript, json, html and css.
+
+Note that javascript will currently be picked up by clang-format;
+here we specify js-beautify explicitly.
+# @TODO: fix default formatter for javascript
 
   @clear
   % f();
 
+  :set filetype=javascript
+  :FormatCode js-beautify
+  ! js-beautify -f - --type js 2>.*
+  $ f();
+
   :set filetype=json
   :FormatCode
-  ! js-beautify .*
+  ! js-beautify -f - --type js 2>.*
   $ f();
 
   :set filetype=html
   :FormatCode
-  ! js-beautify .*
+  ! js-beautify -f - --type html 2>.*
   $ f();
 
   :set filetype=css
   :FormatCode
-  ! js-beautify .*
+  ! js-beautify -f - --type css 2>.*
   $ f();
 
   :set filetype=
