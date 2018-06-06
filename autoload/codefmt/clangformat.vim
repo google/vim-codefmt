@@ -65,6 +65,7 @@ function! codefmt#clangformat#GetFormatter() abort
   function l:formatter.AppliesToBuffer() abort
     if &filetype is# 'c' || &filetype is# 'cpp' ||
         \ &filetype is# 'proto' || &filetype is# 'javascript' ||
+        \ &filetype is# 'objc' || &filetype is# 'objcpp' ||
         \ &filetype is# 'typescript'
       return 1
     endif
