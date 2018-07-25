@@ -1,5 +1,6 @@
-The built-in buildifier formatter knows how to format Bazel BUILD files.  If you
-aren't familiar with basic codefmt usage yet, see main.vroom first.
+The built-in buildifier formatter knows how to format Bazel BUILD and .bzl
+files.  If you aren't familiar with basic codefmt usage yet, see main.vroom
+first.
 
 We'll set up codefmt and configure the vroom environment, then jump into some
 examples.
@@ -38,14 +39,17 @@ buildifier_executable flag if the default of "buildifier" doesn't work.
   $ )
   :Glaive codefmt buildifier_executable='buildifier'
 
-The bzl filetype will use the buildifier formatter by default.
+The bzl filetype will use the buildifier formatter by default. The path to the
+file being edited is passed to buildifier so that it can adjust to whether the
+file is a BUILD or .bzl file.
 
   @clear
   % foo_library(name = "foo", srcs = ["bar.js"],)
 
+  :silent file /foo/bar/BUILD
   :set filetype=bzl
   :FormatCode
-  ! buildifier .*
+  ! buildifier -path /foo/bar/BUILD .*
   $ foo_library(
   $     name = "foo",
   $     srcs = ["bar.js"],

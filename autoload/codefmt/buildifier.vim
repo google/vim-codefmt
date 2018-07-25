@@ -39,7 +39,12 @@ function! codefmt#buildifier#GetFormatter() abort
   " @flag(buildifier)
   " @throws ShellError
   function l:formatter.Format() abort
-    let l:cmd = s:plugin.Flag('buildifier_executable')
+    let l:cmd = [ s:plugin.Flag('buildifier_executable') ]
+    let l:fname = expand('%:p')
+    if !empty(l:fname)
+      let l:cmd += ['-path', l:fname]
+    endif
+
     let l:input = join(getline(1, line('$')), "\n")
     try
       let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
