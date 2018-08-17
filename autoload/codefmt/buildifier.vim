@@ -54,7 +54,13 @@ function! codefmt#buildifier#GetFormatter() abort
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []
       for line in split(v:exception, "\n")
-        let l:tokens = matchlist(line, '\C\v^stdin:(\d+):(\d+):\s*(.*)')
+        if empty(l:fname)
+          let l:fname_pattern = 'stdin'
+        else
+          let l:fname_pattern = escape(l:fname, '\')
+        endif
+        let l:tokens = matchlist(line,
+            \ '\C\v^\V'. l:fname_pattern . '\v:(\d+):(\d+):\s*(.*)')
         if !empty(l:tokens)
           call add(l:errors, {
               \ "filename": @%,

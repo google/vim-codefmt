@@ -75,3 +75,45 @@ Errors are reported using the quickfix list.
   :echomsg string(map(getqflist(),
   |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
   ~ ['2,15,syntax error near ]']
+
+Note that if the file's path was passed to buildifier, error reports are in a
+slightly different format, prefixed with the filename we passed.
+
+  @clear
+  :silent file /foo/bar/BUILD
+  :set filetype=bzl
+  % load()
+
+  > go
+  :FormatCode
+  ! buildifier .*2> (.*)
+  $ echo '/foo/bar/BUILD:1:7: syntax error near )' >\1 (command)
+  $ 1 (status)
+  load()
+  @end
+
+We'll be on column 6 because there's no column 7. (Buildifier appears to always
+report one column past the actual error.)
+
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,6
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
+  ~ ['1,7,syntax error near )']
+
+If there are no errors, then the quickfix list is (currently, see
+https://github.com/google/vim-codefmt/issues/58) left alone:
+
+  > godd
+  % load('@io_bazel_rules_go//proto:def.bzl','go_proto_library')
+  > go
+
+  :FormatCode
+  ! buildifier -path /foo/bar/BUILD .*
+  $ load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,1
+  :echomsg len(getqflist())
+  ~ 1
+  :set filetype=
