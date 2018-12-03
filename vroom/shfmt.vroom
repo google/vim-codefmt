@@ -73,6 +73,7 @@ It can format specific line ranges of code using :FormatLines.
   $   echo "my name is:"
   $   echo "foo"
   $ }
+  $ bar() { echo "my name is:"; echo "bar"; }
   foo() {
     echo "my name is:"
     echo "foo"
