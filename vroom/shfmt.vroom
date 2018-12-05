@@ -49,6 +49,22 @@ You can format any buffer with shfmt specifying the formatter explicitly.
   fi
   @end
 
+Errors are reported using the quickfix list.
+
+  @clear
+  % foo() {
+
+  :FormatCode shfmt
+  ! shfmt .*2>.*
+  foo() {
+  @end
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,7
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
+  ~ ['1,7,reached EOF without matching { with }']
+
+
 The sh filetype will use the shfmt formatter by default.
 
   @clear
