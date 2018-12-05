@@ -22,8 +22,8 @@ let s:plugin = maktaba#plugin#Get('codefmt')
 function! codefmt#shfmt#GetFormatter() abort
   let l:formatter = {
       \ 'name': 'shfmt',
-      \ 'setup_instructions': 'Install shfmt and configure the ' .  
-          \ 'shfmt_executable flag'}
+      \ 'setup_instructions': 'Install shfmt (https://github.com/mvdan/sh) ' .
+          \ 'and configure the shfmt_executable flag'}
 
   function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('shfmt_executable'))
@@ -49,6 +49,8 @@ function! codefmt#shfmt#GetFormatter() abort
           \ string(l:Shfmt_options))
     endif
     " Hack range formatting by formatting range individually, ignoring context.
+    " Feature request for range formatting:
+    " https://github.com/mvdan/sh/issues/333
     let l:cmd = [ s:plugin.Flag('shfmt_executable') ] + l:shfmt_options
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
