@@ -55,7 +55,9 @@ Errors are reported using the quickfix list.
   % foo() {
 
   :FormatCode shfmt
-  ! shfmt .*2>.*
+  ! shfmt .*2> (.*)
+  $ echo '<standard input>:1:7: reached EOF without matching { with }' >\1 (command)
+  $ 1 (status)
   foo() {
   @end
   :echomsg line('.') . ',' . col('.')
