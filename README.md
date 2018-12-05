@@ -24,6 +24,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * Proto (clang-format)
 * Python (Autopep8 or YAPF)
 * TypeScript (clang-format)
+* Shell (shfmt)
 
 # Commands
 

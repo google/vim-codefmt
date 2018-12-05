@@ -1,0 +1,103 @@
+The built-in shfmt formatter knows how to format shell code (POSIX/Bash/mksh).
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The shfmt formatter expects the shfmt executable to be installed on your system.
+
+  % f()
+  :FormatCode shfmt
+  ! shfmt .*
+  $ f()
+
+The name or path of the shfmt executable can be configured via the
+shfmt_executable flag if the default of "shfmt" doesn't work.
+
+  :Glaive codefmt shfmt_executable='myshfmt'
+  :FormatCode shfmt
+  ! myshfmt .*
+  $ f()
+  :Glaive codefmt shfmt_executable='shfmt'
+
+
+You can format any buffer with shfmt specifying the formatter explicitly.
+
+  @clear
+  % if [  $print_hello_world -eq  1  ]; then echo "hello"; echo "world"; fi
+
+  :FormatCode shfmt
+  ! shfmt .*2>.*
+  $ if [ $print_hello_world -eq 1 ]; then
+  $   echo "hello"
+  $   echo "world"
+  $ fi
+  if [ $print_hello_world -eq 1 ]; then
+    echo "hello"
+    echo "world"
+  fi
+  @end
+
+Errors are reported using the quickfix list.
+
+  @clear
+  % foo() {
+
+  :FormatCode shfmt
+  ! shfmt .*2> (.*)
+  $ echo '<standard input>:1:7: reached EOF without matching { with }' >\1 (command)
+  $ 1 (status)
+  foo() {
+  @end
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,7
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
+  ~ ['1,7,reached EOF without matching { with }']
+
+
+The sh filetype will use the shfmt formatter by default.
+
+  @clear
+  % f()
+
+  :set filetype=sh
+  :FormatCode
+  ! shfmt .*
+  $ f()
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % foo() { echo "my name is:"; echo "foo"; }<CR>
+  |bar() { echo "my name is:"; echo "bar"; }
+
+  :1,2FormatLines shfmt
+  ! shfmt .*2>.*
+  $ foo() {
+  $   echo "my name is:"
+  $   echo "foo"
+  $ }
+  $ bar() { echo "my name is:"; echo "bar"; }
+  foo() {
+    echo "my name is:"
+    echo "foo"
+  }
+  bar() { echo "my name is:"; echo "bar"; }
+  @end
+
+NOTE: the shfmt formatter does not natively support range formatting, so there
+are certain limitations like not being able to format misaligned braces.
