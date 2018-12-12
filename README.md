@@ -19,7 +19,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * [GN](https://www.chromium.org/developers/gn-build-configuration) (gn)
 * HTML (js-beautify)
 * Java (google-java-format or clang-format)
-* JavaScript (clang-format)
+* JavaScript (clang-format or [prettier](https://prettier.io))
 * JSON (js-beautify)
 * Proto (clang-format)
 * Python (Autopep8 or YAPF)
