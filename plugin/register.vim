@@ -21,6 +21,8 @@ endif
 let s:registry = s:plugin.GetExtensionRegistry()
 call s:registry.SetValidator('codefmt#EnsureFormatter')
 
+" Formatters that are registered later are given more priority when deciding
+" what the default formatter will be for a particular file type.
 call s:registry.AddExtension(codefmt#jsbeautify#GetFormatter())
 call s:registry.AddExtension(codefmt#prettier#GetFormatter())
 call s:registry.AddExtension(codefmt#clangformat#GetFormatter())
