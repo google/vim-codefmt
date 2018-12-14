@@ -139,7 +139,7 @@ here](https://github.com/google/vim-codefmt/wiki/Formatter-Integration-Guide).
     call s:plugin.Flag('myformatter_executable', 'myformatter')
     ```
 
-*   Create a [vroom](https://github.com/google/vim-vroom) test named
+*   Create a [vroom](https://github.com/google/vroom) test named
     `vroom/myformatter.vroom` to ensure your formatter works properly.
 
 *   Update the README.md to mention your new filetype!
