@@ -108,7 +108,9 @@ call s:plugin.Flag('shfmt_executable', 'shfmt')
 ""
 " Command line arguments to to feed prettier. Either a list or callable that
 " takes no args and returns a list with command line arguments.
-call s:plugin.Flag('prettier_options', ['--single-quote', '--trailing-comma=all', '--arrow-parens=always', '--print-width=80'])
+call s:plugin.Flag('prettier_options', [
+    \ '--single-quote', '--trailing-comma=all',
+    \ '--arrow-parens=always', '--print-width=80'])
 
 ""
 " The path to the prettier executable.

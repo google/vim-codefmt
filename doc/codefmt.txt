@@ -60,6 +60,35 @@ Default: 'yapf' `
 The path to the gn executable.
 Default: 'gn' `
 
+                                               *codefmt:buildifier_executable*
+The path to the buildifier executable.
+Default: 'buildifier' `
+
+                                              *codefmt:google_java_executable*
+The path to the google-java executable.  Generally, this should have the form:
+`java -jar /path/to/google-java`
+Default: 'google-java-format' `
+
+                                                       *codefmt:shfmt_options*
+Command line arguments to to feed shfmt. Either a list or callable that takes
+no args and returns a list with command line arguments. By default, uses the
+Google's style. See https://github.com/mvdan/sh for details.
+Default: ['-i', '2', '-sr', '-ci'] `
+
+                                                    *codefmt:shfmt_executable*
+The path to the shfmt executable.
+Default: 'shfmt' `
+
+                                                    *codefmt:prettier_options*
+Command line arguments to to feed prettier. Either a list or callable that
+takes no args and returns a list with command line arguments.
+Default: [ '--single-quote', '--trailing-comma=all', '--arrow-parens=always',
+  '--print-width=80'] `
+
+                                                 *codefmt:prettier_executable*
+The path to the prettier executable.
+Default: 'prettier' `
+
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `
@@ -99,6 +128,7 @@ none is explicitly supplied via an explicit arg to |:FormatCode| or the
 plugins are enabled or what other software is installed on your system.
 
 The current list of defaults by filetype is:
+  * bzl (Bazel): buildifier
   * c, cpp, proto, javascript, typescript: clang-format
   * go: gofmt
   * python: autopep8, yapf

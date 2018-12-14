@@ -66,11 +66,12 @@ Errors are reported using the quickfix list.
 
   :FormatCode prettier
   ! prettier .*2> (.*)
-  $ echo '[error] stdin: SyntaxError: Unexpected token (2:1)' >\1 (command)
-  $ echo '[error]   1 | function foo() {' >>\1 (command)
-  $ echo '[error] > 2 |' >>\1 (command)
-  $ echo '[error]     | ^' >>\1 (command)
   $ 2 (status)
+  $ echo >\1 ' (command)
+  |[error] stdin: SyntaxError: Unexpected token (2:1)\n
+  |[error]   1 | function foo() {\n
+  |[error] > 2 |\n
+  |[error]     | ^'
   function foo() {
   @end
   :echomsg line('.') . ',' . col('.')

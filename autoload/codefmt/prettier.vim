@@ -49,11 +49,15 @@ function! codefmt#prettier#GetFormatter() abort
           \ string(l:Prettier_options))
     endif
     let l:cmd = [s:plugin.Flag('prettier_executable'), '--stdin', '--no-color']
+
+    " prettier is able to automatically choose the best parser if the filepath
+    " is provided. Otherwise, fall back to the previous default: babylon.
     if @% == ""
       call extend(l:cmd, ['--parser', 'babylon'])
     else
       call extend(l:cmd, ['--stdin-filepath', @%])
     endif
+
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
 
