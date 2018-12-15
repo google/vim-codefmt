@@ -1,0 +1,103 @@
+The prettier formatter knows how to format JavaScript.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The prettier formatter expects the prettier executable to be installed on your system.
+
+  % function HelloWorld(){if(!greeting){return null};}
+  :FormatCode prettier
+  ! prettier .*
+  $ function HelloWorld() {
+  $   if (!greeting) {
+  $     return null;
+  $  }
+  $ }
+
+The name or path of the prettier executable can be configured via the
+prettier_executable flag if the default of "prettier" doesn't work.
+
+  :Glaive codefmt prettier_executable='myprettier'
+  :FormatCode prettier
+  ! myprettier .*
+  $ function HelloWorld() {
+  $   if (!greeting) {
+  $     return null;
+  $   }
+  $ }
+  :Glaive codefmt prettier_executable='prettier'
+
+
+You can format any buffer with prettier specifying the formatter explicitly.
+
+  @clear
+  % function HelloWorld(){if(!greeting){return null};}
+
+  :FormatCode prettier
+  ! prettier .*2>.*
+  $ function HelloWorld() {
+  $   if (!greeting) {
+  $     return null;
+  $   }
+  $ }
+  function HelloWorld() {
+    if (!greeting) {
+      return null;
+    }
+  }
+  @end
+
+Errors are reported using the quickfix list.
+
+  @clear
+  % function foo() {
+
+  :FormatCode prettier
+  ! prettier .*2> (.*)
+  $ 2 (status)
+  $ echo >\1 ' (command)
+  |[error] stdin: SyntaxError: Unexpected token (2:1)\n
+  |[error]   1 | function foo() {\n
+  |[error] > 2 |\n
+  |[error]     | ^'
+  function foo() {
+  @end
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,1
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
+  ~ ['2,1,SyntaxError: Unexpected token']
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % function HelloWorld(){if(!greeting){return null};}<CR>
+  |function Greet(){if(!greeting){return null};}
+
+  :1,1FormatLines prettier
+  ! prettier .*--parser babylon --range-end 50.*2>.*
+  $ function HelloWorld() {
+  $   if (!greeting) {
+  $     return null;
+  $   }
+  $ }
+  $ function Greet(){if(!greeting){return null};}
+  function HelloWorld() {
+    if (!greeting) {
+      return null;
+    }
+  }
+  function Greet(){if(!greeting){return null};}
+  @end
