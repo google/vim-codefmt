@@ -43,6 +43,8 @@ function! codefmt#jsbeautify#GetFormatter() abort
     let l:cmd = [s:plugin.Flag('js_beautify_executable'), '-f', '-']
     if &filetype is# 'javascript' || &filetype is# 'json'
       let l:cmd = l:cmd + ['--type', 'js']
+    elseif &filetype is# 'sass' || &filetype is# 'scss' || &filetype is# 'less'
+      let l:cmd = l:cmd + ['--type', 'css']
     elseif &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif

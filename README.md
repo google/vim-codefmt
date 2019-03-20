@@ -12,7 +12,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 
 * [Bazel](https://www.github.com/bazelbuild/bazel) BUILD files (buildifier)
 * C, C++ (clang-format)
-* CSS (js-beautify)
+* CSS, Sass, SCSS, Less (js-beautify)
 * Chrome GN files (gn)
 * Dart (dartfmt)
 * Go (gofmt)
@@ -82,7 +82,7 @@ augroup autoformat_settings
   autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
   autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,json AutoFormatBuffer js-beautify
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer yapf
   " Alternative: autocmd FileType python AutoFormatBuffer autopep8
