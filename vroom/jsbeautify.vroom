@@ -84,6 +84,21 @@ here we specify js-beautify explicitly.
   ! js-beautify -f - --type css 2>.*
   $ f();
 
+  :set filetype=sass
+  :FormatCode js-beautify
+  ! js-beautify -f - --type css 2>.*
+  $ f();
+
+  :set filetype=scss
+  :FormatCode js-beautify
+  ! js-beautify -f - --type css 2>.*
+  $ f();
+
+  :set filetype=less
+  :FormatCode js-beautify
+  ! js-beautify -f - --type css 2>.*
+  $ f();
+
   :set filetype=
 
 
