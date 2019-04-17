@@ -70,7 +70,7 @@ The path to the google-java executable.  Generally, this should have the form:
 Default: 'google-java-format' `
 
                                                        *codefmt:shfmt_options*
-Command line arguments to to feed shfmt. Either a list or callable that takes
+Command line arguments to feed shfmt. Either a list or callable that takes
 no args and returns a list with command line arguments. By default, uses the
 Google's style. See https://github.com/mvdan/sh for details.
 Default: ['-i', '2', '-sr', '-ci'] `
@@ -80,7 +80,7 @@ The path to the shfmt executable.
 Default: 'shfmt' `
 
                                                     *codefmt:prettier_options*
-Command line arguments to to feed prettier. Either a list or callable that
+Command line arguments to feed prettier. Either a list or callable that
 takes no args and returns a list with command line arguments.
 Default: [ '--single-quote', '--trailing-comma=all', '--arrow-parens=always',
   '--print-width=80'] `

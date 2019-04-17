@@ -95,7 +95,7 @@ call s:plugin.Flag('buildifier_executable', 'buildifier')
 call s:plugin.Flag('google_java_executable', 'google-java-format')
 
 ""
-" Command line arguments to to feed shfmt. Either a list or callable that
+" Command line arguments to feed shfmt. Either a list or callable that
 " takes no args and returns a list with command line arguments. By default, uses
 " the Google's style.
 " See https://github.com/mvdan/sh for details.
@@ -106,7 +106,7 @@ call s:plugin.Flag('shfmt_options', ['-i', '2', '-sr', '-ci'])
 call s:plugin.Flag('shfmt_executable', 'shfmt')
 
 ""
-" Command line arguments to to feed prettier. Either a list or callable that
+" Command line arguments to feed prettier. Either a list or callable that
 " takes no args and returns a list with command line arguments.
 call s:plugin.Flag('prettier_options', [
     \ '--single-quote', '--trailing-comma=all',
