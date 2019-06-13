@@ -29,7 +29,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 # Commands
 
 Use `:FormatLines` to format a range of lines or use `:FormatCode` to format
-the entire buffer.
+the entire buffer. Use `:NoAutoFormatBuffer` to disable current buffer formatting.
 
 # Usage example
 
