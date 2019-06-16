@@ -101,3 +101,38 @@ It can format specific line ranges of code using :FormatLines.
   }
   function Greet(){if(!greeting){return null};}
   @end
+
+It is also the default formatter for several file types.
+
+  @clear
+  % f();
+
+  :silent file /foo/foo.markdown
+  :set filetype=markdown
+  :FormatCode
+  ! prettier .*--stdin-filepath /foo/foo.markdown.*2>.*
+  $ f();
+
+  :silent file /foo/foo.yaml
+  :set filetype=yaml
+  :FormatCode
+  ! prettier .*--stdin-filepath /foo/foo.yaml.*2>.*
+  $ f();
+
+  :silent file /foo/foo.jsx
+  :set filetype=jsx
+  :FormatCode
+  ! prettier .*--stdin-filepath /foo/foo.jsx.*2>.*
+  $ f();
+
+  :silent file /foo/foo.mdx
+  :set filetype=mdx
+  :FormatCode
+  ! prettier .*--stdin-filepath /foo/foo.mdx.*2>.*
+  $ f();
+
+  :silent file /foo/foo.vue
+  :set filetype=vue
+  :FormatCode
+  ! prettier .*--stdin-filepath /foo/foo.vue.*2>.*
+  $ f();

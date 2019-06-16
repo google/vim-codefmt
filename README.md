@@ -25,6 +25,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * Python (Autopep8 or YAPF)
 * TypeScript (clang-format)
 * Shell (shfmt)
+* [Vue](http://vuejs.org) (prettier)
 
 # Commands
 
@@ -86,6 +87,7 @@ augroup autoformat_settings
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer yapf
   " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 ```
 
