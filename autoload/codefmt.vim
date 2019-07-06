@@ -247,6 +247,16 @@ function! codefmt#FormatMap(type) range abort
 endfunction
 
 ""
+" @public
+" To map the builtin |gq| command to invoke codefmt, set 'formatexpr' to call
+" this function. Example: >
+" set formatexpr=codefmt#FormatExpr()
+" <
+function! codefmt#FormatExpr() abort
+  call codefmt#FormatLines(v:lnum, v:lnum + v:count)
+endfunction
+
+""
 " Generate the completion for supported formatters. Lists available formatters
 " that apply to the current buffer first, then unavailable formatters that
 " apply, then everything else.
@@ -260,6 +270,23 @@ function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos) abort
   return join(l:groups[0] + l:groups[1] + l:groups[2], "\n")
 endfunction
 
+""
+" Returns whether there is a default formatter available for the current
+" buffer.
+function! codefmt#AvailableInCurrrentBuffer() abort
+  let l:formatters = s:registry.GetExtensions()
+  if !empty(get(b:, 'codefmt_formatter'))
+    let l:Predicate = {f -> f.name ==# b:codefmt_formatter}
+  else
+    let l:Predicate = {f -> f.AppliesToBuffer() && s:IsAvailable(f)}
+  endif
+  for l:formatter in s:registry.GetExtensions()
+    if l:Predicate(l:formatter)
+      return 1
+    endif
+  endfor
+  return 0
+endfunction
 
 ""
 " @private
