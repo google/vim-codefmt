@@ -23,6 +23,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * JSON (js-beautify)
 * Proto (clang-format)
 * Python (Autopep8 or YAPF)
+* Rust ([rustfmt](https://github.com/rust-lang/rustfmt))
 * TypeScript (clang-format)
 * Shell (shfmt)
 * [Vue](http://vuejs.org) (prettier)
@@ -87,6 +88,7 @@ augroup autoformat_settings
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer yapf
   " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType rust AutoFormatBuffer rustfmt
   autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 ```

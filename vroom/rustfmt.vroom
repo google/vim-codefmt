@@ -1,0 +1,76 @@
+The rustfmt formatter knows how to format Rust code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The rustfmt formatter expects the rustfmt executable to be installed on your system.
+
+  % fn main(){println!("Hello World!");}
+  :FormatCode rustfmt
+  ! rustfmt .*
+  $ fn main() {
+  $     println!("Hello World!");
+  $ }
+
+The name or path of the rustfmt executable can be configured via the
+rustfmt_executable flag if the default of "rustfmt" doesn't work.
+
+  :Glaive codefmt rustfmt_executable='myrustfmt'
+  :FormatCode rustfmt
+  ! myrustfmt .*
+  $ fn main() {
+  $     println!("Hello World!");
+  $ }
+  :Glaive codefmt rustfmt_executable='rustfmt'
+
+
+You can format any buffer with rustfmt specifying the formatter explicitly.
+
+  @clear
+  % fn main(){println!("Hello World!");}
+
+  :FormatCode rustfmt
+  ! rustfmt .*2>.*
+  $ fn main() {
+  $     println!("Hello World!");
+  $ }
+  fn main() {
+      println!("Hello World!");
+  }
+  @end
+
+Errors are reported using the quickfix list.
+
+  @clear
+  % fn main() {
+
+  :FormatCode rustfmt
+  ! rustfmt .*2> (.*)
+  $ 2 (status)
+  $ echo >\1 ' (command)
+  |error: this file contains an un-closed delimiter\n
+  | --> <stdin>:1:13\n
+  |  |\n
+  |1 | fn main() {\n
+  |  |           - ^\n
+  |  |           |\n
+  |  |           un-closed delimiter'
+  fn main() {
+  @end
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,11
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.col . "," . v:val.text'))
+  ~ ['1,13,this file contains an un-closed delimiter']

@@ -115,3 +115,12 @@ call s:plugin.Flag('prettier_options', [
 ""
 " The path to the prettier executable.
 call s:plugin.Flag('prettier_executable', 'prettier')
+
+""
+" Command line arguments to feed rustfmt. Either a list or callable that
+" takes no args and returns a list with command line arguments.
+call s:plugin.Flag('rustfmt_options', [])
+
+""
+" The path to the rustfmt executable.
+call s:plugin.Flag('rustfmt_executable', 'rustfmt')
