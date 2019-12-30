@@ -33,8 +33,8 @@ endif
 
 
 " Shout if maktaba is too old. Done here to ensure it's always triggered.
-if !maktaba#IsAtLeastVersion('1.10.0')
-  call maktaba#error#Shout('Codefmt requires maktaba version 1.10.0.')
+if !maktaba#IsAtLeastVersion('1.12.0')
+  call maktaba#error#Shout('Codefmt requires maktaba version 1.12.0.')
   call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
   call maktaba#error#Shout('Please update your maktaba install.')
 endif
