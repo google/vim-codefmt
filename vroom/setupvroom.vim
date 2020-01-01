@@ -18,6 +18,9 @@
 " Codefmt does not support compatible mode.
 set nocompatible
 
+" Set cmdheight to avoid "Hit ENTER to continue" without needing :silent
+set cmdheight=10
+
 " Install the codefmt plugin.
 let s:repo = expand('<sfile>:p:h:h')
 execute 'source' s:repo . '/bootstrap.vim'
