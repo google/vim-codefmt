@@ -111,6 +111,10 @@ The path to the zprint executable. Typically this is one of the native images
 installed as zprint.
 Default: 'zprint' `
 
+                                              *codefmt:fish_indent_executable*
+The path to the fish_indent executable.
+Default: 'fish_indent' `
+
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `
@@ -154,6 +158,7 @@ The current list of defaults by filetype is:
   * c, cpp, proto, javascript, typescript: clang-format
   * clojure: zprint
   * dart: dartfmt
+  * fish: fish_indent
   * gn: gn
   * go: gofmt
   * python: autopep8, yapf

@@ -128,7 +128,6 @@ call s:plugin.Flag('rustfmt_options', [])
 " The path to the rustfmt executable.
 call s:plugin.Flag('rustfmt_executable', 'rustfmt')
 
-
 ""
 " @private
 " This is declared above zprint_options to avoid interfering with vimdoc parsing
@@ -148,3 +147,7 @@ call s:plugin.Flag('zprint_options', function('s:ZprintOptions'))
 " images (zprintl or zprintm) from https://github.com/kkinnear/zprint/releases
 " installed as zprint.
 call s:plugin.Flag('zprint_executable', 'zprint')
+
+""
+" The path to the fish_indent executable.
+call s:plugin.Flag('fish_indent_executable', 'fish_indent')

@@ -30,6 +30,7 @@
 "   * c, cpp, proto, javascript, typescript: clang-format
 "   * clojure: zprint
 "   * dart: dartfmt
+"   * fish: fish_indent
 "   * gn: gn
 "   * go: gofmt
 "   * python: autopep8, yapf

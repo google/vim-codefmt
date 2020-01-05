@@ -15,6 +15,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * [Clojure](https://clojure.org/) ([zprint](https://github.com/kkinnear/zprint))
 * CSS, Sass, SCSS, Less (js-beautify)
 * Dart (dartfmt)
+* Fish ([fish_indent](https://fishshell.com/docs/current/commands.html#fish_indent))
 * Go (gofmt)
 * [GN](https://www.chromium.org/developers/gn-build-configuration) (gn)
 * HTML (js-beautify)
