@@ -49,7 +49,7 @@ function! codefmt#buildifier#GetFormatter() abort
     try
       " NOTE: Ignores any line ranges given and formats entire buffer.
       " buildifier does not support range formatting.
-      call codefmt#formatterhelpers#Format(l:cmd)
+      call codefmt#formatterhelpers#Format(maktaba#syscall#Create(l:cmd))
     catch
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

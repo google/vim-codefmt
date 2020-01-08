@@ -55,7 +55,7 @@ function! codefmt#rustfmt#GetFormatter() abort
       " NOTE: Ignores any line ranges given and formats entire buffer.
       " Even though rustfmt supports formatting ranges through the --file-lines
       " flag, it is not still enabled in the stable binaries.
-      call codefmt#formatterhelpers#Format(l:cmd)
+      call codefmt#formatterhelpers#Format(maktaba#syscall#Create(l:cmd))
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

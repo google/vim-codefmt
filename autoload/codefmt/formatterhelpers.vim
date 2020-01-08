@@ -13,13 +13,27 @@
 " limitations under the License.
 
 
+function! s:EnsureIsSyscall(Value) abort
+  if type(a:Value) == type({}) &&
+      \ has_key(a:Value, 'Call') &&
+      \ maktaba#function#HasSameName(
+          \ a:Value.Call, function('maktaba#syscall#Call'))
+    return a:Value
+  endif
+  throw maktaba#error#BadValue(
+      \ 'Not a valid matkaba.Syscall: %s', string(a:Value))
+endfunction
+
+
 ""
 " @public
-" Format lines in the current buffer via a formatter invoked by {cmd}. The
-" command includes the explicit range line numbers to use, if any.
+" Format lines in the current buffer via a formatter invoked by {cmd} (a
+" |maktaba.Syscall|). The command includes the explicit range line numbers to
+" use, if any.
 "
 " @throws ShellError if the {cmd} system call fails
 function! codefmt#formatterhelpers#Format(cmd) abort
+  call s:EnsureIsSyscall(a:cmd)
   let l:lines = getline(1, line('$'))
   let l:input = join(l:lines, "\n")
 
@@ -33,8 +47,8 @@ endfunction
 " @public
 " Attempt to format a range of lines from {startline} to {endline} in the
 " current buffer via a formatter that doesn't natively support range
-" formatting (invoked by {cmd}), using a hacky strategy of sending those lines
-" to the formatter in isolation.
+" formatting (invoked by {cmd}, a |maktaba.Syscall|), using a hacky strategy
+" of sending those lines to the formatter in isolation.
 "
 " If invoking this hack, please make sure to file a feature request against
 " the tool for range formatting and post a URL for that feature request above
@@ -45,6 +59,7 @@ function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
     \ startline, endline, cmd) abort
   call maktaba#ensure#IsNumber(a:startline)
   call maktaba#ensure#IsNumber(a:endline)
+  call s:EnsureIsSyscall(a:cmd)
 
   let l:lines = getline(1, line('$'))
   let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
