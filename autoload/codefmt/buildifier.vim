@@ -45,11 +45,10 @@ function! codefmt#buildifier#GetFormatter() abort
       let l:cmd += ['-path', l:fname]
     endif
 
-    let l:input = join(getline(1, line('$')), "\n")
     try
-      let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
-      let l:formatted = split(l:result.stdout, "\n")
-      call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
+      " NOTE: Ignores any line ranges given and formats entire buffer.
+      " buildifier does not support range formatting.
+      call codefmt#formatterhelpers#Format(l:cmd)
     catch
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

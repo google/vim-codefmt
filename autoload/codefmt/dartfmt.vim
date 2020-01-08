@@ -38,22 +38,12 @@ function! codefmt#dartfmt#GetFormatter() abort
   " @flag(dartfmt_executable}, only targetting the range from {startline} to
   " {endline}
   function l:formatter.FormatRange(startline, endline) abort
-    " Hack range formatting by formatting range individually, ignoring context.
     let l:cmd = [ s:plugin.Flag('dartfmt_executable') ]
-    " TODO When https://github.com/dart-lang/dart_style/issues/92 is implemented
-    " use those options.
-    call maktaba#ensure#IsNumber(a:startline)
-    call maktaba#ensure#IsNumber(a:endline)
-    let l:lines = getline(1, line('$'))
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
     try
-      let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
-      let l:formatted = split(l:result.stdout, "\n")
-      " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
-      let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-
-      let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
-      call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+      " dartfmt does not support range formatting yet:
+      " https://github.com/dart-lang/dart_style/issues/92
+      call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
+        \ a:startline, a:endline, l:cmd)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []
@@ -71,7 +61,8 @@ function! codefmt#dartfmt#GetFormatter() abort
 
       if empty(l:errors)
         " Couldn't parse dartfmt error format; display it all.
-        call maktaba#error#Shout('Failed to format range; showing all errors: %s', v:exception)
+        call maktaba#error#Shout(
+            \ 'Failed to format range; showing all errors: %s', v:exception)
       else
         let l:errorHeaderLines = split(v:exception, "\n")[1 : 5]
         let l:errorHeader = join(l:errorHeaderLines, "\n")

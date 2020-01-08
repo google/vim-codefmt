@@ -63,28 +63,20 @@ function! codefmt#zprint#GetFormatter() abort
             \ 'zprint_options flag must be list or callable. Found %s',
             \ string(l:ZprintOptions))
     endif
-    let l:cmd = [s:plugin.Flag('zprint_executable')]
-    call extend(l:cmd, l:zprint_options)
-
-    call maktaba#ensure#IsNumber(a:startline)
-    call maktaba#ensure#IsNumber(a:endline)
-    let l:lines = getline(1, line('$'))
-
-    " zprint doesn't support formatting a range of lines, so format the range
-    " individually, ignoring context. This works well for top-level forms, although it's
-    " not ideal for inner forms because it loses the indentation.
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
+    let l:cmd_args = [s:plugin.Flag('zprint_executable')]
+    call extend(l:cmd_args, l:zprint_options)
 
     " Prepare the syscall, changing to the containing directory in case the user
     " has configured {:search-config? true} in ~/.zprintrc
-    let l:result = maktaba#syscall#Create(l:cmd).WithCwd(expand('%:p:h')).WithStdin(l:input).Call()
-    let l:formatted = split(l:result.stdout, "\n")
-
-    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
-    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
-
-    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+    let l:cmd = maktaba#syscall#Create(l:cmd_args).WithCwd(expand('%:p:h'))
+    " zprint does not support range formatting yet:
+    " https://github.com/kkinnear/zprint/issues/122
+    " This fake range formatting works well for top-level forms, although it's
+    " not ideal for inner forms because it loses the indentation.
+    call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
+        \ a:startline,
+        \ a:endline,
+        \ l:cmd)
   endfunction
 
   return l:formatter

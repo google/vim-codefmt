@@ -52,17 +52,10 @@ function! codefmt#jsbeautify#GetFormatter() abort
     call maktaba#ensure#IsNumber(a:startline)
     call maktaba#ensure#IsNumber(a:endline)
 
-    let l:lines = getline(1, line('$'))
-    " Hack range formatting by formatting range individually, ignoring context.
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
-
-    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
-    let l:formatted = split(l:result.stdout, "\n")
-    " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
-    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-    let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
-
-    call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+    " js-beautify does not support range formatting yet:
+    " https://github.com/beautify-web/js-beautify/issues/610
+    call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
+        \ a:startline, a:endline, l:cmd)
   endfunction
 
   return l:formatter

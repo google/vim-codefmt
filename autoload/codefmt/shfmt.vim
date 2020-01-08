@@ -48,22 +48,14 @@ function! codefmt#shfmt#GetFormatter() abort
           \ 'shfmt_options flag must be list or callable. Found %s',
           \ string(l:Shfmt_options))
     endif
-    " Hack range formatting by formatting range individually, ignoring context.
-    " Feature request for range formatting:
-    " https://github.com/mvdan/sh/issues/333
     let l:cmd = [ s:plugin.Flag('shfmt_executable') ] + l:shfmt_options
-    call maktaba#ensure#IsNumber(a:startline)
-    call maktaba#ensure#IsNumber(a:endline)
-    let l:lines = getline(1, line('$'))
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
     try
-      let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
-      let l:formatted = split(l:result.stdout, "\n")
-      " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
-      let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-
-      let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
-      call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+      " Feature request for range formatting:
+      " https://github.com/mvdan/sh/issues/333
+      call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
+          \ a:startline,
+          \ a:endline,
+          \ l:cmd)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []
