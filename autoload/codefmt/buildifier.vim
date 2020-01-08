@@ -45,7 +45,6 @@ function! codefmt#buildifier#GetFormatter() abort
       let l:cmd += ['-path', l:fname]
     endif
 
-    let l:input = join(getline(1, line('$')), "\n")
     try
       " NOTE: Ignores any line ranges given and formats entire buffer.
       " buildifier does not support range formatting.
