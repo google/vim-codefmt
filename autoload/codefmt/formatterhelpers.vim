@@ -17,8 +17,8 @@
 " @public
 " Format lines in the current buffer via a formatter invoked by {cmd}, which
 " is a system call represented by either a |maktaba.Syscall| or any argument
-" accepted by |maktaba#syscall#Create()|. The command includes any arguments
-" for the explicit range line numbers to use, if any.
+" accepted by |maktaba#syscall#Create()|. The command must include any
+" arguments for the explicit range line numbers to use, if any.
 "
 " @throws ShellError if the {cmd} system call fails
 function! codefmt#formatterhelpers#Format(cmd) abort
