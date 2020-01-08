@@ -55,7 +55,7 @@ function! codefmt#jsbeautify#GetFormatter() abort
     " js-beautify does not support range formatting yet:
     " https://github.com/beautify-web/js-beautify/issues/610
     call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-        \ a:startline, a:endline, maktaba#syscall#Create(l:cmd))
+        \ a:startline, a:endline, l:cmd)
   endfunction
 
   return l:formatter

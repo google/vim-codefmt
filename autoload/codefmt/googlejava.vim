@@ -59,7 +59,7 @@ function! codefmt#googlejava#GetFormatter() abort
     let l:ranges_str = join(map(copy(a:ranges), 'v:val[0] . ":" . v:val[1]'), ',')
     let l:cmd += ['--lines', l:ranges_str, '-']
 
-    call codefmt#formatterhelpers#Format(maktaba#syscall#Create(l:cmd))
+    call codefmt#formatterhelpers#Format(l:cmd)
   endfunction
 
   return l:formatter

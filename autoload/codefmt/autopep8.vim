@@ -69,15 +69,15 @@ function! codefmt#autopep8#GetFormatter() abort
     call maktaba#ensure#IsNumber(a:endline)
 
     if s:autopep8_supports_range
-      call codefmt#formatterhelpers#Format(maktaba#syscall#Create([
+      call codefmt#formatterhelpers#Format([
           \ l:executable,
           \ '--range', string(a:startline), string(a:endline),
-          \ '-']))
+          \ '-'])
     else
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
           \ a:startline,
           \ a:endline,
-          \ maktaba#syscall#Create([l:executable, '-']))
+          \ [l:executable, '-'])
     endif
   endfunction
 

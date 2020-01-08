@@ -55,7 +55,7 @@ function! codefmt#shfmt#GetFormatter() abort
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
           \ a:startline,
           \ a:endline,
-          \ maktaba#syscall#Create(l:cmd))
+          \ l:cmd)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

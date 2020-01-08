@@ -226,9 +226,10 @@ codefmt#FormatMap({type})                                *codefmt#FormatMap()*
   ignored since formatting only works on complete lines.
 
 codefmt#formatterhelpers#Format({cmd})     *codefmt#formatterhelpers#Format()*
-  Format lines in the current buffer via a formatter invoked by {cmd} (a
-  |maktaba.Syscall|). The command includes the explicit range line numbers to
-  use, if any.
+  Format lines in the current buffer via a formatter invoked by {cmd}, which
+  is a system call represented by either a |maktaba.Syscall| or any argument
+  accepted by |maktaba#syscall#Create()|. The command includes any arguments
+  for the explicit range line numbers to use, if any.
 
   Throws ERROR(ShellError) if the {cmd} system call fails
 
@@ -236,8 +237,11 @@ codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
   {cmd})               *codefmt#formatterhelpers#AttemptFakeRangeFormatting()*
   Attempt to format a range of lines from {startline} to {endline} in the
   current buffer via a formatter that doesn't natively support range
-  formatting (invoked by {cmd}, a |maktaba.Syscall|), using a hacky strategy
-  of sending those lines to the formatter in isolation.
+  formatting, which is invoked via {cmd} (a system call represented by either
+  a |maktaba.Syscall| or any argument accepted by |maktaba#syscall#Create()|).
+  It uses a hacky strategy of sending those lines to the formatter in
+  isolation, which gives bad results if the code on those lines isn't a
+  self-contained block of syntax or is part of a larger indent.
 
   If invoking this hack, please make sure to file a feature request against
   the tool for range formatting and post a URL for that feature request above
