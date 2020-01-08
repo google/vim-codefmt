@@ -52,13 +52,10 @@ function! codefmt#rustfmt#GetFormatter() abort
 
     call extend(l:cmd, l:rustfmt_options)
     try
-      let l:lines = getline(1, line('$'))
-      let l:input = join(l:lines, "\n")
-      let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
-      let l:formatted = split(l:result.stdout, "\n")
+      " NOTE: Ignores any line ranges given and formats entire buffer.
       " Even though rustfmt supports formatting ranges through the --file-lines
       " flag, it is not still enabled in the stable binaries.
-      call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
+      call codefmt#formatterhelpers#Format(l:cmd)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

@@ -225,6 +225,25 @@ codefmt#FormatMap({type})                                *codefmt#FormatMap()*
   Suitable for use as 'operatorfunc'; see |g@| for details. The type is
   ignored since formatting only works on complete lines.
 
+codefmt#formatterhelpers#Format({cmd})     *codefmt#formatterhelpers#Format()*
+  Format lines in the current buffer via a formatter invoked by {cmd}. The
+  command includes the explicit range line numbers to use, if any.
+
+  Throws ERROR(ShellError) if the {cmd} system call fails
+
+codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
+  {cmd})               *codefmt#formatterhelpers#AttemptFakeRangeFormatting()*
+  Attempt to format a range of lines from {startline} to {endline} in the
+  current buffer via a formatter that doesn't natively support range
+  formatting (invoked by {cmd}), using a hacky strategy of sending those lines
+  to the formatter in isolation.
+
+  If invoking this hack, please make sure to file a feature request against
+  the tool for range formatting and post a URL for that feature request above
+  code that calls it.
+
+  Throws ERROR(ShellError) if the {cmd} system call fails
+
 ==============================================================================
 MAPPINGS                                                    *codefmt-mappings*
 
