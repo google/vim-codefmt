@@ -1,0 +1,93 @@
+The zprint formatter knows how to format Clojure.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+The zprint formatter expects the zprint executable to be installed on your system.
+
+  :FormatCode zprint
+  ! cd .* zprint .*
+
+The name or path of the zprint executable can be configured via the
+zprint_executable flag if the default of "zprint" doesn't work.
+
+  :Glaive codefmt zprint_executable='/usr/local/bin/zprint'
+  :FormatCode zprint
+  ! cd .* /usr/local/bin/zprint .*
+  :Glaive codefmt zprint_executable='zprint'
+
+You can format an entire buffer with :FormatCode.
+
+  @clear
+  % (defn x [] (cond nil 1 :else 2))<CR>
+  |(defn y [] (cond nil 3 :else 4))
+
+  :FormatCode zprint
+  ! cd .* zprint .*
+  $ (defn x
+  $   []
+  $   (cond nil 1
+  $         :else 2))
+  $ (defn y
+  $   []
+  $   (cond nil 3
+  $         :else 4))
+  (defn x
+    []
+    (cond nil 1
+          :else 2))
+  (defn y
+    []
+    (cond nil 3
+          :else 4))
+  @end
+
+You can format specific line ranges using :FormatLines. (Since zprint works on
+top-level forms, the range of lines should be one or more complete forms,
+otherwise zprint will generate an error or incorrectly-formatted code.)
+
+  @clear
+  % (defn x [] (cond nil 1 :else 2))<CR>
+  |(defn y [] (cond nil 3 :else 4))<CR>
+  |(defn z [] (cond nil 5 :else 6))
+
+  :2,2FormatLines zprint
+  ! cd .* zprint .*
+  $ (defn y
+  $   []
+  $   (cond nil 3
+  $         :else 4))
+  (defn x [] (cond nil 1 :else 2))
+  (defn y
+    []
+    (cond nil 3
+          :else 4))
+  (defn z [] (cond nil 5 :else 6))
+  @end
+
+Zprint is the default formatter for the clojure file type, so calling
+:FormatCode or :FormatLines will use it automatically.
+
+  :set filetype=clojure
+  :FormatCode
+  ! cd .* zprint .*
+  :set filetype&
+
+The default setting of zprint_options propagates Vim's textwidth setting to
+zprint's command-line.
+
+  :set textwidth=123
+  :FormatCode zprint
+  ! cd .* zprint .*:width 123.*
+  :set textwidth&

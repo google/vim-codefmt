@@ -127,3 +127,24 @@ call s:plugin.Flag('rustfmt_options', [])
 ""
 " The path to the rustfmt executable.
 call s:plugin.Flag('rustfmt_executable', 'rustfmt')
+
+
+""
+" @private
+" This is declared above zprint_options to avoid interfering with vimdoc parsing
+" the maktaba flag.
+function s:ZprintOptions() abort
+  return &textwidth ? ['{:width ' . &textwidth . '}'] : []
+endfunction
+
+""
+" Command line arguments to feed zprint. Either a list or callable that takes no
+" args and returns a list with command line arguments. The default configures
+" zprint with Vim's textwidth.
+call s:plugin.Flag('zprint_options', function('s:ZprintOptions'))
+
+""
+" The path to the zprint executable. Typically this is one of the native
+" images (zprintl or zprintm) from https://github.com/kkinnear/zprint/releases
+" installed as zprint.
+call s:plugin.Flag('zprint_executable', 'zprint')

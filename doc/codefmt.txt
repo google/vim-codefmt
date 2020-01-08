@@ -11,6 +11,7 @@ CONTENTS                                                    *codefmt-contents*
   6. Autocommands...........................................|codefmt-autocmds|
   7. Functions.............................................|codefmt-functions|
   8. Mappings...............................................|codefmt-mappings|
+      1. Recommended zprint mappings.................|codefmt-mappings-zprint|
 
 ==============================================================================
 INTRODUCTION                                                   *codefmt-intro*
@@ -98,6 +99,18 @@ Default: [] `
 The path to the rustfmt executable.
 Default: 'rustfmt' `
 
+                                                      *codefmt:zprint_options*
+Command line arguments to feed zprint. Either a list or callable that takes no
+args and returns a list with command line arguments. The default configures
+zprint with Vim's textwidth.
+Default: function('s:ZprintOptions') `
+
+                                                   *codefmt:zprint_executable*
+The path to the zprint executable. Typically this is one of the native images
+(zprintl or zprintm) from https://github.com/kkinnear/zprint/releases
+installed as zprint.
+Default: 'zprint' `
+
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `
@@ -139,10 +152,11 @@ plugins are enabled or what other software is installed on your system.
 The current list of defaults by filetype is:
   * bzl (Bazel): buildifier
   * c, cpp, proto, javascript, typescript: clang-format
+  * clojure: zprint
+  * dart: dartfmt
+  * gn: gn
   * go: gofmt
   * python: autopep8, yapf
-  * gn: gn
-  * dart: dartfmt
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*
@@ -229,6 +243,18 @@ formatting ranges that mimic vim's built-in |operator|s:
     over any motion. For instance, <PREFIX>i{ will format all lines inside the
     enclosing curly braces.
   * In visual mode, <PREFIX> will format the visual selection.
+
+==============================================================================
+RECOMMENDED ZPRINT MAPPINGS                          *codefmt-mappings-zprint*
+
+
+Since zprint only works on top-level Clojure forms, it doesn't make sense to
+format line ranges that aren't complete forms. If you're using vim-sexp
+(https://github.com/guns/vim-sexp), the following mapping replaces the default
+"format the current line" with "format the current top-level form."
+>
+  autocmd FileType clojure nmap <buffer> <silent> <leader>== <leader>=iF
+<
 
 
 vim:tw=78:ts=8:ft=help:norl:

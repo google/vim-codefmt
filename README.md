@@ -12,8 +12,8 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 
 * [Bazel](https://www.github.com/bazelbuild/bazel) BUILD files (buildifier)
 * C, C++ (clang-format)
+* [Clojure](https://clojure.org/) ([zprint](https://github.com/kkinnear/zprint))
 * CSS, Sass, SCSS, Less (js-beautify)
-* Chrome GN files (gn)
 * Dart (dartfmt)
 * Go (gofmt)
 * [GN](https://www.chromium.org/developers/gn-build-configuration) (gn)
