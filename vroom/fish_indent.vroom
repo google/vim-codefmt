@@ -1,0 +1,96 @@
+The built-in fish_indent knows how to format fish code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+You can format any buffer with fish_indent specifying the formatter explicitly.
+
+  @clear
+  % if test 42 -eq $truth; echo '42 is truth'; else; echo 'I do not know what to believe'; end
+
+  :FormatCode fish_indent
+  ! fish_indent .*2>.*
+  $ if test 42 -eq $truth
+  $     echo '42 is truth'
+  $ else
+  $     echo 'I do not know what to believe'
+  $ end
+  if test 42 -eq $truth
+      echo '42 is truth'
+  else
+      echo 'I do not know what to believe'
+  end
+  @end
+
+The fish filetype will use the fish_indent formatter by default.
+
+  @clear
+  % function f; echo f; end
+
+  :set filetype=fish
+  :FormatCode
+  ! fish_indent .*2>.*
+  $ function f
+  $     echo f
+  $ end
+  function f
+      echo f
+  end
+  @end
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % function foo; echo "my name is:"; echo "foo"; end<CR>
+  |function bar; echo "my name is:"; echo "bar"; end
+
+  :1,2FormatLines fish_indent
+  ! fish_indent .*2>.*
+  $ function foo echo "my name is:"
+  $     echo "my name is:"
+  $     echo "foo"
+  $ end
+  $ function bar echo "my name is:"; echo "bar"; end
+  function foo echo "my name is:"
+      echo "my name is:"
+      echo "foo"
+  end
+  function bar echo "my name is:"; echo "bar"; end
+  @end
+
+Errors are reported.
+
+  @clear
+  % function f;
+  :FormatCode fish_indent
+  ! fish_indent .*2> (.*)
+  $ echo test error >\1 (command)
+  $ 1 (status)
+  ~ test error
+  function f;
+  @end
+
+The name or path of the fish_indent executable can be configured via the
+fish_indent_executable flag if the default of "fish_indent" doesn't work.
+
+  @clear
+  :Glaive codefmt fish_indent_executable='my_fish_indent'
+  % function f;
+  :FormatCode fish_indent
+  ! my_fish_indent .*
+  $ function f
+  function f
+  @end
+  :Glaive codefmt fish_indent_executable='fish_indent'
