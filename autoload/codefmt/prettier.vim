@@ -16,7 +16,7 @@
 let s:plugin = maktaba#plugin#Get('codefmt')
 
 " See https://prettier.io for a list of supported file types.
-let s:supported_filetypes = ['javascript', 'markdown', 'html', 'css', 'yaml', 
+let s:supported_filetypes = ['javascript', 'markdown', 'html', 'css', 'yaml',
       \ 'jsx', 'less', 'scss', 'mdx', 'vue']
 
 
@@ -30,7 +30,9 @@ function! codefmt#prettier#GetFormatter() abort
           \ 'and configure the prettier_executable flag'}
 
   function l:formatter.IsAvailable() abort
-    return executable(s:plugin.Flag('prettier_executable'))
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'prettier_executable')
+    return !empty(l:cmd) && executable(l:cmd[0])
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
@@ -42,17 +44,8 @@ function! codefmt#prettier#GetFormatter() abort
   " @flag(prettier_executable), only targeting the range between {startline} and
   " {endline}.
   function l:formatter.FormatRange(startline, endline) abort
-    let l:Prettier_options = s:plugin.Flag('prettier_options')
-    if type(l:Prettier_options) is# type([])
-      let l:prettier_options = l:Prettier_options
-    elseif maktaba#value#IsCallable(l:Prettier_options)
-      let l:prettier_options = maktaba#function#Call(l:Prettier_options)
-    else
-      throw maktaba#error#WrongType(
-          \ 'prettier_options flag must be list or callable. Found %s',
-          \ string(l:Prettier_options))
-    endif
-    let l:cmd = [s:plugin.Flag('prettier_executable'), '--stdin', '--no-color']
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'prettier_executable') + ['--stdin', '--no-color']
 
     " prettier is able to automatically choose the best parser if the filepath
     " is provided. Otherwise, fall back to the previous default: babylon.
@@ -74,7 +67,9 @@ function! codefmt#prettier#GetFormatter() abort
     let l:lines_end = join(l:lines[0 : a:endline - 1], "\n")
     call extend(l:cmd, ['--range-end', string(strchars(l:lines_end))])
 
-    call extend(l:cmd, l:prettier_options)
+    call extend(l:cmd, codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'prettier_options'))
+
     try
       let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
       let l:formatted = split(l:result.stdout, "\n")

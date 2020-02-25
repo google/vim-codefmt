@@ -13,6 +13,9 @@
 " limitations under the License.
 
 
+let s:plugin = maktaba#plugin#Get('codefmt')
+
+
 ""
 " @public
 " Format lines in the current buffer via a formatter invoked by {cmd}, which
@@ -30,6 +33,7 @@ function! codefmt#formatterhelpers#Format(cmd) abort
 
   call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
 endfunction
+
 
 ""
 " @public
@@ -61,4 +65,45 @@ function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
   let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
 
   call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+endfunction
+
+
+""
+" @public
+" Resolve a flag (function, string or array) to a normalized array, with special
+" handling to convert a spaceless string to a single-element array. This is the
+" common case for executables, and more importantly, is backward-compatible for
+" existing user settings.
+"
+" @throws WrongType if the flag doesn't resolve to a string or array
+function! codefmt#formatterhelpers#ResolveFlagToArray(flag_name) abort
+  let l:FlagFn = s:plugin.Flag(a:flag_name)
+  if maktaba#value#IsFuncref(l:FlagFn)
+    let l:value = maktaba#function#Call(l:FlagFn)
+  else
+    let l:value = l:FlagFn
+  endif
+
+  " After (conditionally) calling the function, the resulting value should be
+  " either a list that we can use directly, or a string that we can treat as
+  " a single-element list, mainly for backward compatibility.
+  if maktaba#value#IsString(l:value)
+    if l:value =~ '\s'
+      " Uh oh, there are spaces in the string. Rather than guessing user intent
+      " with shell quoting and word splitting, handle this (hopefully unusual)
+      " case by telling them to update their configuration.
+      throw maktaba#error#WrongType(
+            \ '%s flag is a string with spaces, please make it a list. ' .
+            \ 'Resolved value was: %s',
+            \ a:flag_name, l:value)
+    endif
+    " Convert spaceless string to single-element list.
+    let l:value = [l:value]
+  elseif !maktaba#value#IsList(l:value)
+    throw maktaba#error#WrongType(
+          \ '%s flag should be a list after calling. Found %s',
+          \ a:flag_name, maktaba#value#TypeName(l:value))
+  endif
+
+  return l:value
 endfunction
