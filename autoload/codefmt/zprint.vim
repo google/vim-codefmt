@@ -38,7 +38,9 @@ function! codefmt#zprint#GetFormatter() abort
         \ 'and configure the zprint_executable flag'}
 
   function l:formatter.IsAvailable() abort
-    return executable(s:plugin.Flag('zprint_executable'))
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'zprint_executable')
+    return !empty(l:cmd) && executable(l:cmd[0])
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
@@ -50,25 +52,15 @@ function! codefmt#zprint#GetFormatter() abort
   " @flag(zprint_executable), only targeting the range between {startline} and
   " {endline}.
   function l:formatter.FormatRange(startline, endline) abort
-    " Must be upper-cased to call as a function
-    let l:ZprintOptions = s:plugin.Flag('zprint_options')
-    if type(l:ZprintOptions) is# type([])
-      " Assign upper-case to lower-case
-      let l:zprint_options = l:ZprintOptions
-    elseif maktaba#value#IsCallable(l:ZprintOptions)
-      " Call upper-case to assign lower-case
-      let l:zprint_options = maktaba#function#Call(l:ZprintOptions)
-    else
-      throw maktaba#error#WrongType(
-            \ 'zprint_options flag must be list or callable. Found %s',
-            \ string(l:ZprintOptions))
-    endif
-    let l:cmd_args = [s:plugin.Flag('zprint_executable')]
-    call extend(l:cmd_args, l:zprint_options)
+    let l:exe = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'zprint_executable')
+    let l:opts = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'zprint_options')
 
     " Prepare the syscall, changing to the containing directory in case the user
     " has configured {:search-config? true} in ~/.zprintrc
-    let l:cmd = maktaba#syscall#Create(l:cmd_args).WithCwd(expand('%:p:h'))
+    let l:cmd = maktaba#syscall#Create(l:exe + l:opts).WithCwd(expand('%:p:h'))
+
     " zprint does not support range formatting yet:
     " https://github.com/kkinnear/zprint/issues/122
     " This fake range formatting works well for top-level forms, although it's
