@@ -57,9 +57,13 @@ function! codefmt#zprint#GetFormatter() abort
     let l:opts = codefmt#formatterhelpers#ResolveFlagToArray(
           \ 'zprint_options')
 
-    " Prepare the syscall, changing to the containing directory in case the user
-    " has configured {:search-config? true} in ~/.zprintrc
-    let l:cmd = maktaba#syscall#Create(l:exe + l:opts).WithCwd(expand('%:p:h'))
+    " Prepare the syscall
+    let l:syscall = maktaba#syscall#Create(l:exe + l:opts)
+    if isdirectory(expand('%:p:h'))
+      " Change to the containing directory in case the user has configured
+      " {:search-config? true} in ~/.zprintrc
+      let l:syscall = l:syscall.WithCwd(expand('%:p:h'))
+    endif
 
     " zprint does not support range formatting yet:
     " https://github.com/kkinnear/zprint/issues/122
@@ -68,7 +72,7 @@ function! codefmt#zprint#GetFormatter() abort
     call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
         \ a:startline,
         \ a:endline,
-        \ l:cmd)
+        \ l:syscall)
   endfunction
 
   return l:formatter

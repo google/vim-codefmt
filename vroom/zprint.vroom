@@ -84,6 +84,16 @@ Zprint is the default formatter for the clojure file type, so calling
   ! cd .* zprint .*
   :set filetype&
 
+If the directory containing the file doesn't exist yet, then the plugin won't
+try to change directories:
+
+  :silent file /does-not-exist/x.clj
+  :set filetype=clojure
+  :FormatCode
+  ! zprint .*
+  :set filetype&
+  :0file
+
 The default setting of zprint_options propagates Vim's textwidth setting to
 zprint's command-line.
 
