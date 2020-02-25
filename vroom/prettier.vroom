@@ -14,12 +14,17 @@ examples.
 
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
+The default value of prettier_executable is a function that checks if npx is
+available. We need a deterministic result for these tests, so we'll replace that
+with a simple string.
+
+  :Glaive codefmt prettier_executable='prettier'
 
 The prettier formatter expects the prettier executable to be installed on your system.
 
   % function HelloWorld(){if(!greeting){return null};}
   :FormatCode prettier
-  ! prettier .*
+  ! cd .* prettier .*
   $ function HelloWorld() {
   $   if (!greeting) {
   $     return null;
@@ -31,7 +36,7 @@ prettier_executable flag if the default of "prettier" doesn't work.
 
   :Glaive codefmt prettier_executable='myprettier'
   :FormatCode prettier
-  ! myprettier .*
+  ! cd .* myprettier .*
   $ function HelloWorld() {
   $   if (!greeting) {
   $     return null;
@@ -46,7 +51,7 @@ You can format any buffer with prettier specifying the formatter explicitly.
   % function HelloWorld(){if(!greeting){return null};}
 
   :FormatCode prettier
-  ! prettier .*2>.*
+  ! cd .* prettier .*2>.*
   $ function HelloWorld() {
   $   if (!greeting) {
   $     return null;
@@ -65,7 +70,7 @@ Errors are reported using the quickfix list.
   % function foo() {
 
   :FormatCode prettier
-  ! prettier .*2> (.*)
+  ! cd .* prettier .*2> (.*)
   $ 2 (status)
   $ echo >\1 ' (command)
   |[error] stdin: SyntaxError: Unexpected token (2:1)\n
@@ -87,7 +92,7 @@ It can format specific line ranges of code using :FormatLines.
   |function Greet(){if(!greeting){return null};}
 
   :1,1FormatLines prettier
-  ! prettier .*--parser babylon --range-end 50.*2>.*
+  ! cd .* prettier .*--parser babylon --range-end 50.*2>.*
   $ function HelloWorld() {
   $   if (!greeting) {
   $     return null;
