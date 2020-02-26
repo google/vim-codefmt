@@ -18,6 +18,7 @@ The zprint formatter expects the zprint executable to be installed on your syste
 
   :FormatCode zprint
   ! cd .* zprint .*
+  $ no-op
 
 The name or path of the zprint executable can be configured via the
 zprint_executable flag if the default of "zprint" doesn't work.
@@ -25,6 +26,7 @@ zprint_executable flag if the default of "zprint" doesn't work.
   :Glaive codefmt zprint_executable='/usr/local/bin/zprint'
   :FormatCode zprint
   ! cd .* /usr/local/bin/zprint .*
+  $ no-op
   :Glaive codefmt zprint_executable='zprint'
 
 You can format an entire buffer with :FormatCode.
@@ -82,6 +84,7 @@ Zprint is the default formatter for the clojure file type, so calling
   :set filetype=clojure
   :FormatCode
   ! cd .* zprint .*
+  $ no-op
   :set filetype&
 
 The default setting of zprint_options propagates Vim's textwidth setting to
@@ -90,4 +93,5 @@ zprint's command-line.
   :set textwidth=123
   :FormatCode zprint
   ! cd .* zprint .*:width 123.*
+  $ no-op
   :set textwidth&
