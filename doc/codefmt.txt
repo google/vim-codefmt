@@ -254,6 +254,15 @@ codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
 
   Throws ERROR(ShellError) if the {cmd} system call fails
 
+codefmt#formatterhelpers#ResolveFlagToArray({flag_name})
+                               *codefmt#formatterhelpers#ResolveFlagToArray()*
+  Resolve a flag (function, string or array) to a normalized array, with
+  special handling to convert a spaceless string to a single-element array.
+  This is the common case for executables, and more importantly, is
+  backward-compatible for existing user settings.
+
+  Throws ERROR(WrongType) if the flag doesn't resolve to a string or array
+
 ==============================================================================
 MAPPINGS                                                    *codefmt-mappings*
 
