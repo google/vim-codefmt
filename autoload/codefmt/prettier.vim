@@ -22,6 +22,14 @@ let s:supported_filetypes = ['javascript', 'markdown', 'html', 'css', 'yaml',
 
 ""
 " @private
+" Invalidates the cached prettier availability detection.
+function! codefmt#prettier#InvalidateIsAvailable() abort
+  unlet! s:prettier_is_available
+endfunction
+
+
+""
+" @private
 " Formatter: prettier
 function! codefmt#prettier#GetFormatter() abort
   let l:formatter = {
@@ -30,9 +38,21 @@ function! codefmt#prettier#GetFormatter() abort
           \ 'and configure the prettier_executable flag'}
 
   function l:formatter.IsAvailable() abort
-    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
-          \ 'prettier_executable')
-    return !empty(l:cmd) && executable(l:cmd[0])
+    if !exists('s:prettier_is_available')
+      let s:prettier_is_available = 0
+      let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+            \ 'prettier_executable')
+      if !empty(l:cmd) && executable(l:cmd[0])
+        " Unfortunately the availability of npx isn't enough to tell whether
+        " prettier is available, and npx doesn't have a way of telling us.
+        " Fetching the prettier version should suffice.
+        let l:result = maktaba#syscall#Create(l:cmd + ['--version']).Call(0)
+        if v:shell_error == 0
+          let s:prettier_is_available = 1
+        endif
+      endif
+    endif
+    return s:prettier_is_available
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
@@ -52,7 +72,7 @@ function! codefmt#prettier#GetFormatter() abort
     if @% == ""
       call extend(l:cmd, ['--parser', 'babylon'])
     else
-      call extend(l:cmd, ['--stdin-filepath', @%])
+      call extend(l:cmd, ['--stdin-filepath', expand('%:p')])
     endif
 
     call maktaba#ensure#IsNumber(a:startline)
@@ -71,7 +91,13 @@ function! codefmt#prettier#GetFormatter() abort
           \ 'prettier_options'))
 
     try
-      let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
+      let l:syscall = maktaba#syscall#Create(l:cmd).WithStdin(l:input)
+      if isdirectory(expand('%:p:h'))
+        " Change to the containing directory so that npx will find
+        " a project-local prettier in node_modules
+        let l:syscall = l:syscall.WithCwd(expand('%:p:h'))
+      endif
+      let l:result = l:syscall.Call()
       let l:formatted = split(l:result.stdout, "\n")
       call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
     catch /ERROR(ShellError):/

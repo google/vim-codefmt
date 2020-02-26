@@ -83,12 +83,13 @@ Default: 'shfmt' `
                                                     *codefmt:prettier_options*
 Command line arguments to feed prettier. Either a list or callable that takes
 no args and returns a list with command line arguments.
-Default: [ '--single-quote', '--trailing-comma=all', '--arrow-parens=always',
-  '--print-width=80'] `
+Default: [] `
 
                                                  *codefmt:prettier_executable*
-The path to the prettier executable.
-Default: 'prettier' `
+The path to the prettier executable. String, list, or callable that takes no
+args and returns a string or a list. The default uses npx if available, so
+that the repository-local prettier will have priority.
+Default: function('s:LookupPrettierExecutable') `
 
                                                      *codefmt:rustfmt_options*
 Command line arguments to feed rustfmt. Either a list or callable that takes

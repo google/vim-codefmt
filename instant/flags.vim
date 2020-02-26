@@ -111,13 +111,24 @@ call s:plugin.Flag('shfmt_executable', 'shfmt')
 ""
 " Command line arguments to feed prettier. Either a list or callable that
 " takes no args and returns a list with command line arguments.
-call s:plugin.Flag('prettier_options', [
-    \ '--single-quote', '--trailing-comma=all',
-    \ '--arrow-parens=always', '--print-width=80'])
+call s:plugin.Flag('prettier_options', [])
 
 ""
-" The path to the prettier executable.
-call s:plugin.Flag('prettier_executable', 'prettier')
+" @private
+function s:LookupPrettierExecutable() abort
+  return executable('npx') ? ['npx', '--no-install', 'prettier'] : 'prettier'
+endfunction
+
+""
+" The path to the prettier executable. String, list, or callable that
+" takes no args and returns a string or a list. The default uses npx if
+" available, so that the repository-local prettier will have priority.
+call s:plugin.Flag('prettier_executable', function('s:LookupPrettierExecutable'))
+
+" Invalidate cache of detected prettier availability whenever
+" prettier_executable changes.
+call s:plugin.flags.prettier_executable.AddCallback(
+    \ maktaba#function#FromExpr('codefmt#prettier#InvalidateIsAvailable()'), 0)
 
 ""
 " Command line arguments to feed rustfmt. Either a list or callable that
