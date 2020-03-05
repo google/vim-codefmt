@@ -1,4 +1,5 @@
 " Copyright 2015 Google Inc. All rights reserved.
+" Copyright 2019 Jingrong Chen i@cjr.host
 "
 " Licensed under the Apache License, Version 2.0 (the "License");
 " you may not use this file except in compliance with the License.
@@ -34,3 +35,4 @@ call s:registry.AddExtension(codefmt#gn#GetFormatter())
 call s:registry.AddExtension(codefmt#buildifier#GetFormatter())
 call s:registry.AddExtension(codefmt#googlejava#GetFormatter())
 call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
+call s:registry.AddExtension(codefmt#hindent#GetFormatter())

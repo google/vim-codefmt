@@ -1,4 +1,5 @@
 " Copyright 2014 Google Inc. All rights reserved.
+" Copyright 2019 Jingrong Chen i@cjr.host
 "
 " Licensed under the Apache License, Version 2.0 (the "License");
 " you may not use this file except in compliance with the License.
@@ -115,3 +116,9 @@ call s:plugin.Flag('prettier_options', [
 ""
 " The path to the prettier executable.
 call s:plugin.Flag('prettier_executable', 'prettier')
+
+""
+" The path to the hindent executable.
+call s:plugin.Flag('hindent_executable', 'hindent')
+call s:plugin.Flag('hindent_indent_size', '2')
+call s:plugin.Flag('hindent_line_length', '80')
