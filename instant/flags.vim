@@ -162,3 +162,9 @@ call s:plugin.Flag('zprint_executable', 'zprint')
 ""
 " The path to the fish_indent executable.
 call s:plugin.Flag('fish_indent_executable', 'fish_indent')
+
+""
+" The path to the hindent executable.
+call s:plugin.Flag('hindent_executable', 'hindent')
+call s:plugin.Flag('hindent_indent_size', '2')
+call s:plugin.Flag('hindent_line_length', '80')
