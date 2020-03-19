@@ -1,0 +1,71 @@
+The built-in black formatter knows how to format python code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The black formatter expects the black executable to be installed on your
+system.
+
+  % f()
+  :FormatCode black
+  ! black .*
+  $ f()
+
+The name or path of the black executable can be configured via the
+black_executable flag if the default of "black" doesn't work.
+
+  :Glaive codefmt black_executable='blackpy3'
+  :FormatCode black
+  ! blackpy3 .*
+  $ f()
+  :Glaive codefmt black_executable='black'
+
+
+You can format any buffer with black specifying the formatter explicitly.
+Here's an example:
+
+  @clear
+  % if True: pass
+
+  :FormatCode black
+  ! black .*
+  $ if True:
+  $     pass
+  if True:
+      pass
+  @end
+
+Here's a second example:
+
+  @clear
+  % some_tuple=(   1,2, 3,'a'  );<CR>
+  |if bar : bar+=1;  bar=bar* bar<CR>
+  |else: bar-=1;
+
+  :FormatCode black
+  ! black .*
+  $ some_tuple = (1, 2, 3, "a");
+  $ if bar:
+  $     bar += 1
+  $     bar = bar * bar
+  $ else:
+  $     bar -= 1
+  some_tuple = (1, 2, 3, "a");
+  if bar:
+      bar += 1
+      bar = bar * bar
+  else:
+      bar -= 1
+  @end
