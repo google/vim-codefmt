@@ -57,6 +57,10 @@ Default: 'js-beautify' `
 The path to the yapf executable.
 Default: 'yapf' `
 
+                                                     *codefmt:black_executable*
+The path to the black executable.
+Default: 'black' `
+
                                                        *codefmt:gn_executable*
 The path to the gn executable.
 Default: 'gn' `
@@ -162,7 +166,7 @@ The current list of defaults by filetype is:
   * fish: fish_indent
   * gn: gn
   * go: gofmt
-  * python: autopep8, yapf
+  * python: autopep8, yapf, black
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*
