@@ -33,7 +33,7 @@
 "   * fish: fish_indent
 "   * gn: gn
 "   * go: gofmt
-"   * python: autopep8, yapf
+"   * python: autopep8, black, yapf
 
 
 let s:plugin = maktaba#plugin#Get('codefmt')

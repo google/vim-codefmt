@@ -53,6 +53,10 @@ Default: 'dartfmt' `
 The path to the js-beautify executable.
 Default: 'js-beautify' `
 
+                                                     *codefmt:black_executable*
+The path to the black executable.
+Default: 'black' `
+
                                                      *codefmt:yapf_executable*
 The path to the yapf executable.
 Default: 'yapf' `
@@ -162,7 +166,7 @@ The current list of defaults by filetype is:
   * fish: fish_indent
   * gn: gn
   * go: gofmt
-  * python: autopep8, yapf
+  * python: autopep8, black, yapf
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*
