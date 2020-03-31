@@ -23,20 +23,35 @@ function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
       return 0
     endif
 
-    let l:version_output =
-          \ maktaba#syscall#Create([l:executable, '--version']).Call().stdout
+    let l:syscall = maktaba#syscall#Create([l:executable, '--version'])
+    " Call with throw_errors disabled because some versions of clang-format
+    " misbehave and return exit code 1 along with the successful version
+    " output (see https://github.com/google/vim-codefmt/issues/84).
+    let l:version_output = l:syscall.Call(0).stdout
     let l:version_string = matchstr(l:version_output, '\v\d+(.\d+)+')
+    " If no version string was matched, cached version will be an empty list.
     let s:clang_format_version = map(split(l:version_string, '\.'), 'v:val + 0')
   endif
-  let l:length = min([len(a:minimum_version), len(s:clang_format_version)])
+  " Always fail check if version couldn't be fetched.
+  if empty(s:clang_format_version)
+    return 0
+  endif
+  " Compare each dotted version value in turn.
+  let l:length = max([len(a:minimum_version), len(s:clang_format_version)])
   for i in range(l:length)
-    if a:minimum_version[i] < s:clang_format_version[i]
+    " Consider missing version places as zero (e.g. 7 = 7.0 = 7.0.0).
+    let l:detected_value = get(s:clang_format_version, i, 0)
+    let l:minimum_value = get(a:minimum_version, i, 0)
+    " Any place value above or below than its minimum means entire version is
+    " above or below the minimum.
+    if l:detected_value > l:minimum_value
       return 1
-    elseif a:minimum_version[i] > s:clang_format_version[i]
+    elseif l:detected_value < l:minimum_value
       return 0
     endif
   endfor
-  return len(a:minimum_version) <= len(s:clang_format_version)
+  " All version numbers were equal, so version was at least minimum.
+  return 1
 endfunction
 
 
