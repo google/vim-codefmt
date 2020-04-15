@@ -120,32 +120,49 @@ function! codefmt#clangformat#GetFormatter() abort
       let l:cmd += ['-lines', l:startline . ':' . l:endline]
     endfor
 
+    let l:lines = getline(1, line('$'))
+
     " Version 3.4 introduced support for cursor tracking
     " http://llvm.org/releases/3.4/tools/clang/docs/ClangFormat.html
     let l:supports_cursor = s:ClangFormatHasAtLeastVersion([3, 4])
     if l:supports_cursor
-      " line2byte counts bytes from 1, and col counts from 1, so -2 
-      let l:cursor_pos = line2byte(line('.')) + col('.') - 2
+      " Avoid line2byte: https://github.com/vim/vim/issues/5930
+      let l:cursor_pos = col('.') - 1
+      for l:i in range(1, line('.') - 1)
+        let l:cursor_pos += len(l:lines[l:i - 1]) + 1
+      endfor
       let l:cmd += ['-cursor', string(l:cursor_pos)]
     endif
 
-    let l:input = join(getline(1, line('$')), "\n")
+    let l:input = join(l:lines, "\n")
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call()
     let l:formatted = split(l:result.stdout, "\n")
 
-    if !l:supports_cursor
-      call maktaba#buffer#Overwrite(1, line('$'), l:formatted[0:])
-    else
-      call maktaba#buffer#Overwrite(1, line('$'), l:formatted[1:])
+    if l:supports_cursor
+      " With -cursor, the first line is a JSON object.
+      let l:header = l:formatted[0]
+      let l:formatted = l:formatted[1:]
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
       try
-        let l:clang_format_output_json = maktaba#json#Parse(l:formatted[0])
-        let l:new_cursor_pos =
-            \ maktaba#ensure#IsNumber(l:clang_format_output_json.Cursor) + 1
-        execute 'goto' l:new_cursor_pos
+        let l:header_json = maktaba#json#Parse(l:header)
+        let l:offset = maktaba#ensure#IsNumber(l:header_json.Cursor)
+        " Compute line/col, avoid goto: https://github.com/vim/vim/issues/5930
+        let l:new_line = 0
+        for l:line in l:formatted
+          let l:offset_after_next = l:offset - len(l:line) - 1
+          if l:offset_after_next < 0
+            break
+          endif
+          let l:offset = l:offset_after_next
+          let l:new_line += 1
+        endfor
+        call cursor(l:new_line + 1, l:offset + 1)
       catch
         call maktaba#error#Warn('Unable to parse clang-format cursor pos: %s',
             \ v:exception)
       endtry
+    else
+      call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
     endif
   endfunction
 
