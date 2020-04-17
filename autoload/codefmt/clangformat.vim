@@ -55,6 +55,36 @@ function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
 endfunction
 
 
+" Inputs are 1-based (row, col) coordinates into lines.
+" Returns the corresponding zero-based offset into lines->join("\n")
+function! s:PositionToOffset(row, col, lines) abort
+  let l:offset = a:col - 1
+  if a:row > 1
+    for l:line in a:lines[0 : a:row - 2]
+      let l:offset += len(l:line) + 1
+    endfor
+  endif
+  return l:offset
+endfunction
+
+
+" Input is zero-based offset into lines->join("\n")
+" Returns the 1-based [row, col] coordinates into lines.
+function! s:OffsetToPosition(offset, lines) abort
+  let l:lines_consumed = 0
+  let l:chars_left = a:offset
+  for l:line in a:lines
+    let l:chars_after_next = l:chars_left - len(l:line) - 1
+    if l:chars_after_next < 0
+      break
+    endif
+    let l:chars_left = l:chars_after_next
+    let l:lines_consumed += 1
+  endfor
+  return [l:lines_consumed + 1, l:chars_left + 1]
+endfunction
+
+
 ""
 " @private
 " Invalidates the cached clang-format version.
@@ -127,10 +157,7 @@ function! codefmt#clangformat#GetFormatter() abort
     let l:supports_cursor = s:ClangFormatHasAtLeastVersion([3, 4])
     if l:supports_cursor
       " Avoid line2byte: https://github.com/vim/vim/issues/5930
-      let l:cursor_pos = col('.') - 1
-      for l:i in range(1, line('.') - 1)
-        let l:cursor_pos += len(l:lines[l:i - 1]) + 1
-      endfor
+      let l:cursor_pos = s:PositionToOffset(line('.'), col('.'), l:lines)
       let l:cmd += ['-cursor', string(l:cursor_pos)]
     endif
 
@@ -140,23 +167,14 @@ function! codefmt#clangformat#GetFormatter() abort
 
     if l:supports_cursor
       " With -cursor, the first line is a JSON object.
-      let l:header = l:formatted[0]
-      let l:formatted = l:formatted[1:]
+      let l:header = remove(l:formatted, 0)
       call maktaba#buffer#Overwrite(1, line('$'), l:formatted)
       try
         let l:header_json = maktaba#json#Parse(l:header)
         let l:offset = maktaba#ensure#IsNumber(l:header_json.Cursor)
         " Compute line/col, avoid goto: https://github.com/vim/vim/issues/5930
-        let l:new_line = 0
-        for l:line in l:formatted
-          let l:offset_after_next = l:offset - len(l:line) - 1
-          if l:offset_after_next < 0
-            break
-          endif
-          let l:offset = l:offset_after_next
-          let l:new_line += 1
-        endfor
-        call cursor(l:new_line + 1, l:offset + 1)
+        let [l:new_line, l:new_col] = s:OffsetToPosition(l:offset, l:formatted)
+        call cursor(l:new_line, l:new_col)
       catch
         call maktaba#error#Warn('Unable to parse clang-format cursor pos: %s',
             \ v:exception)
