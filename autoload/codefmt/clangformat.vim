@@ -81,7 +81,7 @@ function! codefmt#clangformat#GetFormatter() abort
     if &filetype is# 'c' || &filetype is# 'cpp' ||
         \ &filetype is# 'proto' || &filetype is# 'javascript' ||
         \ &filetype is# 'objc' || &filetype is# 'objcpp' ||
-        \ &filetype is# 'typescript'
+        \ &filetype is# 'typescript' || &filetype is# 'arduino'
       return 1
     endif
     " Version 3.6 adds support for java
