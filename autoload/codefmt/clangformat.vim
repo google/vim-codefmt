@@ -74,11 +74,11 @@ function! s:OffsetToPosition(offset, lines) abort
   let l:lines_consumed = 0
   let l:chars_left = a:offset
   for l:line in a:lines
-    let l:chars_after_next = l:chars_left - len(l:line) - 1
-    if l:chars_after_next < 0
+    let l:line_len = len(l:line) + 1
+    if l:chars_left < l:line_len
       break
     endif
-    let l:chars_left = l:chars_after_next
+    let l:chars_left -= l:line_len
     let l:lines_consumed += 1
   endfor
   return [l:lines_consumed + 1, l:chars_left + 1]
