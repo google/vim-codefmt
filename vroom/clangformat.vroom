@@ -178,7 +178,33 @@ that clang-format has a version >= 3.4).
   :echomsg getline('.')[col('.')-1]
   ~ 5
 
+This should work when with textprops set in the file, despite various functions
+like line2byte() and :goto being buggy in that case.
+(See https://github.com/vim/vim/issues/5930 for bug details)
 
+  @clear
+  % int f()     {<CR>
+  |    int i=1;<CR>
+  |   return 1234567890; }<CR>
+  :call prop_type_add('keyword', {})
+  :call prop_add(1, 1, {'length': 3, 'type': 'keyword'})
+  :call cursor(2, 10)
+  :echomsg getline('.')[col('.')-1]
+  ~ =
+  :FormatCode clang-format
+  ! clang-format -style file .* -cursor 23 .*2>.*
+  $ { "Cursor": 18 }
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  int f() {
+    int i = 1;
+    return 1234567890;
+  }
+  @end
+  :echomsg getline('.')[col('.')-1]
+  ~ =
 
 You might have wondered where the "-style file" above comes from. The
 clang-format tool accepts a "style" option to control the formatting style. By
