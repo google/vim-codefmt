@@ -58,10 +58,10 @@ endfunction
 " Inputs are 1-based (row, col) coordinates into lines.
 " Returns the corresponding zero-based offset into lines->join("\n")
 function! s:PositionToOffset(row, col, lines) abort
-  let l:offset = a:col - 1
+  let l:offset = a:col - 1 " 1-based to 0-based
   if a:row > 1
-    for l:line in a:lines[0 : a:row - 2]
-      let l:offset += len(l:line) + 1
+    for l:line in a:lines[0 : a:row - 2] " 1-based to 0-based, exclude current
+      let l:offset += len(l:line) + 1 " +1 for newline
     endfor
   endif
   return l:offset
@@ -74,14 +74,14 @@ function! s:OffsetToPosition(offset, lines) abort
   let l:lines_consumed = 0
   let l:chars_left = a:offset
   for l:line in a:lines
-    let l:line_len = len(l:line) + 1
+    let l:line_len = len(l:line) + 1 " +1 for newline
     if l:chars_left < l:line_len
       break
     endif
     let l:chars_left -= l:line_len
     let l:lines_consumed += 1
   endfor
-  return [l:lines_consumed + 1, l:chars_left + 1]
+  return [l:lines_consumed + 1, l:chars_left + 1] " 0-based to 1-based
 endfunction
 
 
