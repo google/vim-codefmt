@@ -30,7 +30,8 @@ The path to the autopep8 executable.
 Default: 'autopep8' `
 
                                              *codefmt:clang_format_executable*
-The path to the clang-format executable.
+The path to the clang-format executable. String, list, or callable that takes
+no args and returns a string or a list.
 Default: 'clang-format' `
 
                                                   *codefmt:clang_format_style*

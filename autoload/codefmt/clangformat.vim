@@ -18,12 +18,13 @@ let s:plugin = maktaba#plugin#Get('codefmt')
 
 function! s:ClangFormatHasAtLeastVersion(minimum_version) abort
   if !exists('s:clang_format_version')
-    let l:executable = s:plugin.Flag('clang_format_executable')
-    if codefmt#ShouldPerformIsAvailableChecks() && !executable(l:executable)
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'clang_format_executable')
+    if codefmt#ShouldPerformIsAvailableChecks() && !executable(l:cmd[0])
       return 0
     endif
 
-    let l:syscall = maktaba#syscall#Create([l:executable, '--version'])
+    let l:syscall = maktaba#syscall#Create(l:cmd + ['--version'])
     " Call with throw_errors disabled because some versions of clang-format
     " misbehave and return exit code 1 along with the successful version
     " output (see https://github.com/google/vim-codefmt/issues/84).
@@ -104,7 +105,13 @@ function! codefmt#clangformat#GetFormatter() abort
           \ 'configure the clang_format_executable flag'}
 
   function l:formatter.IsAvailable() abort
-    return executable(s:plugin.Flag('clang_format_executable'))
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'clang_format_executable')
+    if !empty(l:cmd) && executable(l:cmd[0])
+      return 1
+    else
+      return 0
+    endif
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
@@ -136,9 +143,8 @@ function! codefmt#clangformat#GetFormatter() abort
       return
     endif
 
-    let l:cmd = [
-        \ s:plugin.Flag('clang_format_executable'),
-        \ '-style', l:style]
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'clang_format_executable') + ['-style', l:style]
     let l:fname = expand('%:p')
     if !empty(l:fname)
       let l:cmd += ['-assume-filename', l:fname]
