@@ -109,7 +109,8 @@ call s:plugin.Flag('google_java_executable', 'google-java-format')
 call s:plugin.Flag('shfmt_options', ['-i', '2', '-sr', '-ci'])
 
 ""
-" The path to the shfmt executable.
+" The path to the shfmt executable. String, list, or callable that
+" takes no args and returns a string or a list.
 call s:plugin.Flag('shfmt_executable', 'shfmt')
 
 ""
