@@ -52,7 +52,8 @@ call s:plugin.flags.autopep8_executable.AddCallback(
     \ maktaba#function#FromExpr('codefmt#autopep8#InvalidateVersion()'), 0)
 
 ""
-" The path to the clang-format executable.
+" The path to the clang-format executable. String, list, or callable that
+" takes no args and returns a string or a list.
 call s:plugin.Flag('clang_format_executable', 'clang-format')
 " Invalidate cache of detected clang-format version when this is changed, regardless
 " of {value} arg.
