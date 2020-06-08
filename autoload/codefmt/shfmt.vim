@@ -26,7 +26,13 @@ function! codefmt#shfmt#GetFormatter() abort
           \ 'and configure the shfmt_executable flag'}
 
   function l:formatter.IsAvailable() abort
-    return executable(s:plugin.Flag('shfmt_executable'))
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'shfmt_executable')
+    if !empty(l:cmd) && executable(l:cmd[0])
+      return 1
+    else
+      return 0
+    endif
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
@@ -48,7 +54,8 @@ function! codefmt#shfmt#GetFormatter() abort
           \ 'shfmt_options flag must be list or callable. Found %s',
           \ string(l:Shfmt_options))
     endif
-    let l:cmd = [ s:plugin.Flag('shfmt_executable') ] + l:shfmt_options
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'shfmt_executable') + l:shfmt_options
     try
       " Feature request for range formatting:
       " https://github.com/mvdan/sh/issues/333

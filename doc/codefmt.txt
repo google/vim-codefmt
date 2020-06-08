@@ -82,7 +82,8 @@ Google's style. See https://github.com/mvdan/sh for details.
 Default: ['-i', '2', '-sr', '-ci'] `
 
                                                     *codefmt:shfmt_executable*
-The path to the shfmt executable.
+The path to the shfmt executable. String, list, or callable that takes no args
+and returns a string or a list.
 Default: 'shfmt' `
 
                                                     *codefmt:prettier_options*
