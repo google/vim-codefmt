@@ -186,8 +186,10 @@ like line2byte() and :goto being buggy in that case.
   % int f()     {<CR>
   |    int i=1;<CR>
   |   return 1234567890; }<CR>
-  :call prop_type_add('keyword', {})
-  :call prop_add(1, 1, {'length': 3, 'type': 'keyword'})
+  :if has('textprop')
+  :  call prop_type_add('keyword', {})
+  :  call prop_add(1, 1, {'length': 3, 'type': 'keyword'})
+  :endif
   :call cursor(2, 10)
   :echomsg getline('.')[col('.')-1]
   ~ =
