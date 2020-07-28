@@ -107,20 +107,40 @@ endfunction
 " @function(#SetWhetherToPerformIsAvailableChecksForTesting), skips the
 " IsAvailable check and always returns true.
 function! s:IsAvailable(formatter) abort
-  if codefmt#ShouldPerformIsAvailableChecks()
-    return a:formatter.IsAvailable()
+  if !codefmt#ShouldPerformIsAvailableChecks()
+    return 1
   endif
-  return 1
+  return a:formatter.IsAvailable()
+endfunction
+
+
+" Checks whether {formatter} is available, safely handling errors by logging
+" an error and returning 0.
+function! s:IsAvailableSafe(formatter) abort
+  try
+    return s:IsAvailable(a:formatter)
+  catch /.*/
+    call maktaba#error#Shout(
+        \ 'Failed to evaluate whether formatter %s is available: %s',
+        \ a:formatter.name,
+        \ v:exception)
+    return 0
+  endtry
 endfunction
 
 
 ""
 " Detects whether a formatter has been defined for the current buffer/filetype.
 function! codefmt#IsFormatterAvailable() abort
-  let l:formatters = copy(s:registry.GetExtensions())
-  let l:is_available = 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)'
-  return !empty(filter(l:formatters, l:is_available)) ||
-      \ !empty(get(b:, 'codefmt_formatter'))
+  if !empty(get(b:, 'codefmt_formatter'))
+    return 1
+  endfor
+  for l:formatter in s:registry.GetExtensions()
+    if l:formatter.AppliesToBuffer() && s:IsAvailableSafe(l:formatter)
+      return 1
+    endif
+  endfor
+  return 0
 endfunction
 
 
@@ -153,23 +173,32 @@ function! s:GetFormatter(...) abort
       return
     endif
     let l:formatter = l:selected_formatters[0]
-    if !s:IsAvailable(l:formatter)
+    try
+      let l:formatter_is_available = s:IsAvailable(l:formatter)
+    catch /.*/
+      call maktaba#error#Shout(
+          \ 'Error checking if formatter %s is available: %s',
+          \ l:formatter.name,
+          \ v:exception)
+      return
+    endtry
+    if !l:formatter_is_available
       call maktaba#error#Shout(s:GetSetupInstructions(l:formatter))
       return
     endif
   else
     " No explicit name, use default.
+    let l:applicable_formatters = filter(
+        \ copy(l:formatters), 'v:val.AppliesToBuffer()')
     let l:default_formatters = filter(
-        \ copy(l:formatters), 'v:val.AppliesToBuffer() && s:IsAvailable(v:val)')
+        \ copy(l:applicable_formatters), 's:IsAvailableSafe(v:val)')
     if !empty(l:default_formatters)
       let l:formatter = l:default_formatters[0]
     else
       " Check if we have formatters that are not available for some reason.
       " Report a better error message in that case.
-      let l:unavailable_formatters = filter(
-          \ copy(l:formatters), 'v:val.AppliesToBuffer()')
-      if !empty(l:unavailable_formatters)
-        let l:error = join(map(copy(l:unavailable_formatters),
+      if !empty(l:applicable_formatters)
+        let l:error = join(map(copy(l:applicable_formatters),
             \ 's:GetSetupInstructions(v:val)'), "\n")
       else
         let l:error = 'Not available. codefmt doesn''t have a default ' .
@@ -248,7 +277,7 @@ function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos) abort
   let l:groups = [[], [], []]
   for l:formatter in s:registry.GetExtensions()
     let l:key = l:formatter.AppliesToBuffer() ? (
-        \ l:formatter.IsAvailable() ? 0 : 1) : 2
+        \ s:IsAvailable(l:formatter) ? 0 : 1) : 2
     call add(l:groups[l:key], l:formatter.name)
   endfor
   return join(l:groups[0] + l:groups[1] + l:groups[2], "\n")
