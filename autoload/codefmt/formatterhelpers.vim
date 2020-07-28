@@ -98,12 +98,12 @@ function! codefmt#formatterhelpers#ResolveFlagToArray(flag_name) abort
             \ a:flag_name, l:value)
     endif
     " Convert spaceless string to single-element list.
-    let l:value = [l:value]
-  elseif !maktaba#value#IsList(l:value)
-    throw maktaba#error#WrongType(
-          \ '%s flag should be a list after calling. Found %s',
-          \ a:flag_name, maktaba#value#TypeName(l:value))
+    return [l:value]
+  elseif maktaba#value#IsList(l:value)
+    return l:value
   endif
 
-  return l:value
+  throw maktaba#error#WrongType(
+      \ '%s flag should be a list after calling. Found %s',
+      \ a:flag_name, maktaba#value#TypeName(l:value))
 endfunction
