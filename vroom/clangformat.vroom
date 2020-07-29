@@ -132,79 +132,8 @@ It can format specific line ranges of code using :FormatLines.
   }
   @end
 
-
-
-It will keep the cursor in the correct position when formatting code (assuming
-that clang-format has a version >= 3.4).
-
-  :Glaive codefmt clang_format_executable='clang-format-3.3'
-  @clear
-  % int f() { int i = 1; return 1234567890; }
-
-  :FormatCode clang-format
-  ! clang-format-3.3 --version .*
-  $ clang-format version 3.3.0 (tags/testing)
-  ! clang-format-3.3 -style file -lines 1:1 2>.*
-  $ int f() {
-  $   int i = 1;
-  $   return 1234567890;
-  $ }
-  int f() {
-    int i = 1;
-    return 1234567890;
-  }
-  @end
-  :Glaive codefmt clang_format_executable='clang-format'
-  @clear
-  % int f() { int i = 1; return 1234567890; }
-
-  :goto 33
-  :echomsg getline('.')[col('.')-1]
-  ~ 5
-  :FormatCode clang-format
-  ! clang-format --version .*
-  $ clang-format version 3.7.0 (tags/testing)
-  ! clang-format -style file .* -cursor 32 .*2>.*
-  $ { "Cursor": 36 }
-  $ int f() {
-  $   int i = 1;
-  $   return 1234567890;
-  $ }
-  int f() {
-    int i = 1;
-    return 1234567890;
-  }
-  @end
-  :echomsg getline('.')[col('.')-1]
-  ~ 5
-
-This should work when with textprops set in the file, despite various functions
-like line2byte() and :goto being buggy in that case.
-(See https://github.com/vim/vim/issues/5930 for bug details)
-
-  @clear
-  % int f()     {<CR>
-  |    int i=1;<CR>
-  |   return 1234567890; }<CR>
-  :call prop_type_add('keyword', {})
-  :call prop_add(1, 1, {'length': 3, 'type': 'keyword'})
-  :call cursor(2, 10)
-  :echomsg getline('.')[col('.')-1]
-  ~ =
-  :FormatCode clang-format
-  ! clang-format -style file .* -cursor 23 .*2>.*
-  $ { "Cursor": 18 }
-  $ int f() {
-  $   int i = 1;
-  $   return 1234567890;
-  $ }
-  int f() {
-    int i = 1;
-    return 1234567890;
-  }
-  @end
-  :echomsg getline('.')[col('.')-1]
-  ~ =
+Note this will usually maintain cursor position correctly even when the code
+under the cursor moves. See clangformat-cursor.vroom for examples.
 
 You might have wondered where the "-style file" above comes from. The
 clang-format tool accepts a "style" option to control the formatting style. By

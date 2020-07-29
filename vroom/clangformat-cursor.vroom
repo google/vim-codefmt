@@ -1,0 +1,90 @@
+These examples demonstrate specific cursor positioning behavior related to the
+overall clang-format formatting demonstrated in clangformat.vroom. See the
+examples in that file first if you're unfamiliar with formatting behavior.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+It will keep the cursor in the correct position when formatting code (assuming
+that clang-format has a version >= 3.4).
+
+  :Glaive codefmt clang_format_executable='clang-format-3.3'
+  % int f() { int i = 1; return 1234567890; }
+
+  :FormatCode clang-format
+  ! clang-format-3.3 --version .*
+  $ clang-format version 3.3.0 (tags/testing)
+  ! clang-format-3.3 -style file -lines 1:1 2>.*
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  int f() {
+    int i = 1;
+    return 1234567890;
+  }
+  @end
+
+  :Glaive codefmt clang_format_executable='clang-format'
+  @clear
+  % int f() { int i = 1; return 1234567890; }
+
+  :goto 33
+  :echomsg getline('.')[col('.')-1]
+  ~ 5
+  :FormatCode clang-format
+  ! clang-format --version .*
+  $ clang-format version 3.7.0 (tags/testing)
+  ! clang-format -style file .* -cursor 32 .*2>.*
+  $ { "Cursor": 36 }
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  :echomsg getline('.')[col('.')-1]
+  ~ 5
+
+Some vim builds that support textprops had a bug with determining cursor
+position (see https://github.com/vim/vim/issues/5930), but codefmt's cursor
+positioning should still maintain cursor position correctly for those cases.
+
+Note: The following test scenario will skip the relevant textprops setup and run
+harmlessly without doing any interesting verification in vim versions that don't
+support textprops.
+
+  @clear
+  :function PlaceTextpropIfSupported(lnum, col, length) abort<CR>
+  |  if !has('textprops')<CR>
+  |    return<CR>
+  |  endif<CR>
+  |  call prop_type_add('keyword', {})<CR>
+  |  call prop_add(a:lnum, a:col, {'length': a:length, 'type': 'keyword'})<CR>
+  |endfunction
+  % int f()     {<CR>
+  |    int i=1;<CR>
+  |   return 1234567890; }<CR>
+  :call PlaceTextpropIfSupported(1, 1, 3)
+  :call cursor(2, 10)
+  :echomsg getline('.')[col('.')-1]
+  ~ =
+  :FormatCode clang-format
+  ! clang-format -style file .* -cursor 23 .*2>.*
+  $ { "Cursor": 18 }
+  $ int f() {
+  $   int i = 1;
+  $   return 1234567890;
+  $ }
+  :echomsg getline('.')[col('.')-1]
+  ~ =
+
