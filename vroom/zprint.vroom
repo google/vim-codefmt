@@ -14,7 +14,8 @@ examples.
 
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
-The zprint formatter expects the zprint executable to be installed on your system.
+The zprint formatter expects the zprint executable to be installed on your
+system.
 
   :FormatCode zprint
   ! cd .* zprint .*

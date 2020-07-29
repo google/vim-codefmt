@@ -15,7 +15,8 @@ examples.
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
-The rustfmt formatter expects the rustfmt executable to be installed on your system.
+The rustfmt formatter expects the rustfmt executable to be installed on your
+system.
 
   % fn main(){println!("Hello World!");}
   :FormatCode rustfmt
