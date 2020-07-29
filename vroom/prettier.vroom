@@ -20,11 +20,12 @@ with a simple string.
 
   :Glaive codefmt prettier_executable='prettier'
 
-The prettier formatter expects the prettier executable to be installed on your system.
+The prettier formatter expects the prettier executable to be installed on your
+system.
 
   % function HelloWorld(){if(!greeting){return null};}
   :FormatCode prettier
-  ! cd .* prettier .*
+  ! cd .* prettier .*--parser babel.*
   $ function HelloWorld() {
   $   if (!greeting) {
   $     return null;
@@ -77,6 +78,7 @@ Errors are reported using the quickfix list.
   |[error]   1 | function foo() {\n
   |[error] > 2 |\n
   |[error]     | ^'
+  ~ (1 of 1): SyntaxError: Unexpected token
   function foo() {
   @end
   :echomsg line('.') . ',' . col('.')
@@ -92,7 +94,7 @@ It can format specific line ranges of code using :FormatLines.
   |function Greet(){if(!greeting){return null};}
 
   :1,1FormatLines prettier
-  ! cd .* prettier .*--parser babylon --range-end 50.*2>.*
+  ! cd .* prettier .*--range-end 50.*2>.*
   $ function HelloWorld() {
   $   if (!greeting) {
   $     return null;
