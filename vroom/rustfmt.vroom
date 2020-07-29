@@ -68,6 +68,7 @@ Errors are reported using the quickfix list.
   |  |           - ^\n
   |  |           |\n
   |  |           un-closed delimiter'
+  ~ (1 of 1): this file contains an un-closed delimiter
   fn main() {
   @end
   :echomsg line('.') . ',' . col('.')

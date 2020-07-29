@@ -79,7 +79,8 @@ Errors are reported.
   ! fish_indent .*2> (.*)
   $ echo test error >\1 (command)
   $ 1 (status)
-  ~ test error
+  ~ Error formatting file:* (glob)
+  ~ *test error* (glob)
   function f;
   @end
 
