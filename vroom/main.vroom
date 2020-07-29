@@ -95,15 +95,15 @@ the same number of lines again.
 
 
 
-Formatting doesn't move the cursor.
+Even when the text under the cursor moves, formatting preserves the literal
+cursor position (except in formatter implementations that can intelligently
+preserve logical position; see examples in vroom/clangformat-cursor.vroom).
 
   % void f() {int i;<CR>
   |SomeFunction();<CR>
   |}
 
-  > 1G/Fun<CR>
-  :echomsg line('.') . ',' . col('.')
-  ~ 2,5
+  :call cursor(2, 5)
   :FormatCode clang-format
   ! clang-format .*
   $ void f() {
@@ -115,6 +115,10 @@ Formatting doesn't move the cursor.
     SomeFunction();
   }
   @end
+
+In this case the cursor is still at position (2, 5), which is no longer over the
+F in SomeFunction.
+
   :echomsg line('.') . ',' . col('.')
   ~ 2,5
 

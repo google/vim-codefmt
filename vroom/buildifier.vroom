@@ -67,6 +67,7 @@ Errors are reported using the quickfix list.
   ! buildifier .*2> (.*)
   $ echo 'stdin:2:15: syntax error near ]' >\1 (command)
   $ 1 (status)
+  ~ (1 of 1): syntax error near ]
   #
   java_package(])
   @end
@@ -84,11 +85,12 @@ slightly different format, prefixed with the filename we passed.
   :set filetype=bzl
   % load()
 
-  > go
+  :call cursor(1, 1)
   :FormatCode
   ! buildifier .*2> (.*)
   $ echo '/foo/bar/BUILD:1:7: syntax error near )' >\1 (command)
   $ 1 (status)
+  ~ (1 of 1): syntax error near )
   load()
   @end
 
@@ -104,9 +106,11 @@ report one column past the actual error.)
 If there are no errors, then the quickfix list is (currently, see
 https://github.com/google/vim-codefmt/issues/58) left alone:
 
-  > godd
+  @clear
+  :silent file /foo/bar/BUILD
+  :set filetype=bzl
   % load('@io_bazel_rules_go//proto:def.bzl','go_proto_library')
-  > go
+  :call cursor(1, 1)
 
   :FormatCode
   ! buildifier -path /foo/bar/BUILD .*
@@ -116,4 +120,3 @@ https://github.com/google/vim-codefmt/issues/58) left alone:
   ~ 1,1
   :echomsg len(getqflist())
   ~ 1
-  :set filetype=

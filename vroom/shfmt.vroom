@@ -58,6 +58,7 @@ Errors are reported using the quickfix list.
   ! shfmt .*2> (.*)
   $ echo '<standard input>:1:7: reached EOF without matching { with }' >\1 (command)
   $ 1 (status)
+  ~ (1 of 1): reached EOF without matching { with }
   foo() {
   @end
   :echomsg line('.') . ',' . col('.')

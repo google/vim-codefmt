@@ -60,7 +60,7 @@ same formatter.
 You can disable it for the current buffer with :NoAutoFormatBuffer. After that,
 the buffer will go back to doing nothing special when you save.
 
-  :%delete
+  @clear
   :NoAutoFormatBuffer
   % void f() {int i; SomeFunction(parameter,// comment<CR>
   |i);}
