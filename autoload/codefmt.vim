@@ -134,7 +134,7 @@ endfunction
 function! codefmt#IsFormatterAvailable() abort
   if !empty(get(b:, 'codefmt_formatter'))
     return 1
-  endfor
+  endif
   for l:formatter in s:registry.GetExtensions()
     if l:formatter.AppliesToBuffer() && s:IsAvailableSafe(l:formatter)
       return 1
