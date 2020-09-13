@@ -67,6 +67,17 @@ call s:plugin.flags.clang_format_executable.AddCallback(
 call s:plugin.Flag('clang_format_style', 'file')
 
 ""
+" The path to the cmake-format executable. String, list, or callable that
+" takes no args and returns a string or a list.
+call s:plugin.Flag('cmake_format_executable', 'cmake-format')
+
+""
+" The path to the cmake-format configuration file for cmake-format to use.
+" See https://cmake-format.readthedocs.io/en/latest/installation.html for
+" details.
+call s:plugin.Flag('cmake_format_config', '')
+
+""
 " The path to the gofmt executable. For example, this can be changed to
 " "goimports" (https://godoc.org/golang.org/x/tools/cmd/goimports) to
 " additionally adjust imports when formatting.
