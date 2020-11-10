@@ -49,7 +49,7 @@ function! codefmt#yapf#GetFormatter() abort
     let l:input = join(l:lines, "\n")
 
     let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call(0)
-    if v:shell_error == 1 " Indicates an error with parsing
+    if v:shell_error
       call maktaba#error#Shout('Error formatting file: %s', l:result.stderr)
       return
     endif
