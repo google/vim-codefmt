@@ -28,6 +28,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * TypeScript (clang-format)
 * Shell (shfmt)
 * [Vue](http://vuejs.org) (prettier)
+* Nix (nixpkgs-fmt)
 
 # Commands
 

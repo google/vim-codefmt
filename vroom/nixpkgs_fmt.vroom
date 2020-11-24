@@ -1,0 +1,50 @@
+The built-in nixpkgs-fmt formatter knows how to format Nix code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The nixpkgs-fmt formatter expects the nixpkgs-fmt executable to be installed on
+your system.
+
+  % f()
+  :FormatCode nixpkgs-fmt
+  ! nixpkgs-fmt .*
+  $ f()
+
+The name or path of the nixpkgs-fmt executable can be configured via the
+nixpkgs_fmt_executable flag if the default of "nixpkgs-fmt" doesn't work.
+
+  :Glaive codefmt nixpkgs_fmt_executable='nixpkgsfmt'
+  :FormatCode nixpkgs-fmt
+  ! nixpkgsfmt .*
+  $ f()
+  :Glaive codefmt nixpkgs_fmt_executable='nixpkgs-fmt'
+
+
+You can format any buffer with nixpkgs-fmt specifying the formatter explicitly.
+Here's an example:
+
+  @clear
+  % { foo = "bar" ;}
+
+  :FormatCode nixpkgs-fmt
+  ! nixpkgs-fmt .*
+  $ {
+  $   foo = "bar";
+  $ }
+  {
+    foo = "bar";
+  }
+  @end
