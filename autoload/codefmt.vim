@@ -33,6 +33,7 @@
 "   * fish: fish_indent
 "   * gn: gn
 "   * go: gofmt
+"   * ocaml: ocamlformat
 "   * python: autopep8, black, yapf
 
 

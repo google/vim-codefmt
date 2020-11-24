@@ -54,13 +54,13 @@ Default: 'dartfmt' `
 The path to the js-beautify executable.
 Default: 'js-beautify' `
 
-                                                     *codefmt:black_executable*
-The path to the black executable.
-Default: 'black' `
-
                                                      *codefmt:yapf_executable*
 The path to the yapf executable.
 Default: 'yapf' `
+
+                                                    *codefmt:black_executable*
+The path to the black executable.
+Default: 'black' `
 
                                                        *codefmt:gn_executable*
 The path to the gn executable.
@@ -122,6 +122,10 @@ Default: 'zprint' `
 The path to the fish_indent executable.
 Default: 'fish_indent' `
 
+                                              *codefmt:ocamlformat_executable*
+The path to the ocamlformat executable.
+Default: 'ocamlformat' `
+
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
 Default: 1 `
@@ -168,6 +172,7 @@ The current list of defaults by filetype is:
   * fish: fish_indent
   * gn: gn
   * go: gofmt
+  * ocaml: ocamlformat
   * python: autopep8, black, yapf
 
 ==============================================================================

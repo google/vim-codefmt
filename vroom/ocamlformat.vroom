@@ -1,0 +1,100 @@
+The built-in ocamlformat formatter knows how to format ocaml code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The ocamlformat formatter expects the ocamlformat executable to be installed on your system.
+
+  @clear
+  % f()
+  :FormatCode ocamlformat
+  ! ocamlformat .*
+  $ ;;
+  $ f ()
+  ;;
+  f ()
+  @end
+
+The name or path of the ocamlformat executable can be configured via the
+ocamlformat_executable flag if the default of "ocamlformat" doesn't work.
+
+  @clear
+  :Glaive codefmt ocamlformat_executable='myocamlformat'
+  :FormatCode ocamlformat
+  ! myocamlformat .*
+  $ ;;
+  $ f ()
+  :Glaive codefmt ocamlformat_executable='ocamlformat'
+
+
+You can format any buffer with ocamlformat specifying the formatter explicitly.
+
+  @clear
+  % let x=5 in<CR>
+  |  let inc x=x+1 in<CR>
+  |    print_endline (string_of_int (inc x))
+
+  :FormatCode ocamlformat
+  ! ocamlformat .*
+  $ ;;
+  $ let x = 5 in
+  $ let inc x = x + 1 in
+  $ print_endline (string_of_int (inc x))
+  ;;
+  let x = 5 in
+  let inc x = x + 1 in
+  print_endline (string_of_int (inc x))
+  @end
+
+The ocaml filetype will use the ocamlformat formatter by default. The path to the
+file being edited is passed to ocamlformat so that it can adjust to whether the
+file is an implementation or an interface file.
+
+  @clear
+  % f()
+
+  :silent file /foo/bar/test.ml
+  :set filetype=ocaml
+  :FormatCode
+  ! ocamlformat - --name /foo/bar/test.ml .*
+  $ ;;
+  $ f ()
+  ;;
+  f ()
+  @end
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % print_string "Hello";;<CR>
+  |let x=1 in let y=2 in<CR>
+  |y+2
+
+  :2,3FormatLines ocamlformat
+  ! ocamlformat .*
+  $ ;;
+  $ let x = 1 in
+  $ let y = 2 in
+  $ y + 2
+  print_string "Hello";;
+  ;;
+  let x = 1 in
+  let y = 2 in
+  y + 2
+  @end
+
+NOTE: the ocamlformat formatter does not natively support range formatting, so there
+are certain limitations like not being able to format misaligned braces.
+

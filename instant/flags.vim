@@ -168,3 +168,7 @@ call s:plugin.Flag('zprint_executable', 'zprint')
 ""
 " The path to the fish_indent executable.
 call s:plugin.Flag('fish_indent_executable', 'fish_indent')
+
+""
+" The path to the ocamlformat executable.
+call s:plugin.Flag('ocamlformat_executable', 'ocamlformat')

@@ -22,6 +22,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * Java (google-java-format or clang-format)
 * JavaScript (clang-format or [prettier](https://prettier.io))
 * JSON (js-beautify)
+* [OCaml](https://ocaml.org) ([ocamlformat](https://github.com/ocaml-ppx/ocamlformat))
 * Proto (clang-format)
 * Python (Autopep8, Black, or YAPF)
 * Rust ([rustfmt](https://github.com/rust-lang/rustfmt))
