@@ -168,3 +168,7 @@ call s:plugin.Flag('zprint_executable', 'zprint')
 ""
 " The path to the fish_indent executable.
 call s:plugin.Flag('fish_indent_executable', 'fish_indent')
+
+""
+" The path to the nixpkgs-fmt executable.
+call s:plugin.Flag('nixpkgs_fmt_executable', 'nixpkgs-fmt')
