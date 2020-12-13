@@ -33,6 +33,7 @@
 "   * fish: fish_indent
 "   * gn: gn
 "   * go: gofmt
+"   * lua: luaformatterfiveone
 "   * python: autopep8, black, yapf
 
 

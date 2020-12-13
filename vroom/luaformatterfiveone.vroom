@@ -1,0 +1,53 @@
+luaformatterfiveone" formatter only knows how to format lua 5.1 code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+luaformatterfiveone expects the lua formatterfiveone executable to be installed
+on your system.
+
+  % function hello()
+  % print("world")
+  % end
+  :FormatCode luaformatterfiveone
+  ! luaformatterfiveone -i 2> .*
+  $ function hello()
+  $   print("world")
+  $ end
+
+The name or path of the luaformatterfiveone executable can be configured via the
+luaformatterfiveone_executable flag if the default of "buildifier" doesn't work.
+
+  :Glaive codefmt luaformatterfiveone_executable='myluaformatterfiveone'
+  :FormatCode luaformatterfiveone
+  ! myluaformatterfiveone -i 2> .*
+  $ function hello()
+  $   print("world")
+  $ end
+  :Glaive codefmt luaformatterfiveone_executable='luaformatterfiveone'
+
+Errors are reported using the quickfix list.
+
+  @clear
+  % 13()
+  :FormatCode luaformatterfiveone
+  ! luaformatterfiveone -i 2> .*
+  ~ (1 of 1): unexpected symbol near '13'
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,1
+  :echomsg string(map(getqflist(),
+  |'v:val.lnum . "," . v:val.text'))
+  ~ ['1,unexpected symbol near ''13''']
+
