@@ -115,6 +115,10 @@ call s:plugin.Flag('shfmt_options', ['-i', '2', '-sr', '-ci'])
 call s:plugin.Flag('shfmt_executable', 'shfmt')
 
 ""
+" The path to rubocop executable
+call s:plugin.Flag('rubocop_executable', 'rubocop')
+
+""
 " Command line arguments to feed prettier. Either a list or callable that
 " takes no args and returns a list with command line arguments.
 call s:plugin.Flag('prettier_options', [])
