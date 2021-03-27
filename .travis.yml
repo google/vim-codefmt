@@ -1,8 +1,8 @@
 language: generic
 env:
   global:
-    - VROOM_VERSION=0.13.0
-  matrix:
+    - VROOM_VERSION=0.14.0
+  jobs:
     # This Maktaba version should match the minimum required in instant/flags.vim.
     - CI_TARGET=vim MAKTABA_VERSION=1.12.0
     - CI_TARGET=vim MAKTABA_VERSION=master
@@ -15,7 +15,7 @@ before_script:
       sudo apt-get install vim-gnome;
     elif [ $CI_TARGET = neovim ]; then
       eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64" &&
-      wget https://bootstrap.pypa.io/get-pip.py &&
+      wget https://bootstrap.pypa.io/pip/3.5/get-pip.py &&
       sudo python3 get-pip.py &&
       sudo pip3 install neovim;
     fi
@@ -28,5 +28,5 @@ services:
 script:
   - '[ $CI_TARGET = neovim ] && VROOM_ARGS="--neovim" || VROOM_ARGS=""'
   - vroom $VROOM_ARGS --crawl ./vroom/
-matrix:
+jobs:
   fast_finish: true
