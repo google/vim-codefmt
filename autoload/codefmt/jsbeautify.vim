@@ -30,7 +30,8 @@ function! codefmt#jsbeautify#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'css' || &filetype is# 'html' || &filetype is# 'json' ||
+    return &filetype is# 'css' || &filetype is# 'html' ||
+        \ &filetype =~# '\mhtml\.' || &filetype is# 'json' ||
         \ &filetype is# 'javascript'
   endfunction
 
@@ -45,6 +46,8 @@ function! codefmt#jsbeautify#GetFormatter() abort
       let l:cmd = l:cmd + ['--type', 'js']
     elseif &filetype is# 'sass' || &filetype is# 'scss' || &filetype is# 'less'
       let l:cmd = l:cmd + ['--type', 'css']
+    elseif &filetype =~# '\mhtml\.'
+      let l:cmd = l:cmd + ['--type', 'html']
     elseif &filetype != ""
       let l:cmd = l:cmd + ['--type', &filetype]
     endif
