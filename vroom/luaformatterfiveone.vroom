@@ -18,8 +18,8 @@ examples.
 luaformatterfiveone expects the lua formatterfiveone executable to be installed
 on your system.
 
-  % function hello()
-  % print("world")
+  % function hello()<CR>
+  % print("world")<CR>
   % end
   :FormatCode luaformatterfiveone
   ! luaformatterfiveone -i 2> .*
@@ -43,11 +43,14 @@ Errors are reported using the quickfix list.
   @clear
   % 13()
   :FormatCode luaformatterfiveone
-  ! luaformatterfiveone -i 2> .*
+  ! luaformatterfiveone -i 2> (.*)
+  $ 1 (status)
+  $ echo >\1 ' (command)
+  |luaformatterfiveone:Unable to format stdin:\n
+  |[string "isCodeValid"]:1: unexpected symbol near '"'13'"
   ~ (1 of 1): unexpected symbol near '13'
   :echomsg line('.') . ',' . col('.')
   ~ 1,1
-  :echomsg string(map(getqflist(),
-  |'v:val.lnum . "," . v:val.text'))
+  :echomsg string(map(getqflist(), 'v:val.lnum . "," . v:val.text'))
   ~ ['1,unexpected symbol near ''13''']
 
