@@ -12,7 +12,8 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 
 * [Bazel](https://www.github.com/bazelbuild/bazel) BUILD files (buildifier)
 * C, C++ (clang-format)
-* [Clojure](https://clojure.org/) ([zprint](https://github.com/kkinnear/zprint))
+* [Clojure](https://clojure.org/) ([zprint](https://github.com/kkinnear/zprint),
+  [cljstyle](https://github.com/greglook/cljstyle))
 * CSS, Sass, SCSS, Less (js-beautify)
 * Dart (dartfmt)
 * Fish ([fish_indent](https://fishshell.com/docs/current/commands.html#fish_indent))
