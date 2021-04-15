@@ -75,9 +75,8 @@ You can format any buffer with clang-format specifying the formatter explicitly.
   }
   @end
 
-Several filetypes will use the clang-format formatter by default: c, cpp,
-javascript, and proto.  If the version of clang-format is >= 3.6, then it will
-also format java files, but google-java-format is the default.
+Several filetypes will use the clang-format formatter by default: c, cpp, and
+proto.
 
   @clear
   % f();
@@ -88,14 +87,18 @@ also format java files, but google-java-format is the default.
   $ { "Cursor": 0 }
   $ f();
 
-  :set filetype=javascript
+  :set filetype=proto
   :FormatCode
   ! clang-format .*
   $ { "Cursor": 0 }
   $ f();
 
-  :set filetype=proto
-  :FormatCode
+It will also format javascript and java, but is not necessarily the default if
+other formatters are available.
+Note: Formatting java requires clang-format >= 3.6.
+
+  :set filetype=javascript
+  :FormatCode clang-format
   ! clang-format .*
   $ { "Cursor": 0 }
   $ f();
@@ -144,6 +147,7 @@ a string value to use everywhere...
 
   :Glaive codefmt clang_format_style='WebKit'
 
+  @clear
   % f();
   :FormatCode clang-format
   ! clang-format -style WebKit .*2>.*

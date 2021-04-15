@@ -60,18 +60,6 @@ You can format any buffer with autopep8 specifying the formatter explicitly.
       pass
   @end
 
-The python filetype will use the autopep8 formatter by default.
-
-  @clear
-  % pass
-
-  :set filetype=python
-  :FormatCode
-  ! autopep8 .*
-  $ pass
-
-  :set filetype=
-
 It can format specific line ranges of code using :FormatLines.
 
   @clear
