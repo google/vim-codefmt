@@ -12,30 +12,6 @@
 " See the License for the specific language governing permissions and
 " limitations under the License.
 
-""
-" @section Formatters, formatters
-" This plugin has three built-in formatters: clang-format, gofmt, and autopep8.
-" More formatters can be registered by other plugins that integrate with
-" codefmt.
-"
-" @subsection Default formatters
-" Codefmt will automatically use a default formatter for certain filetypes if
-" none is explicitly supplied via an explicit arg to @command(FormatCode) or the
-" @setting(b:codefmt_formatter) variable. The default formatter may also depend
-" on what plugins are enabled or what other software is installed on your
-" system.
-"
-" The current list of defaults by filetype is:
-"   * bzl (Bazel): buildifier
-"   * c, cpp, proto, javascript, typescript: clang-format
-"   * clojure: zprint
-"   * dart: dartfmt
-"   * fish: fish_indent
-"   * gn: gn
-"   * go: gofmt
-"   * lua: luaformatterfiveone
-"   * python: autopep8, black, yapf
-
 
 let s:plugin = maktaba#plugin#Get('codefmt')
 let s:registry = s:plugin.GetExtensionRegistry()

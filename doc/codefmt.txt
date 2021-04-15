@@ -175,13 +175,19 @@ plugins are enabled or what other software is installed on your system.
 The current list of defaults by filetype is:
   * bzl (Bazel): buildifier
   * c, cpp, proto, javascript, typescript: clang-format
-  * clojure: zprint
+  * clojure: cljstyle, zprint
   * dart: dartfmt
   * fish: fish_indent
   * gn: gn
   * go: gofmt
+  * java: google-java-format
+  * javascript, json, html, css: js-beautify
+  * javascript, html, css, markdown: prettier
   * lua: luaformatterfiveone
+  * nix: nixpkgs-fmt
   * python: autopep8, black, yapf
+  * rust: rustfmt
+  * sh: shfmt
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*
