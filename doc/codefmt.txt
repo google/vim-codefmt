@@ -4,19 +4,49 @@ Google                                                               *codefmt*
 ==============================================================================
 CONTENTS                                                    *codefmt-contents*
   1. Introduction..............................................|codefmt-intro|
-  2. Configuration............................................|codefmt-config|
-  3. Formatters...........................................|codefmt-formatters|
-  4. Dictionaries..............................................|codefmt-dicts|
-  5. Commands...............................................|codefmt-commands|
-  6. Autocommands...........................................|codefmt-autocmds|
-  7. Functions.............................................|codefmt-functions|
-  8. Mappings...............................................|codefmt-mappings|
+  2. Formatters...........................................|codefmt-formatters|
+  3. Configuration............................................|codefmt-config|
+  4. Commands...............................................|codefmt-commands|
+  5. Autocommands...........................................|codefmt-autocmds|
+  6. Mappings...............................................|codefmt-mappings|
       1. Recommended zprint mappings.................|codefmt-mappings-zprint|
+  7. Dictionaries..............................................|codefmt-dicts|
+  8. Functions.............................................|codefmt-functions|
 
 ==============================================================================
 INTRODUCTION                                                   *codefmt-intro*
 
 Provides a |:FormatCode| command to intelligently reformat code.
+
+==============================================================================
+FORMATTERS                                                *codefmt-formatters*
+
+This plugin has three built-in formatters: clang-format, gofmt, and autopep8.
+More formatters can be registered by other plugins that integrate with
+codefmt.
+
+DEFAULT FORMATTERS
+Codefmt will automatically use a default formatter for certain filetypes if
+none is explicitly supplied via an explicit arg to |:FormatCode| or the
+|b:codefmt_formatter| variable. The default formatter may also depend on what
+plugins are enabled or what other software is installed on your system.
+
+The current list of defaults by filetype is:
+  * bzl (Bazel): buildifier
+  * c, cpp, proto, javascript, typescript: clang-format
+  * clojure: cljstyle, zprint
+  * dart: dartfmt
+  * fish: fish_indent
+  * gn: gn
+  * go: gofmt
+  * java: google-java-format
+  * javascript, json, html, css: js-beautify
+  * javascript, html, css, markdown: prettier
+  * lua: luaformatterfiveone
+  * nix: nixpkgs-fmt
+  * python: autopep8, black, yapf
+  * rust: rustfmt
+  * sh: shfmt
 
 ==============================================================================
 CONFIGURATION                                                 *codefmt-config*
@@ -160,34 +190,64 @@ to your vimrc. You can also set the value to an empty string to disable all
 formatting.
 
 ==============================================================================
-FORMATTERS                                                *codefmt-formatters*
+COMMANDS                                                    *codefmt-commands*
 
-This plugin has three built-in formatters: clang-format, gofmt, and autopep8.
-More formatters can be registered by other plugins that integrate with
-codefmt.
+:[range]FormatLines [formatter]                                 *:FormatLines*
+  Format the current line or range using [formatter].
+  [formatter] is the default formatter associated with the current buffer if
+  omitted.
 
-DEFAULT FORMATTERS
-Codefmt will automatically use a default formatter for certain filetypes if
-none is explicitly supplied via an explicit arg to |:FormatCode| or the
-|b:codefmt_formatter| variable. The default formatter may also depend on what
-plugins are enabled or what other software is installed on your system.
+:FormatCode [formatter]                                          *:FormatCode*
+  Format the whole buffer using [formatter]. See |codefmt-formatters| for list
+  of valid formatters.
+  [formatter] is the default formatter associated with the current buffer if
+  omitted.
 
-The current list of defaults by filetype is:
-  * bzl (Bazel): buildifier
-  * c, cpp, proto, javascript, typescript: clang-format
-  * clojure: cljstyle, zprint
-  * dart: dartfmt
-  * fish: fish_indent
-  * gn: gn
-  * go: gofmt
-  * java: google-java-format
-  * javascript, json, html, css: js-beautify
-  * javascript, html, css, markdown: prettier
-  * lua: luaformatterfiveone
-  * nix: nixpkgs-fmt
-  * python: autopep8, black, yapf
-  * rust: rustfmt
-  * sh: shfmt
+:AutoFormatBuffer [formatter]                              *:AutoFormatBuffer*
+  Enables format on save for this buffer using [formatter]. Also configures
+  [formatter] as the default formatter for this buffer via the
+  |b:codefmt_formatter| variable.
+  [formatter] is the default formatter associated with the current buffer if
+  omitted.
+
+:NoAutoFormatBuffer                                      *:NoAutoFormatBuffer*
+  Disables format on save for this buffer.
+
+==============================================================================
+AUTOCOMMANDS                                                *codefmt-autocmds*
+
+You can enable automatic formatting on a buffer using |:AutoFormatBuffer|.
+
+==============================================================================
+MAPPINGS                                                    *codefmt-mappings*
+
+This plugin provides default mappings that can be enabled via the
+plugin[mappings] flag. You can enable them under the default prefix of
+<Leader>= (<Leader> being "\" by default) or set the plugin[mappings] flag to
+an explicit prefix to use. Or you can define your own custom mappings; see
+plugin/mappings.vim for inspiration.
+
+To format the whole buffer, use <PREFIX>b.
+
+Some formatters also support formatting ranges. There are several mappings for
+formatting ranges that mimic vim's built-in |operator|s:
+  * Format the current line with the <PREFIX>= mapping.
+  * <PREFIX> by itself acts as an |operator|. Use <PREFIX><MOTION> to format
+    over any motion. For instance, <PREFIX>i{ will format all lines inside the
+    enclosing curly braces.
+  * In visual mode, <PREFIX> will format the visual selection.
+
+==============================================================================
+RECOMMENDED ZPRINT MAPPINGS                          *codefmt-mappings-zprint*
+
+
+Since zprint only works on top-level Clojure forms, it doesn't make sense to
+format line ranges that aren't complete forms. If you're using vim-sexp
+(https://github.com/guns/vim-sexp), the following mapping replaces the default
+"format the current line" with "format the current top-level form."
+>
+  autocmd FileType clojure nmap <buffer> <silent> <leader>== <leader>=iF
+<
 
 ==============================================================================
 DICTIONARIES                                                   *codefmt-dicts*
@@ -219,35 +279,6 @@ and should implement at least one of the following functions:
     ranges of lines. Each range should be a 2-item list of
     [startline,endline].
 Formatters should implement the most specific format method that is supported.
-
-==============================================================================
-COMMANDS                                                    *codefmt-commands*
-
-:[range]FormatLines [formatter]                                 *:FormatLines*
-  Format the current line or range using [formatter].
-  [formatter] is the default formatter associated with the current buffer if
-  omitted.
-
-:FormatCode [formatter]                                          *:FormatCode*
-  Format the whole buffer using [formatter]. See |codefmt-formatters| for list
-  of valid formatters.
-  [formatter] is the default formatter associated with the current buffer if
-  omitted.
-
-:AutoFormatBuffer [formatter]                              *:AutoFormatBuffer*
-  Enables format on save for this buffer using [formatter]. Also configures
-  [formatter] as the default formatter for this buffer via the
-  |b:codefmt_formatter| variable.
-  [formatter] is the default formatter associated with the current buffer if
-  omitted.
-
-:NoAutoFormatBuffer                                      *:NoAutoFormatBuffer*
-  Disables format on save for this buffer.
-
-==============================================================================
-AUTOCOMMANDS                                                *codefmt-autocmds*
-
-You can enable automatic formatting on a buffer using |:AutoFormatBuffer|.
 
 ==============================================================================
 FUNCTIONS                                                  *codefmt-functions*
@@ -288,37 +319,6 @@ codefmt#formatterhelpers#ResolveFlagToArray({flag_name})
   backward-compatible for existing user settings.
 
   Throws ERROR(WrongType) if the flag doesn't resolve to a string or array
-
-==============================================================================
-MAPPINGS                                                    *codefmt-mappings*
-
-This plugin provides default mappings that can be enabled via the
-plugin[mappings] flag. You can enable them under the default prefix of
-<Leader>= (<Leader> being "\" by default) or set the plugin[mappings] flag to
-an explicit prefix to use. Or you can define your own custom mappings; see
-plugin/mappings.vim for inspiration.
-
-To format the whole buffer, use <PREFIX>b.
-
-Some formatters also support formatting ranges. There are several mappings for
-formatting ranges that mimic vim's built-in |operator|s:
-  * Format the current line with the <PREFIX>= mapping.
-  * <PREFIX> by itself acts as an |operator|. Use <PREFIX><MOTION> to format
-    over any motion. For instance, <PREFIX>i{ will format all lines inside the
-    enclosing curly braces.
-  * In visual mode, <PREFIX> will format the visual selection.
-
-==============================================================================
-RECOMMENDED ZPRINT MAPPINGS                          *codefmt-mappings-zprint*
-
-
-Since zprint only works on top-level Clojure forms, it doesn't make sense to
-format line ranges that aren't complete forms. If you're using vim-sexp
-(https://github.com/guns/vim-sexp), the following mapping replaces the default
-"format the current line" with "format the current top-level form."
->
-  autocmd FileType clojure nmap <buffer> <silent> <leader>== <leader>=iF
-<
 
 
 vim:tw=78:ts=8:ft=help:norl:
