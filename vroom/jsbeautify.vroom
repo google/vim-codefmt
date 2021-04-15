@@ -70,17 +70,17 @@ here we specify js-beautify explicitly.
   $ f();
 
   :set filetype=json
-  :FormatCode
+  :FormatCode js-beautify
   ! js-beautify -f - --type js 2>.*
   $ f();
 
   :set filetype=html
-  :FormatCode
+  :FormatCode js-beautify
   ! js-beautify -f - --type html 2>.*
   $ f();
 
   :set filetype=css
-  :FormatCode
+  :FormatCode js-beautify
   ! js-beautify -f - --type css 2>.*
   $ f();
 
