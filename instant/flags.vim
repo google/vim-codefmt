@@ -103,6 +103,11 @@ call s:plugin.Flag('buildifier_executable', 'buildifier')
 call s:plugin.Flag('google_java_executable', 'google-java-format')
 
 ""
+" The path to the ktfmt executable.  Generally, this should have the form:
+" `java -jar /path/to/ktfmt-VERSION-jar-with-dependencies.jar`
+call s:plugin.Flag('ktfmt_executable', 'ktfmt')
+
+""
 " Command line arguments to feed shfmt. Either a list or callable that
 " takes no args and returns a list with command line arguments. By default, uses
 " the Google's style.
