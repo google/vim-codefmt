@@ -28,10 +28,13 @@ function! codefmt#ktfmt#GetFormatter() abort
           \ 'in your .vimrc' }
 
   function l:formatter.IsAvailable() abort
-    let l:exec = s:plugin.Flag('ktfmt_executable')
-    if executable(l:exec)
+    let l:exec = split(s:plugin.Flag('ktfmt_executable'), '\\\@<! ')
+    if empty(l:exec)
+      return 0
+    endif
+    if executable(l:exec[0])
       return 1
-    elseif !empty(l:exec) && l:exec isnot# 'ktfmt'
+    elseif !empty(l:exec[0]) && l:exec[0] isnot# 'ktfmt'
       " The user has specified a custom formatter command. Hope it works.
       return 1
     else
