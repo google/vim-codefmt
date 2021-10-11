@@ -48,6 +48,8 @@ function! codefmt#ktfmt#GetFormatter() abort
   function l:formatter.FormatRange(startline, endline) abort
     " Split the command on spaces, except when there's a proceeding \
     let l:cmd = split(s:plugin.Flag('ktfmt_executable'), '\\\@<! ')
+    " ktfmt requires '-' as a filename arg to read stdin
+    let l:cmd = add(l:cmd, '-')
     try
       " TODO(tstone) Switch to using --lines once that arg is added, see
       " https://github.com/facebookincubator/ktfmt/issues/218
