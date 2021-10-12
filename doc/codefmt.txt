@@ -105,6 +105,11 @@ The path to the google-java executable.  Generally, this should have the form:
 `java -jar /path/to/google-java`
 Default: 'google-java-format' `
 
+                                                    *codefmt:ktfmt_executable*
+The path to the ktfmt executable.  Generally, this should have the form: `java
+-jar /path/to/ktfmt-VERSION-jar-with-dependencies.jar`
+Default: 'ktfmt' `
+
                                                        *codefmt:shfmt_options*
 Command line arguments to feed shfmt. Either a list or callable that takes no
 args and returns a list with command line arguments. By default, uses the
