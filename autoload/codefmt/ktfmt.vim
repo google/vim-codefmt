@@ -57,6 +57,7 @@ function! codefmt#ktfmt#GetFormatter() abort
         " command is executable and doesn't look like 'java' so assume yes
         let s:cmdAvailable[l:joined] = 1
       endif
+      return s:cmdAvailable[l:joined]
     else
       if l:cmd[0] =~# ','
         call maktaba#error#Warn(
@@ -64,7 +65,6 @@ function! codefmt#ktfmt#GetFormatter() abort
               \ . 'Try not quoting the comma-separated value',
               \ l:cmd[0])
       endif
-      return s:cmdAvailable[l:joined]
       " don't cache unavailability, in case user installs the command
       return 0
     endif
