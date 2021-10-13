@@ -36,6 +36,7 @@
 "   * java: google-java-format
 "   * javascript, json, html, css: js-beautify
 "   * javascript, html, css, markdown: prettier
+"   * kotlin: ktfmt
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
 "   * python: autopep8, black, yapf

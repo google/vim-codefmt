@@ -15,6 +15,8 @@
 
 let s:plugin = maktaba#plugin#Get('codefmt')
 
+let s:cmdAvailable = {}
+
 ""
 " @private
 " Formatter: ktfmt
@@ -22,22 +24,48 @@ function! codefmt#ktfmt#GetFormatter() abort
   let l:formatter = {
       \ 'name': 'ktfmt',
       \ 'setup_instructions': 'Install ktfmt ' .
-          \ "(https://github.com/facebookincubator/ktfmt).\n" .
-          \ 'Enable with "Glaive codefmt ktfmt_executable=' .
-          \ '"java -jar /path/to/ktfmt-<VERSION>-jar-with-dependencies.jar" ' .
-          \ 'in your .vimrc' }
+          \ '(https://github.com/facebookincubator/ktfmt). ' .
+          \ "Enable with\nGlaive codefmt ktfmt_executable=" .
+          \ 'java,-jar,/path/to/ktfmt-<VERSION>-jar-with-dependencies.jar ' .
+          \ "\nin your .vimrc or create a shell script named 'ktfmt'" }
 
   function l:formatter.IsAvailable() abort
-    let l:exec = split(s:plugin.Flag('ktfmt_executable'), '\\\@<! ')
-    if empty(l:exec)
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray('ktfmt_executable')
+    if empty(l:cmd)
       return 0
     endif
-    if executable(l:exec[0])
-      return 1
-    elseif !empty(l:exec[0]) && l:exec[0] isnot# 'ktfmt'
-      " The user has specified a custom formatter command. Hope it works.
-      return 1
+    let l:joined = join(l:cmd, ' ')
+    if has_key(s:cmdAvailable, l:joined)
+      return s:cmdAvailable[l:joined]
+    endif
+    if executable(l:cmd[0])
+      if l:cmd[0] is# 'java' || l:cmd[0] =~# '/java$'
+        " Even if java is executable, jar path might be wrong, so run a simple
+        " command. There's no --version flag, so format an empty file.
+        let l:success = 0
+        try
+          let l:result = maktaba#syscall#Create(l:cmd + ['-']).Call()
+          let l:success = v:shell_error != 0
+        catch /ERROR(ShellError)/
+          call maktaba#error#Shout(
+                \ 'ktfmt unavailable, check jar file in %s -: %s',
+                \ l:joined,
+                \ v:exception)
+        endtry
+        let s:cmdAvailable[l:joined] = l:success
+      else
+        " command is executable and doesn't look like 'java' so assume yes
+        let s:cmdAvailable[l:joined] = 1
+      endif
     else
+      if l:cmd[0] =~# ','
+        call maktaba#error#Warn(
+              \ 'ktfmt_executable is a string "%s" but looks like a list. '
+              \ . 'Try not quoting the comma-separated value',
+              \ l:cmd[0])
+      endif
+      return s:cmdAvailable[l:joined]
+      " don't cache unavailability, in case user installs the command
       return 0
     endif
   endfunction
@@ -49,10 +77,9 @@ function! codefmt#ktfmt#GetFormatter() abort
   ""
   " Reformat the current buffer using ktfmt, only targeting {ranges}.
   function l:formatter.FormatRange(startline, endline) abort
-    " Split the command on spaces, except when there's a proceeding \
-    let l:cmd = split(s:plugin.Flag('ktfmt_executable'), '\\\@<! ')
     " ktfmt requires '-' as a filename arg to read stdin
-    let l:cmd = add(l:cmd, '-')
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray('ktfmt_executable')
+          \ + ['-']
     try
       " TODO(tstone) Switch to using --lines once that arg is added, see
       " https://github.com/facebookincubator/ktfmt/issues/218

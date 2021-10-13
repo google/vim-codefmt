@@ -15,7 +15,8 @@ examples.
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 
-The ktfmt formatter expects a ktfmt executable to be installed on your system.
+The ktfmt formatter expects a ktfmt executable to be installed on your system,
+e.g. as a shell wrapper around "java -jar /path/to/ktfmt.jar"..
 
   % class Foo { public bar() : String { return "bar"; } }
   :FormatCode ktfmt
@@ -26,10 +27,10 @@ The ktfmt formatter expects a ktfmt executable to be installed on your system.
   $   }
   $ }
 
-The name or path of the ktmft executable can be configured via the
+The name or path of the ktfmt executable can be configured via the
 ktfmt_executable flag if the default of "ktmft" doesn't work.
 
-  :Glaive codefmt ktfmt_executable='java -jar /path/to/ktfmt.jar'
+  :Glaive codefmt ktfmt_executable=java,-jar,/path/to/ktfmt.jar
   :FormatCode ktfmt
   ! java -jar /path/to/ktfmt.jar .*
   $ class Foo {

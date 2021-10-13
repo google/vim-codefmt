@@ -103,9 +103,16 @@ call s:plugin.Flag('buildifier_executable', 'buildifier')
 call s:plugin.Flag('google_java_executable', 'google-java-format')
 
 ""
-" The path to the ktfmt executable.  Generally, this should have the form:
-" `java -jar /path/to/ktfmt-VERSION-jar-with-dependencies.jar`
-call s:plugin.Flag('ktfmt_executable', 'ktfmt')
+" The path to the ktfmt executable with args, as a list. The default value
+" assumes there is a wrapper script named `ktfmt`. Without such a script, this
+" will generally have the form:
+" `ktfmt_executable=java,-jar,/path/to/ktfmt-VERSION-jar-with-dependencies.jar`
+"
+" Note that range formatting is not fully supported, with a feature request at
+" https://github.com/facebookincubator/ktfmt/issues/218. ktfmt will align a
+" formatted range to column 1, requiring a manual reindent to match the
+" surrounding blocks.
+call s:plugin.Flag('ktfmt_executable', ['ktfmt'])
 
 ""
 " Command line arguments to feed shfmt. Either a list or callable that
