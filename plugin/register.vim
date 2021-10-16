@@ -36,6 +36,7 @@
 "   * java: google-java-format
 "   * javascript, json, html, css: js-beautify
 "   * javascript, html, css, markdown: prettier
+"   * kotlin: ktfmt
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
 "   * python: autopep8, black, yapf
@@ -65,6 +66,7 @@ call s:registry.AddExtension(codefmt#gofmt#GetFormatter())
 call s:registry.AddExtension(codefmt#googlejava#GetFormatter())
 call s:registry.AddExtension(codefmt#jsbeautify#GetFormatter())
 call s:registry.AddExtension(codefmt#prettier#GetFormatter())
+call s:registry.AddExtension(codefmt#ktfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#luaformatterfiveone#GetFormatter())
 call s:registry.AddExtension(codefmt#nixpkgs_fmt#GetFormatter())
 call s:registry.AddExtension(codefmt#autopep8#GetFormatter())

@@ -1,0 +1,41 @@
+The built-in ktfmt formatter knows how to format Java BUILD files.  If you
+aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The ktfmt formatter expects a ktfmt executable to be installed on your system,
+e.g. as a shell wrapper around "java -jar /path/to/ktfmt.jar"..
+
+  % class Foo { public bar() : String { return "bar"; } }
+  :FormatCode ktfmt
+  ! ktfmt .*
+  $ class Foo {
+  $   public bar(): String {
+  $     return "bar"
+  $   }
+  $ }
+
+The name or path of the ktfmt executable can be configured via the
+ktfmt_executable flag if the default of "ktmft" doesn't work.
+
+  :Glaive codefmt ktfmt_executable=java,-jar,/path/to/ktfmt.jar
+  :FormatCode ktfmt
+  ! java -jar /path/to/ktfmt.jar .*
+  $ class Foo {
+  $   public bar(): String {
+  $     return "bar"
+  $   }
+  $ }
+  :Glaive codefmt ktfmt_executable='ktfmt'
