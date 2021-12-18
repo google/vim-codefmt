@@ -25,7 +25,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * JSON (js-beautify)
 * Kotlin ([ktfmt](https://github.com/facebookincubator/ktfmt))
 * Proto (clang-format)
-* Python (Autopep8, Black, or YAPF)
+* Python (Autopep8, Black, Isort or YAPF)
 * Rust ([rustfmt](https://github.com/rust-lang/rustfmt))
 * TypeScript (clang-format)
 * Shell (shfmt)
