@@ -89,6 +89,10 @@ call s:plugin.Flag('yapf_executable', 'yapf')
 call s:plugin.Flag('black_executable', 'black')
 
 ""
+" The path to the black executable.
+call s:plugin.Flag('isort_executable', 'isort')
+
+""
 " The path to the gn executable.
 call s:plugin.Flag('gn_executable', 'gn')
 
