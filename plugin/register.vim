@@ -39,7 +39,7 @@
 "   * kotlin: ktfmt
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
-"   * python: autopep8, black, yapf
+"   * python: autopep8, black, isort, yapf
 "   * rust: rustfmt
 "   * sh: shfmt
 
@@ -71,6 +71,7 @@ call s:registry.AddExtension(codefmt#luaformatterfiveone#GetFormatter())
 call s:registry.AddExtension(codefmt#nixpkgs_fmt#GetFormatter())
 call s:registry.AddExtension(codefmt#autopep8#GetFormatter())
 call s:registry.AddExtension(codefmt#black#GetFormatter())
+call s:registry.AddExtension(codefmt#isort#GetFormatter())
 call s:registry.AddExtension(codefmt#yapf#GetFormatter())
 call s:registry.AddExtension(codefmt#rustfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
