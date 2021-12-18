@@ -1,0 +1,40 @@
+With isort you can sort python imports. It can see and sort them in order according to PEP8.
+
+we'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+The isort formatter/sorter expects you to have isort executable
+installed on your system.
+
+  % f()
+  :FormatCode isort
+  ! isort .*
+  $ f()
+
+The name or path of the isort executable can be configured via the
+isort_executable flag if the default of "isort" doesn't work.
+
+You can format any buffer with black specifying the formatter explicitly.
+Here's an example:
+
+  @clear
+  %import sys
+  %import os
+  
+  :FormatCode isort
+  ! isort .*
+  $ import os
+  $ import sys
+  import os
+  import sys
+  @end
