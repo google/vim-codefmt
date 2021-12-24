@@ -93,6 +93,10 @@ Default: 'yapf' `
 The path to the black executable.
 Default: 'black' `
 
+                                                     *codefmt:isort_executable*
+The path to the isort executable.
+Default: 'isort' `
+
                                                        *codefmt:gn_executable*
 The path to the gn executable.
 Default: 'gn' `
