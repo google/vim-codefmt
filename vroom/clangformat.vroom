@@ -181,3 +181,10 @@ current buffer.
 
 The -assume-filename arg passed above is also related, used by the clang-format
 tool to detect any custom style rules particular to the current file.
+
+
+Bug #102. When the buffer is empty, clang-format does _not_ return a cursor
+position
+
+  @clear
+  :FormatCode clang-format

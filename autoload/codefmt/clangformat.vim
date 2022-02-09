@@ -129,6 +129,11 @@ function! codefmt#clangformat#GetFormatter() abort
   ""
   " Reformat buffer with clang-format, only targeting [ranges] if given.
   function l:formatter.FormatRanges(ranges) abort
+    if  line('$') == 1 && getline(1) == ''
+      " If the buffer is completely empty, there's nothing to do
+      return
+    endif
+
     let l:Style_value = s:plugin.Flag('clang_format_style')
     if type(l:Style_value) is# type('')
       let l:style = l:Style_value
