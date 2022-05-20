@@ -101,6 +101,14 @@ call s:plugin.Flag('gn_executable', 'gn')
 call s:plugin.Flag('buildifier_executable', 'buildifier')
 
 ""
+" The lint_mode for buildifier, defaults to not passing the flag. 
+" set to 'fix' to fix issues automatically during formatting,
+" or 'off' to explicitly not fix issues (the current buildifier default).
+" Setting to 'warn' will format only if there are no issues; if there are
+" issues it will cause an error and do no formatting.
+call s:plugin.Flag('buildifier_lint_mode', '')
+
+""
 " The path to the google-java executable.  Generally, this should have the
 " form:
 " `java -jar /path/to/google-java`
