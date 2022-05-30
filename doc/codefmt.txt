@@ -105,6 +105,14 @@ Default: 'gn' `
 The path to the buildifier executable.
 Default: 'buildifier' `
 
+                                               *codefmt:buildifier_lint_mode*
+Buildifier --lint=lint_mode parameter. Set to 'fix' to autofix issues.
+Default: '' to not pass the flag and use the buildifier default (off)
+Off:  Do not fix issues.
+Fix:  Fix issues automatically during formatting.
+Warn: Format only if there are no issues; if there are issues
+      it will cause an error and do no formatting.
+
                                               *codefmt:google_java_executable*
 The path to the google-java executable.  Generally, this should have the form:
 `java -jar /path/to/google-java`
