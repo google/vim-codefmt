@@ -48,6 +48,7 @@ The current list of defaults by filetype is:
   * python: autopep8, black, yapf
   * rust: rustfmt
   * sh: shfmt
+  * swift: swift-format
 
 ==============================================================================
 CONFIGURATION                                                 *codefmt-config*
@@ -188,6 +189,11 @@ Default: 'luaformatterfiveone' `
                                                  *codefmt:cljstyle_executable*
 The path to the cljstyle executable.
 Default: 'cljstyle' `
+
+                                                  *codefmt:swift_format_executable*
+The path to the swift-format executable.
+Default: 'swift-format' `
+
 
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.

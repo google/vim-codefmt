@@ -144,6 +144,10 @@ call s:plugin.Flag('shfmt_executable', 'shfmt')
 call s:plugin.Flag('prettier_options', [])
 
 ""
+" The path to the swift-format executable.
+call s:plugin.Flag('swift_format_executable', 'swift-format')
+
+""
 " @private
 function s:LookupPrettierExecutable() abort
   return executable('npx') ? ['npx', '--no-install', 'prettier'] : 'prettier'
