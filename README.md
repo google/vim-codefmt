@@ -31,6 +31,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * Shell (shfmt)
 * [Vue](http://vuejs.org) (prettier)
 * Nix (nixpkgs-fmt)
+* Swift ([swift-format](https://github.com/apple/swift-format))
 
 # Commands
 
@@ -95,6 +96,7 @@ augroup autoformat_settings
   " Alternative: autocmd FileType python AutoFormatBuffer autopep8
   autocmd FileType rust AutoFormatBuffer rustfmt
   autocmd FileType vue AutoFormatBuffer prettier
+  autocmd FileType swift AutoFormatBuffer swift-format
 augroup END
 ```
 
