@@ -34,7 +34,7 @@ You can format any buffer with swift-format specifying the formatter explicitly.
   $   return "a"
   $ }
   func f(a: String, b: Int) -> String {
-     return "a"
+    return "a"
   }
   @end
 
