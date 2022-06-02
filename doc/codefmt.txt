@@ -94,7 +94,7 @@ Default: 'yapf' `
 The path to the black executable.
 Default: 'black' `
 
-                                                     *codefmt:isort_executable*
+                                                    *codefmt:isort_executable*
 The path to the isort executable.
 Default: 'isort' `
 
@@ -106,13 +106,16 @@ Default: 'gn' `
 The path to the buildifier executable.
 Default: 'buildifier' `
 
-                                               *codefmt:buildifier_lint_mode*
-Buildifier --lint=lint_mode parameter. Set to 'fix' to autofix issues.
-Default: '' to not pass the flag and use the buildifier default (off)
-Off:  Do not fix issues.
-Fix:  Fix issues automatically during formatting.
-Warn: Format only if there are no issues; if there are issues
-      it will cause an error and do no formatting.
+                                                *codefmt:buildifier_lint_mode*
+The lint_mode for buildifier. passed to buildifier --lint parameter.
+
+Options:
+"" (empty): Use default from buildifier.
+"Off": Do not fix issues.
+"Fix": Fix issues automatically during formatting.
+"Warn": Format only if there are no issues; if there are issues, it will cause
+  an error and do no formatting.
+Default: '' `
 
                                               *codefmt:google_java_executable*
 The path to the google-java executable.  Generally, this should have the form:
@@ -146,6 +149,10 @@ Default: 'shfmt' `
 Command line arguments to feed prettier. Either a list or callable that takes
 no args and returns a list with command line arguments.
 Default: [] `
+
+                                             *codefmt:swift_format_executable*
+The path to the swift-format executable.
+Default: 'swift-format' `
 
                                                  *codefmt:prettier_executable*
 The path to the prettier executable. String, list, or callable that takes no
@@ -189,11 +196,6 @@ Default: 'luaformatterfiveone' `
                                                  *codefmt:cljstyle_executable*
 The path to the cljstyle executable.
 Default: 'cljstyle' `
-
-                                                  *codefmt:swift_format_executable*
-The path to the swift-format executable.
-Default: 'swift-format' `
-
 
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
