@@ -41,8 +41,12 @@ function! codefmt#buildifier#GetFormatter() abort
   function l:formatter.Format() abort
     let l:lint_flag = s:plugin.Flag('buildifier_lint_mode')
     let l:cmd = [ s:plugin.Flag('buildifier_executable') ]
-    if l:lint_flag != ""
+    if !empty(l:lint_flag)
       let l:cmd += ["--lint=" . l:lint_flag]
+    endif
+    let l:warnings_flag = s:plugin.Flag('buildifier_warnings')
+    if !empty(l:warnings_flag)
+      let l:cmd += ["--warnings=" . l:warnings_flag]
     endif
     let l:fname = expand('%:p')
     if !empty(l:fname)

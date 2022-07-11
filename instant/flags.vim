@@ -112,6 +112,15 @@ call s:plugin.Flag('buildifier_executable', 'buildifier')
 call s:plugin.Flag('buildifier_lint_mode', '')
 
 ""
+" The warnings for buildifier. passed to buildifier --warnings parameter.
+"
+" Options:
+"" (empty): Use default warnings from buildifier.
+"-some-warning": Remove 'some-warning' from the warning set.
+"+some-warning": Add 'some-warning' to the warning set.
+call s:plugin.Flag('buildifier_warnings', '')
+
+""
 " The path to the google-java executable.  Generally, this should have the
 " form:
 " `java -jar /path/to/google-java`

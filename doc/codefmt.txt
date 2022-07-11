@@ -117,6 +117,23 @@ Options:
   an error and do no formatting.
 Default: '' `
 
+                                                *codefmt:buildifier_warnings*
+The warnings passed to buildifier to modify the defaults. Whatever is
+specified is added to the commandline after '--warnings='. For example, if you
+add this to your config:
+
+Glaive codefmt buildifier_warnings='-module-docstring,+unsorted-dict-items'
+
+Then buildifier will omit the 'module-docstring' warning, but add 
+'unsorted-dict-items' (which is ignored by default). This works also in
+fix-mode, in which case dictionary items will be resorted upon buffer save.
+
+Options:
+"" (empty): Use default warnings from buildifier.
+"-some-warning": Remove 'some-warning' from the warning set.
+"+some-warning": Add 'some-warning' to the warning set.
+Default: ''
+
                                               *codefmt:google_java_executable*
 The path to the google-java executable.  Generally, this should have the form:
 `java -jar /path/to/google-java`
