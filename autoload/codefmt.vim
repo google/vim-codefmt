@@ -271,9 +271,10 @@ function! codefmt#GetSupportedFormatters(ArgLead, CmdLine, CursorPos) abort
 endfunction
 
 ""
+" @public
 " Returns whether there is a default formatter available for the current
 " buffer.
-function! codefmt#AvailableInCurrrentBuffer() abort
+function! codefmt#AvailableInCurrentBuffer() abort
   let l:formatters = s:registry.GetExtensions()
   if !empty(get(b:, 'codefmt_formatter'))
     let l:Predicate = {f -> f.name ==# b:codefmt_formatter}
