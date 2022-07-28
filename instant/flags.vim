@@ -112,12 +112,19 @@ call s:plugin.Flag('buildifier_executable', 'buildifier')
 call s:plugin.Flag('buildifier_lint_mode', '')
 
 ""
-" The warnings for buildifier. passed to buildifier --warnings parameter.
+" The warnings options passed to buildifier to modify the defaults. Whatever is
+" specified is added to the commandline after "--warnings=". For example, if you
+" add this to your config: >
+"   Glaive codefmt buildifier_warnings='-module-docstring,+unsorted-dict-items'
+" <
+" Then buildifier will omit the "module-docstring" warning, but add
+" "unsorted-dict-items" (which is ignored by default). This works also in
+" fix-mode, in which case dictionary items will be resorted upon buffer save.
 "
 " Options:
-"" (empty): Use default warnings from buildifier.
-"-some-warning": Remove 'some-warning' from the warning set.
-"+some-warning": Add 'some-warning' to the warning set.
+" - "" (empty): Use default warnings from buildifier.
+" - "-some-warning": Remove 'some-warning' from the warning set.
+" - "+some-warning": Add 'some-warning' to the warning set.
 call s:plugin.Flag('buildifier_warnings', '')
 
 ""
