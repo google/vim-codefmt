@@ -1,0 +1,40 @@
+name: ci
+on: [push, pull_request]
+env:
+  VROOM_VERSION: 0.14.0
+  MAKTABA_VERSION: 1.14.0
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: "setup linux build environment"
+      run: |
+        sudo apt update
+        sudo apt install -y vim-gtk3 wget xvfb xterm
+        wget https://github.com/google/vroom/releases/download/v$VROOM_VERSION/vroom_$VROOM_VERSION-1_all.deb
+        sudo dpkg -i ./vroom_$VROOM_VERSION-1_all.deb
+        git clone -b ${MAKTABA_VERSION} https://github.com/google/vim-maktaba.git $GITHUB_WORKSPACE/../maktaba/
+        git clone https://github.com/google/vim-glaive.git $GITHUB_WORKSPACE/../glaive/
+
+    - name: "echo vim information"
+      run: vim --version
+
+    - name: "set up log files"
+      run: |
+        export _vroomlog=$(mktemp XXXXXX_error.log)
+        export _statuslog=$(mktemp XXXXXX_status.log)
+        echo "vroomlog=${_vroomlog}" >> $GITHUB_ENV
+        echo "statuslog=${_statuslog}" >> $GITHUB_ENV
+
+    - name: "run tests (silently 😞)"
+      run: |
+        xvfb-run -a xterm -e "vroom -o ${vroomlog} --crawl vroom; echo $? > ${statuslog}"
+        exit $(cat ${statuslog})
+
+    - name: "dump test logs"
+      if: always()
+      run: cat ${vroomlog}
