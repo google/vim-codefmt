@@ -42,7 +42,7 @@ function! codefmt#mixformat#GetFormatter() abort
   ""
   " Reformat the current buffer using ktfmt, only targeting {ranges}.
   function l:formatter.FormatRange(startline, endline) abort
-    let l:filename = expand('%:t')
+    let l:filename = expand('%:p')
     if empty(l:filename)
       let l:filename = 'stdin.exs'
     endif
@@ -50,11 +50,13 @@ function! codefmt#mixformat#GetFormatter() abort
     let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray('mix_executable')
     " Specify stdin as the file
     let l:cmd = l:cmd + ['format', '--stdin-filename=' . l:filename, '-']
+    let l:dir = l:filename == 'stdin.exs' ? getcwd() : s:findMixDir(l:filename)
+    let l:syscall = maktaba#syscall#Create(l:cmd).WithCwd(l:dir)
     try
       " mix format doesn't have a line-range option, but does a reasonable job
       " (except for leading indent) when given a full valid expression
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-          \ a:startline, a:endline, l:cmd)
+          \ a:startline, a:endline, l:syscall)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []
@@ -86,4 +88,21 @@ function! codefmt#mixformat#GetFormatter() abort
   endfunction
 
   return l:formatter
+endfunction
+
+" Finds the directory to run mix from.  Looks for a mix.exs file first; if that
+" is not found looks for a .formatter.exs file, falling back to the parent of
+" filepath.
+function! s:findMixDir(filepath) abort
+  let l:path = empty(a:filepath) ? getcwd() : fnamemodify(a:filepath, ':h')
+  let l:root = findfile('mix.exs', l:path . ';')
+  if empty(l:root)
+    let l:root = findfile('.formatter.exs', l:path . ';')
+  endif
+  if empty(l:root)
+    let l:root = l:path
+  else
+    let l:root = fnamemodify(l:root, ':h')
+  endif
+  return l:root
 endfunction
