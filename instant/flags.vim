@@ -81,6 +81,10 @@ call s:plugin.Flag('dartfmt_executable', 'dartfmt')
 call s:plugin.Flag('js_beautify_executable', 'js-beautify')
 
 ""
+" The path to the mix executable for Elixir.
+call s:plugin.Flag('mix_executable', 'mix')
+
+""
 " The path to the yapf executable.
 call s:plugin.Flag('yapf_executable', 'yapf')
 

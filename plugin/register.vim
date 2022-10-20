@@ -31,6 +31,7 @@
 "   * clojure: cljstyle, zprint
 "   * dart: dartfmt
 "   * fish: fish_indent
+"   * elixir: mixformat
 "   * gn: gn
 "   * go: gofmt
 "   * java: google-java-format
@@ -61,6 +62,7 @@ call s:registry.AddExtension(codefmt#clangformat#GetFormatter())
 call s:registry.AddExtension(codefmt#cljstyle#GetFormatter())
 call s:registry.AddExtension(codefmt#zprint#GetFormatter())
 call s:registry.AddExtension(codefmt#dartfmt#GetFormatter())
+call s:registry.AddExtension(codefmt#mixformat#GetFormatter())
 call s:registry.AddExtension(codefmt#fish_indent#GetFormatter())
 call s:registry.AddExtension(codefmt#gn#GetFormatter())
 call s:registry.AddExtension(codefmt#gofmt#GetFormatter())

@@ -37,6 +37,7 @@ The current list of defaults by filetype is:
   * clojure: cljstyle, zprint
   * dart: dartfmt
   * fish: fish_indent
+  * elixir: mixformat
   * gn: gn
   * go: gofmt
   * java: google-java-format
@@ -85,6 +86,10 @@ Default: 'dartfmt' `
                                               *codefmt:js_beautify_executable*
 The path to the js-beautify executable.
 Default: 'js-beautify' `
+
+                                                      *codefmt:mix_executable*
+The path to the mix executable for Elixir.
+Default: 'mix' `
 
                                                      *codefmt:yapf_executable*
 The path to the yapf executable.
