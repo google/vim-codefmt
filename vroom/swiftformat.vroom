@@ -1,0 +1,52 @@
+The built-in swift-format formatter knows how to format swift code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The swift-format formatter expects the swift-format executable to be installed on your
+system.
+
+  % f()
+  :FormatCode swift-format
+  ! swift-format .*
+  $ f()
+
+You can format any buffer with swift-format specifying the formatter explicitly.
+
+  @clear
+  % func f(a: String,b:Int)->String{
+  | return "a" }
+  :FormatCode swift-format
+  ! swift-format .*2>.*
+  $ func f(a: String, b: Int) -> String {
+  $   return "a"
+  $ }
+  func f(a: String, b: Int) -> String {
+    return "a"
+  }
+  @end
+
+The swift filetype will use the swift-format formatter by default.
+
+  @clear
+  % f()
+
+  :set filetype=swift
+  :FormatCode
+  ! swift-format .*
+  $ f()
+
+  :set filetype=
+

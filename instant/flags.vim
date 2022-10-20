@@ -89,12 +89,43 @@ call s:plugin.Flag('yapf_executable', 'yapf')
 call s:plugin.Flag('black_executable', 'black')
 
 ""
+" The path to the isort executable.
+call s:plugin.Flag('isort_executable', 'isort')
+
+""
 " The path to the gn executable.
 call s:plugin.Flag('gn_executable', 'gn')
 
 ""
 " The path to the buildifier executable.
 call s:plugin.Flag('buildifier_executable', 'buildifier')
+
+""
+" The lint_mode for buildifier. passed to buildifier --lint parameter.
+"
+" Options:
+" - "" (empty): Use default from buildifier.
+" - "Off": Do not fix issues.
+" - "Fix": Fix issues automatically during formatting.
+" - "Warn": Format only if there are no issues; if there are issues, it will
+"   cause an error and do no formatting.
+call s:plugin.Flag('buildifier_lint_mode', '')
+
+""
+" The warnings options passed to buildifier to modify the defaults. Whatever is
+" specified is added to the commandline after "--warnings=". For example, if you
+" add this to your config: >
+"   Glaive codefmt buildifier_warnings='-module-docstring,+unsorted-dict-items'
+" <
+" Then buildifier will omit the "module-docstring" warning, but add
+" "unsorted-dict-items" (which is ignored by default). This works also in
+" fix-mode, in which case dictionary items will be resorted upon buffer save.
+"
+" Options:
+" - "" (empty): Use default warnings from buildifier.
+" - "-some-warning": Remove 'some-warning' from the warning set.
+" - "+some-warning": Add 'some-warning' to the warning set.
+call s:plugin.Flag('buildifier_warnings', '')
 
 ""
 " The path to the google-java executable.  Generally, this should have the
@@ -130,6 +161,10 @@ call s:plugin.Flag('shfmt_executable', 'shfmt')
 " Command line arguments to feed prettier. Either a list or callable that
 " takes no args and returns a list with command line arguments.
 call s:plugin.Flag('prettier_options', [])
+
+""
+" The path to the swift-format executable.
+call s:plugin.Flag('swift_format_executable', 'swift-format')
 
 ""
 " @private

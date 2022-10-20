@@ -48,6 +48,7 @@ The current list of defaults by filetype is:
   * python: autopep8, black, yapf
   * rust: rustfmt
   * sh: shfmt
+  * swift: swift-format
 
 ==============================================================================
 CONFIGURATION                                                 *codefmt-config*
@@ -93,6 +94,10 @@ Default: 'yapf' `
 The path to the black executable.
 Default: 'black' `
 
+                                                    *codefmt:isort_executable*
+The path to the isort executable.
+Default: 'isort' `
+
                                                        *codefmt:gn_executable*
 The path to the gn executable.
 Default: 'gn' `
@@ -100,6 +105,34 @@ Default: 'gn' `
                                                *codefmt:buildifier_executable*
 The path to the buildifier executable.
 Default: 'buildifier' `
+
+                                                *codefmt:buildifier_lint_mode*
+The lint_mode for buildifier. passed to buildifier --lint parameter.
+
+Options:
+"" (empty): Use default from buildifier.
+"Off": Do not fix issues.
+"Fix": Fix issues automatically during formatting.
+"Warn": Format only if there are no issues; if there are issues, it will cause
+  an error and do no formatting.
+Default: '' `
+
+                                                 *codefmt:buildifier_warnings*
+The warnings options passed to buildifier to modify the defaults. Whatever is
+specified is added to the commandline after "--warnings=". For example, if you
+add this to your config:
+>
+  Glaive codefmt buildifier_warnings='-module-docstring,+unsorted-dict-items'
+<
+Then buildifier will omit the "module-docstring" warning, but add
+"unsorted-dict-items" (which is ignored by default). This works also in
+fix-mode, in which case dictionary items will be resorted upon buffer save.
+
+Options:
+"" (empty): Use default warnings from buildifier.
+"-some-warning": Remove 'some-warning' from the warning set.
+"+some-warning": Add 'some-warning' to the warning set.
+Default: '' `
 
                                               *codefmt:google_java_executable*
 The path to the google-java executable.  Generally, this should have the form:
@@ -133,6 +166,10 @@ Default: 'shfmt' `
 Command line arguments to feed prettier. Either a list or callable that takes
 no args and returns a list with command line arguments.
 Default: [] `
+
+                                             *codefmt:swift_format_executable*
+The path to the swift-format executable.
+Default: 'swift-format' `
 
                                                  *codefmt:prettier_executable*
 The path to the prettier executable. String, list, or callable that takes no

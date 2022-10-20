@@ -42,6 +42,7 @@
 "   * python: autopep8, black, yapf
 "   * rust: rustfmt
 "   * sh: shfmt
+"   * swift: swift-format
 
 
 let [s:plugin, s:enter] = maktaba#plugin#Enter(expand('<sfile>:p'))
@@ -70,7 +71,9 @@ call s:registry.AddExtension(codefmt#ktfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#luaformatterfiveone#GetFormatter())
 call s:registry.AddExtension(codefmt#nixpkgs_fmt#GetFormatter())
 call s:registry.AddExtension(codefmt#autopep8#GetFormatter())
+call s:registry.AddExtension(codefmt#isort#GetFormatter())
 call s:registry.AddExtension(codefmt#black#GetFormatter())
 call s:registry.AddExtension(codefmt#yapf#GetFormatter())
 call s:registry.AddExtension(codefmt#rustfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
+call s:registry.AddExtension(codefmt#swiftformat#GetFormatter())
