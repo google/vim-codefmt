@@ -68,13 +68,13 @@ function! codefmt#mixformat#GetFormatter() abort
         " (blank line), (stack trace with 4-space indent)
         " TODO gather additional details between error message and stack trace
         let l:tokens = matchlist(l:line,
-              \ printf('\v^\*\* (\(.*\)) %s:(\d+):(\d+):\s*(.*)', l:filename))
+              \ printf('\v^\*\* (\(\k+\)) [^:]+:(\d+):(\d+):\s*(.*)'))
         if !empty(l:tokens)
           call add(l:errors, {
               \ 'filename': @%,
-              \ 'lnum': l:tokens[1] + a:startline - 1,
-              \ 'col': l:tokens[2],
-              \ 'text': l:tokens[3]})
+              \ 'lnum': l:tokens[2] + a:startline - 1,
+              \ 'col': l:tokens[3],
+              \ 'text': printf('%s %s', l:tokens[1], l:tokens[4])})
         endif
       endfor
       if empty(l:errors)
