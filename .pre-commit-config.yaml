@@ -1,0 +1,6 @@
+# See https://pre-commit.com for more information
+repos:
+- repo: https://github.com/google/vimdoc
+  rev: v0.7.1
+  hooks:
+  - id: vimdoc
