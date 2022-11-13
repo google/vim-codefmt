@@ -1,0 +1,131 @@
+The ormolu formatter knows how to format Haskell.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The ormolu formatter expects the ormolu executable to be installed
+on your system.
+
+  % f()
+  :FormatCode ormolu
+  ! ormolu .*
+  $ f()
+
+The name or path of the ormolu executable can be configured via the
+ormolu_executable flag if the default of "ormolu" doesn't work.
+
+  :Glaive codefmt ormolu_executable='myormolu'
+  :FormatCode ormolu
+  ! myormolu .*
+  $ f()
+  :Glaive codefmt ormolu_executable='ormolu'
+
+You can format any buffer with ormolu specifying the formatter explicitly.
+
+  @clear
+  % module Main<CR>
+  |<CR>
+  |  where<CR>
+  |<CR>
+  |main:: IO ()<CR>
+  |<CR>
+  |<CR>
+  |{- this is just a comment -}<CR>
+  |main =pure ()<CR>
+  |<CR>
+  |foo :: Int<CR>
+  |foo =<CR>
+  |  5<CR>
+  |  + 5<CR>
+  |<CR>
+  |bar :: Int<CR>
+  |      bar = 7
+
+  :FormatCode ormolu
+  ! ormolu .*2>.*
+  $ module Main where
+  $ 
+  $ main :: IO ()
+  $ {- this is just a comment -}
+  $ main = pure ()
+  $ 
+  $ foo :: Int
+  $ foo =
+  $   5
+  $     + 5
+  $ 
+  $ bar :: Int
+  $ bar = 7
+  module Main where
+  
+  main :: IO ()
+  {- this is just a comment -}
+  main = pure ()
+  
+  foo :: Int
+  foo =
+    5
+      + 5
+  
+  bar :: Int
+  bar = 7
+  @end
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % module Main (main) where<CR>
+  |<CR>
+  |main :: IO ()<CR>
+  |{- this is just a comment -}<CR>
+  |main = pure ()<CR>
+  |<CR>
+  |foo :: Int<CR>
+  |foo =<CR>
+  |  5<CR>
+  |      + 5<CR>
+  |<CR>
+  |bar :: Int<CR>
+  |      bar = 7
+
+  :1,5FormatLines ormolu
+  ! ormolu .*2>.*
+  $ module Main (main) where
+  $ 
+  $ main :: IO ()
+  $ {- this is just a comment -}
+  $ main = pure ()
+  $ 
+  $ foo :: Int
+  $ foo =
+  $   5
+  $       + 5
+  $ 
+  $ bar :: Int
+  $       bar = 7
+  module Main (main) where
+  
+  main :: IO ()
+  {- this is just a comment -}
+  main = pure ()
+  
+  foo :: Int
+  foo =
+    5
+        + 5
+  
+  bar :: Int
+        bar = 7
+  @end
