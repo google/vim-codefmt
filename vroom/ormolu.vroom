@@ -23,8 +23,8 @@ on your system.
   ! ormolu .*
   $ f()
 
-The name or path of the gofmt executable can be configured via the
-gofmt_executable flag if the default of "gofmt" doesn't work.
+The name or path of the ormolu executable can be configured via the
+ormolu_executable flag if the default of "ormolu" doesn't work.
 
   :Glaive codefmt ormolu_executable='myormolu'
   :FormatCode ormolu
