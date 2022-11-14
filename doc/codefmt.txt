@@ -46,6 +46,7 @@ The current list of defaults by filetype is:
   * kotlin: ktfmt
   * lua: luaformatterfiveone
   * nix: nixpkgs-fmt
+  * ocaml: ocamlformat
   * python: autopep8, black, yapf
   * rust: rustfmt
   * sh: shfmt
@@ -218,6 +219,10 @@ Default: 'cljstyle' `
                                                    *codefmt:ormolu_executable*
 The path to the ormolu executable.
 Default: 'ormolu' `
+
+                                              *codefmt:ocamlformat_executable*
+The path to the ocamlformat executable.
+Default: 'ocamlformat' `
 
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
