@@ -50,6 +50,9 @@ function! codefmt#ocamlformat#GetFormatter() abort
       " Assume we're formatting an implementation file.
       let l:inputflags = ['--impl']
     endif
+    " TODO(dimitrije): Catch and handle formatting errors more nicely. See how
+    " it's dome in gofmt.vim.
+    " For now, an ugly ShellError will be thrown if anything fails here.
     call codefmt#formatterhelpers#Format(
         \ [l:executable]
         \ + l:inputflags
