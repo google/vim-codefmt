@@ -229,5 +229,9 @@ call s:plugin.Flag('luaformatterfiveone_executable', 'luaformatterfiveone')
 call s:plugin.Flag('cljstyle_executable', 'cljstyle')
 
 ""
+" The path to the ormolu executable.
+call s:plugin.Flag('ormolu_executable', 'ormolu')
+
+""
 " The path to the ocamlformat executable.
 call s:plugin.Flag('ocamlformat_executable', 'ocamlformat')

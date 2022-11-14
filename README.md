@@ -19,6 +19,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * Fish ([fish_indent](https://fishshell.com/docs/current/commands.html#fish_indent))
 * Go (gofmt)
 * [GN](https://www.chromium.org/developers/gn-build-configuration) (gn)
+* Haskell ([ormolu](https://github.com/tweag/ormolu))
 * HTML (js-beautify)
 * Java (google-java-format or clang-format)
 * JavaScript (clang-format or [prettier](https://prettier.io))
