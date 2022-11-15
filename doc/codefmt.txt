@@ -40,6 +40,7 @@ The current list of defaults by filetype is:
   * elixir: mixformat
   * gn: gn
   * go: gofmt
+  * haskell: ormolu
   * java: google-java-format
   * javascript, json, html, css: js-beautify
   * javascript, html, css, markdown: prettier
@@ -218,6 +219,10 @@ Default: 'luaformatterfiveone' `
                                                  *codefmt:cljstyle_executable*
 The path to the cljstyle executable.
 Default: 'cljstyle' `
+
+                                                   *codefmt:ormolu_executable*
+The path to the ormolu executable.
+Default: 'ormolu' `
 
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.

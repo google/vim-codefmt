@@ -34,6 +34,7 @@
 "   * elixir: mixformat
 "   * gn: gn
 "   * go: gofmt
+"   * haskell: ormolu
 "   * java: google-java-format
 "   * javascript, json, html, css: js-beautify
 "   * javascript, html, css, markdown: prettier
@@ -79,3 +80,4 @@ call s:registry.AddExtension(codefmt#yapf#GetFormatter())
 call s:registry.AddExtension(codefmt#rustfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#swiftformat#GetFormatter())
+call s:registry.AddExtension(codefmt#ormolu#GetFormatter())

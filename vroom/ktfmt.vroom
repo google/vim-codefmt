@@ -1,5 +1,5 @@
-The built-in ktfmt formatter knows how to format Kotlin files.  If you
-aren't familiar with basic codefmt usage yet, see main.vroom first.
+The built-in ktfmt formatter knows how to format Kotlin files. If you aren't
+familiar with basic codefmt usage yet, see main.vroom first.
 
 We'll set up codefmt and configure the vroom environment, then jump into some
 examples.

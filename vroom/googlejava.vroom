@@ -1,4 +1,4 @@
-The built-in google-java formatter knows how to format Java files.  If you
+The built-in google-java formatter knows how to format Java files. If you
 aren't familiar with basic codefmt usage yet, see main.vroom first.
 
 We'll set up codefmt and configure the vroom environment, then jump into some
