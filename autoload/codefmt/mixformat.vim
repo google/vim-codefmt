@@ -21,7 +21,7 @@ let s:cmdAvailable = {}
 function! codefmt#mixformat#GetFormatter() abort
   let l:formatter = {
       \ 'name': 'mixformat',
-      \ 'setup_instructions': 'mix is usually installed with Elixir' .
+      \ 'setup_instructions': 'mix is usually installed with Elixir ' .
           \ '(https://elixir-lang.org/install.html). ' .
           \ "If mix is not in your path, configure it in .vimrc:\n" .
           \ 'Glaive codefmt mix_executable=/path/to/mix' }
@@ -40,17 +40,20 @@ function! codefmt#mixformat#GetFormatter() abort
   endfunction
 
   ""
-  " Reformat the current buffer using ktfmt, only targeting {ranges}.
+  " Reformat the current buffer using mix format, only targeting {ranges}.
   function l:formatter.FormatRange(startline, endline) abort
     let l:filename = expand('%:p')
     if empty(l:filename)
+      let l:dir = getcwd()
+      " Default filename per https://hexdocs.pm/mix/Mix.Tasks.Format.html
       let l:filename = 'stdin.exs'
+    else
+      let l:dir = s:findMixDir(l:filename)
     endif
     " mix format docs: https://hexdocs.pm/mix/main/Mix.Tasks.Format.html
     let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray('mix_executable')
     " Specify stdin as the file
     let l:cmd = l:cmd + ['format', '--stdin-filename=' . l:filename, '-']
-    let l:dir = l:filename == 'stdin.exs' ? getcwd() : s:findMixDir(l:filename)
     let l:syscall = maktaba#syscall#Create(l:cmd).WithCwd(l:dir)
     try
       " mix format doesn't have a line-range option, but does a reasonable job
