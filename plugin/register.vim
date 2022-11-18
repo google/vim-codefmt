@@ -40,6 +40,7 @@
 "   * kotlin: ktfmt
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
+"   * ocaml: ocamlformat
 "   * python: autopep8, black, yapf
 "   * rust: rustfmt
 "   * sh: shfmt
@@ -79,3 +80,4 @@ call s:registry.AddExtension(codefmt#rustfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#swiftformat#GetFormatter())
 call s:registry.AddExtension(codefmt#ormolu#GetFormatter())
+call s:registry.AddExtension(codefmt#ocamlformat#GetFormatter())

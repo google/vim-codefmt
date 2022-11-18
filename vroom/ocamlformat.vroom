@@ -1,0 +1,76 @@
+The ocamlformat formatter knows how to format OCaml.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The ocamlformat formatter expects the ocamlformat executable to be installed
+on your system.
+
+  % f()
+  :FormatCode ocamlformat
+  ! ocamlformat --impl - .*2>.*
+  $ f()
+
+The name or path of the ocamlformat executable can be configured via the
+ocamlformat_executable flag if the default of "ocamlformat" doesn't work.
+
+  :Glaive codefmt ocamlformat_executable='myocamlformat'
+  :FormatCode ocamlformat
+  ! myocamlformat --impl - .*2>.*
+  $ f()
+  :Glaive codefmt ocamlformat_executable='ocamlformat'
+
+You can format any buffer with ocamlformat specifying the formatter explicitly.
+
+  @clear
+  % open Base<CR>
+  |<CR>
+  |   open Stdio<CR>
+  |<CR>
+  | let build_count  chan=In_channel.fold_lines chan<CR>
+  |   ~init:[]<CR>
+  |  ~f:<CR>
+  |  (fun counts line -><CR>
+  |     let count = match List.Assoc.find ~equal:String.equal  counts line with<CR>
+  |       |   None -> 0<CR>
+  |       | Some x -> x<CR>
+  |     in List.Assoc.add ~equal:String.equal counts line ( count  +  1 )<CR>
+  |  )
+
+  :FormatCode ocamlformat
+  ! ocamlformat --impl - .*2>.*
+  $ open Base
+  $ open Stdio
+  $ 
+  $ let build_count chan =
+  $   In_channel.fold_lines chan ~init:[] ~f:(fun counts line ->
+  $     let count =
+  $       match List.Assoc.find ~equal:String.equal counts line with
+  $       | None -> 0
+  $       | Some x -> x
+  $     in
+  $     List.Assoc.add ~equal:String.equal counts line (count + 1))
+  open Base
+  open Stdio
+  
+  let build_count chan =
+    In_channel.fold_lines chan ~init:[] ~f:(fun counts line ->
+      let count =
+        match List.Assoc.find ~equal:String.equal counts line with
+        | None -> 0
+        | Some x -> x
+      in
+      List.Assoc.add ~equal:String.equal counts line (count + 1))
+  @end
