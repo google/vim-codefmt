@@ -1,0 +1,103 @@
+
+The built-in mixformat formatter knows how to format Elixir code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The mixformat formatter expects the mix executable to be installed on your
+system.
+
+  % IO.puts("Hello world")
+  :FormatCode mixformat
+  ! cd .* && mix format .* - 2>.*
+  $ IO.puts("Hello world")
+
+The name or path of the mixformat executable can be configured via the
+mix_executable flag if the default of "mix" doesn't work.
+
+  :Glaive codefmt mix_executable='someothermix'
+  :FormatCode mixformat
+  ! cd .* && someothermix format .* - 2>.*
+  $ IO.puts("Hello world")
+  :Glaive codefmt mix_executable='mix'
+
+
+You can format any buffer with mixformat specifying the formatter explicitly.
+
+  @clear
+  % def foo() do<CR>
+  |IO.puts("Hello"); IO.puts("World");<CR>
+  |end
+
+  :FormatCode mixformat
+  ! cd .* && mix format .* - 2>.*
+  $ def foo() do
+  $   IO.puts("Hello")
+  $   IO.puts("World")
+  $ end
+  def foo() do
+    IO.puts("Hello")
+    IO.puts("World")
+  end
+  @end
+
+The elixir, eelixer, and heex filetypes will use the mixformat formatter
+by default.
+
+  @clear
+  % IO.puts("Hello world")
+
+  :set filetype=elixir
+  :FormatCode
+  ! cd .* && mix format .* - 2>.*
+  $ IO.puts("Hello world")
+
+  :set filetype=eelixir
+  :FormatCode
+  ! cd .* && mix format .* - 2>.*
+  $ IO.puts("Hello world")
+
+  :set filetype=heex
+  :FormatCode
+  ! cd .* && mix format .* - 2>.*
+  $ IO.puts("Hello world")
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % defmodule Foo do<CR>
+  |def bar(list) do<CR>
+  |[head | tail] = list; IO.puts(head)<CR>
+  |end<CR>
+  |end
+
+  :2,4FormatLines mixformat
+  ! cd .* && mix format .* - 2>.*
+  $ def bar(list) do
+  $   [head | tail] = list
+  $   IO.puts(head)
+  $ end
+  defmodule Foo do
+  def bar(list) do
+    [head | tail] = list
+    IO.puts(head)
+  end
+  end
+  @end
+
+NOTE: the mix formatter does not natively support range formatting, so there
+are certain limitations like misaligning indentation levels.
