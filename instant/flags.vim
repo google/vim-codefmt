@@ -132,6 +132,10 @@ call s:plugin.Flag('buildifier_lint_mode', '')
 call s:plugin.Flag('buildifier_warnings', '')
 
 ""
+" The path to the jsonnetfmt executable.
+call s:plugin.Flag('jsonnetfmt_executable', 'jsonnetfmt')
+
+""
 " The path to the google-java executable.  Generally, this should have the
 " form:
 " `java -jar /path/to/google-java`

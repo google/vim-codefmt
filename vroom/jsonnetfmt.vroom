@@ -1,0 +1,33 @@
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The jsonnetfmt formatter expects the jsonnetfmt executable to be installed on
+your system.
+
+  % {foo:'bar'}
+  :FormatCode jsonnetfmt
+  ! jsonnetfmt .*
+  $ { foo: 'foo' }
+
+
+The name or path of the jsonnetfmt executable can be configured via the
+jsonnetfmt_executable flag if the default of "jsonnetfmt" doesn't work.
+
+  :Glaive codefmt jsonnetfmt_executable='myjsonnetfmt'
+  :FormatCode jsonnetfmt
+  ! myjsonnetfmt .*
+  $ foo_library(
+  $     name = "foo",
+  $     srcs = ["bar.js"],
+  $ )
+  :Glaive codefmt jsonnetfmt_executable='jsonnetfmt'
+
