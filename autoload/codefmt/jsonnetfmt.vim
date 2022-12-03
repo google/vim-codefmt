@@ -15,10 +15,10 @@ function! codefmt#jsonnetfmt#GetFormatter() abort
     return executable(s:plugin.Flag('jsonnetfmt_executable'))
   endfunction
 
-  let s:supported_filetypes = ['json','jsonnet']
+  let l:supported_filetypes = ['json','jsonnet']
 
   function l:formatter.AppliesToBuffer() abort
-    return index(s:supported_filetypes, &filetype) >= 0
+    return index(l:supported_filetypes, &filetype) >= 0
   endfunction
 
   ""
