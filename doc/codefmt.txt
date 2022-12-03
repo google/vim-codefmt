@@ -44,6 +44,7 @@ The current list of defaults by filetype is:
   * java: google-java-format
   * javascript, json, html, css: js-beautify
   * javascript, html, css, markdown: prettier
+  * json, jsonnet: jsonnetfmt
   * kotlin: ktfmt
   * lua: luaformatterfiveone
   * nix: nixpkgs-fmt
@@ -140,6 +141,10 @@ Options:
 "-some-warning": Remove 'some-warning' from the warning set.
 "+some-warning": Add 'some-warning' to the warning set.
 Default: '' `
+
+                                               *codefmt:jsonnetfmt_executable*
+The path to the jsonnetfmt executable.
+Default: 'jsonnetfmt' `
 
                                               *codefmt:google_java_executable*
 The path to the google-java executable.  Generally, this should have the form:

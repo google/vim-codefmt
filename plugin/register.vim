@@ -38,6 +38,7 @@
 "   * java: google-java-format
 "   * javascript, json, html, css: js-beautify
 "   * javascript, html, css, markdown: prettier
+"   * json, jsonnet: jsonnetfmt
 "   * kotlin: ktfmt
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
@@ -69,7 +70,7 @@ call s:registry.AddExtension(codefmt#fish_indent#GetFormatter())
 call s:registry.AddExtension(codefmt#gn#GetFormatter())
 call s:registry.AddExtension(codefmt#gofmt#GetFormatter())
 call s:registry.AddExtension(codefmt#googlejava#GetFormatter())
-call s.registry.AddExtension(codefmt#jsonnetfmt#GetFormatter())
+call s:registry.AddExtension(codefmt#jsonnetfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#jsbeautify#GetFormatter())
 call s:registry.AddExtension(codefmt#prettier#GetFormatter())
 call s:registry.AddExtension(codefmt#ktfmt#GetFormatter())

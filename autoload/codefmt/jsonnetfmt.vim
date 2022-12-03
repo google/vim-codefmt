@@ -8,14 +8,13 @@ let s:plugin = maktaba#plugin#Get('codefmt')
 function! codefmt#jsonnetfmt#GetFormatter() abort
   let l:formatter = {
       \ 'name': 'jsonnetfmt',
-      \ 'setup_instructions': 'Install jsonnet. ' .
-          \ '(https://jsonnet.org/).'}
+      \ 'setup_instructions': 'Install jsonnet. (https://jsonnet.org/).'}
 
   function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('jsonnetfmt_executable'))
   endfunction
 
-  let l:supported_filetypes = ['json','jsonnet']
+  let l:supported_filetypes = ['json', 'jsonnet']
 
   function l:formatter.AppliesToBuffer() abort
     return index(l:supported_filetypes, &filetype) >= 0
@@ -24,7 +23,6 @@ function! codefmt#jsonnetfmt#GetFormatter() abort
   ""
   " Reformat the current buffer with jsonnetfmt or the binary named in
   " @flag(jsonnetfmt_executable)
-  " @throws ShellError
   function l:formatter.Format() abort
     let l:cmd = [ s:plugin.Flag('jsonnetfmt_executable') ]
     let l:fname = expand('%:p')
