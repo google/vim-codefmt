@@ -1,0 +1,50 @@
+name: run-tests
+
+on: [push, pull_request]
+
+env:
+  VROOM_VERSION: 0.14.0
+  MAKTABA_VERSION: 1.14.0
+
+jobs:
+  run-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-22.04
+        vim-flavour:
+          - vim
+          - neovim
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install vim
+        if: ${{ matrix.vim-flavour == 'vim' }}
+        run: |
+          sudo apt update
+          sudo apt install vim vim-gtk xvfb
+      - name: Install neovim
+        if: ${{ matrix.vim-flavour == 'neovim' }}
+        run: |
+          sudo apt update
+          sudo apt install neovim python3-neovim xvfb
+      - name: Install vroom
+        run: |
+          wget https://github.com/google/vroom/releases/download/v${VROOM_VERSION}/vroom_${VROOM_VERSION}-1_all.deb
+          sudo dpkg -i ./vroom_${VROOM_VERSION}-1_all.deb
+      - name: Install plugin dependencies
+        run: |
+          git clone -b ${MAKTABA_VERSION} https://github.com/google/vim-maktaba.git ../maktaba/
+          git clone https://github.com/google/vim-glaive.git ../glaive/
+
+      - name: Run tests (vim)
+        if: ${{ matrix.vim-flavour == 'vim' }}
+        timeout-minutes: 30
+        run: |
+          xvfb-run script -q -e -c 'vroom --crawl'
+      - name: Run tests (neovim)
+        if: ${{ matrix.vim-flavour == 'neovim' }}
+        timeout-minutes: 30
+        run: |
+          xvfb-run script -q -e -c 'vroom --neovim --crawl'
