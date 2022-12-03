@@ -37,7 +37,8 @@ function! codefmt#jsonnetfmt#GetFormatter() abort
       " jsonnetfmt does not support range formatting.
       call codefmt#formatterhelpers#Format(l:cmd)
     catch
-      " Parse all the errors and stick them in the quickfix list.
+      " TODO: Parse all the errors and stick them in the quickfix list.
+      " currently just echoes the errors.
       call maktaba#error#Shout('Error formatting file: %s', v:exception)
     endtry
   endfunction
