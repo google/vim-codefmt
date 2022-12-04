@@ -1,5 +1,7 @@
 let s:plugin = maktaba#plugin#Get('codefmt')
 
+let s:SUPPORTED_FILETYPES = ['json', 'jsonnet']
+
 
 ""
 " @private
@@ -14,10 +16,8 @@ function! codefmt#jsonnetfmt#GetFormatter() abort
     return executable(s:plugin.Flag('jsonnetfmt_executable'))
   endfunction
 
-  let l:supported_filetypes = ['json', 'jsonnet']
-
   function l:formatter.AppliesToBuffer() abort
-    return index(l:supported_filetypes, &filetype) >= 0
+    return index(s:SUPPORTED_FILETYPES, &filetype) >= 0
   endfunction
 
   ""
