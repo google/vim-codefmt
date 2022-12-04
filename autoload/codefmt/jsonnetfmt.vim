@@ -27,7 +27,7 @@ function! codefmt#jsonnetfmt#GetFormatter() abort
     let l:cmd = [ s:plugin.Flag('jsonnetfmt_executable') ]
     let l:fname = expand('%:p')
     if !empty(l:fname)
-      let l:cmd += ['-path', l:fname]
+      let l:cmd += ['--in-place', l:fname]
     endif
 
     try
