@@ -59,3 +59,14 @@ execute 'nnoremap <unique> <silent>' s:prefix . '=' ':FormatLines<CR>'
 " Format the visually selected region using the formatter associated with the
 " current buffer.
 execute 'vnoremap <unique> <silent>' s:prefix ':FormatLines<CR>'
+
+function! s:SetFormatExpr() abort
+  if codefmt#AvailableInCurrrentBuffer()
+    setlocal formatexpr=codefmt#FormatExpr()
+  endif
+endfunction
+
+augroup codefmt_formatexpr
+  autocmd!
+  autocmd BufEnter * call <SID>SetFormatExpr()
+augroup END

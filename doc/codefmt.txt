@@ -357,6 +357,17 @@ codefmt#FormatMap({type})                                *codefmt#FormatMap()*
   Suitable for use as 'operatorfunc'; see |g@| for details. The type is
   ignored since formatting only works on complete lines.
 
+codefmt#FormatExpr()                                    *codefmt#FormatExpr()*
+  To map the builtin |gq| command to invoke codefmt, set 'formatexpr' to call
+  this function. Example:
+>
+<
+  set formatexpr=codefmt#FormatExpr() <
+
+codefmt#AvailableInCurrentBuffer()        *codefmt#AvailableInCurrentBuffer()*
+  Returns whether there is a default formatter available for the current
+  buffer.
+
 codefmt#formatterhelpers#Format({cmd})     *codefmt#formatterhelpers#Format()*
   Format lines in the current buffer via a formatter invoked by {cmd}, which
   is a system call represented by either a |maktaba.Syscall| or any argument
