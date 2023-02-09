@@ -43,14 +43,14 @@ endfunction
 ""
 " Format the current line or range using [formatter].
 " @default formatter=the default formatter associated with the current buffer
-command -nargs=? -range -complete=custom,codefmt#GetSupportedFormatters
+command -nargs=? -bar -range -complete=custom,codefmt#GetSupportedFormatters
     \ FormatLines call s:FormatLinesAndSetRepeat(<line1>, <line2>, <f-args>)
 
 ""
 " Format the whole buffer using [formatter].
 " See @section(formatters) for list of valid formatters.
 " @default formatter=the default formatter associated with the current buffer
-command -nargs=? -complete=custom,codefmt#GetSupportedFormatters
+command -nargs=? -bar -complete=custom,codefmt#GetSupportedFormatters
     \ FormatCode call s:FormatBufferAndSetRepeat(<f-args>)
 
 ""
@@ -58,10 +58,10 @@ command -nargs=? -complete=custom,codefmt#GetSupportedFormatters
 " [formatter] as the default formatter for this buffer via the
 " @setting(b:codefmt_formatter) variable.
 " @default formatter=the default formatter associated with the current buffer
-command -nargs=? -complete=custom,codefmt#GetSupportedFormatters
+command -nargs=? -bar -complete=custom,codefmt#GetSupportedFormatters
     \ AutoFormatBuffer call s:AutoFormatBuffer(<f-args>)
 
 ""
 " Disables format on save for this buffer.
-command -nargs=0 NoAutoFormatBuffer let b:codefmt_auto_format_buffer = 0
+command -nargs=0 -bar NoAutoFormatBuffer let b:codefmt_auto_format_buffer = 0
 
