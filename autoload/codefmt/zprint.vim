@@ -44,7 +44,7 @@ function! codefmt#zprint#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'clojure'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'clojure')
   endfunction
 
   ""

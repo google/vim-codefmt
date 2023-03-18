@@ -35,8 +35,8 @@ function! codefmt#mixformat#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'elixir' || &filetype is# 'eelixir'
-          \ || &filetype is# 'heex'
+    return codefmt#formatterhelpers#FiletypeMatches(
+        \ &filetype, ['elixir', 'eelixir', 'heex'])
   endfunction
 
   ""

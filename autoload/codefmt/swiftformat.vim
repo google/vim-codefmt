@@ -29,7 +29,7 @@ function! codefmt#swiftformat#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'swift'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'swift')
   endfunction
 
   ""

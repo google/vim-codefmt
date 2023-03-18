@@ -357,6 +357,20 @@ codefmt#FormatMap({type})                                *codefmt#FormatMap()*
   Suitable for use as 'operatorfunc'; see |g@| for details. The type is
   ignored since formatting only works on complete lines.
 
+codefmt#formatterhelpers#FiletypeMatches({filetype}, {expected})
+                                  *codefmt#formatterhelpers#FiletypeMatches()*
+  Checks if the given {filetype} matches {expected} filetype(s).
+
+  Usage examples:
+>
+    if codefmt#formatterhelpers#FiletypeMatches(&filetype, 'c')
+<
+
+>
+    if codefmt#formatterhelpers#FiletypeMatches(&filetype, ['c', 'cpp'])
+<
+  Throws ERROR(WrongType)
+
 codefmt#formatterhelpers#Format({cmd})     *codefmt#formatterhelpers#Format()*
   Format lines in the current buffer via a formatter invoked by {cmd}, which
   is a system call represented by either a |maktaba.Syscall| or any argument
@@ -380,6 +394,7 @@ codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
   code that calls it.
 
   Throws ERROR(ShellError) if the {cmd} system call fails
+  Throws ERROR(WrongType)
 
 codefmt#formatterhelpers#ResolveFlagToArray({flag_name})
                                *codefmt#formatterhelpers#ResolveFlagToArray()*

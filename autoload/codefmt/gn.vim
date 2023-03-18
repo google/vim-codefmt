@@ -31,7 +31,7 @@ function! codefmt#gn#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'gn'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'gn')
   endfunction
 
   ""

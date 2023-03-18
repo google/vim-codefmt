@@ -30,7 +30,7 @@ function! codefmt#ormolu#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'haskell'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'haskell')
   endfunction
 
   ""

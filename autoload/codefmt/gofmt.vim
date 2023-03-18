@@ -30,7 +30,7 @@ function! codefmt#gofmt#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'go'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'go')
   endfunction
 
   ""

@@ -41,7 +41,7 @@ function! codefmt#googlejava#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'java'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'java')
   endfunction
 
   ""

@@ -27,7 +27,7 @@ function! codefmt#fish_indent#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'fish'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'fish')
   endfunction
 
   ""
