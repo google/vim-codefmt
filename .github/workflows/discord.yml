@@ -1,0 +1,20 @@
+name: notify-discord
+
+on:
+  push:
+    branches: [master]
+  pull_request_target:
+    branches: [master]
+  issues:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.repository == 'google/vim-codefmt'
+
+    steps:
+      - name: Actions for Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.3.2
