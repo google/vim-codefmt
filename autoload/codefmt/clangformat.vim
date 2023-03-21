@@ -115,16 +115,14 @@ function! codefmt#clangformat#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    if &filetype is# 'c' || &filetype is# 'cpp' ||
-        \ &filetype is# 'proto' || &filetype is# 'javascript' ||
-        \ &filetype is# 'objc' || &filetype is# 'objcpp' ||
-        \ &filetype is# 'typescript' || &filetype is# 'arduino' ||
-        \ &filetype is# 'cuda'
+    if codefmt#formatterhelpers#FiletypeMatches(
+        \ &filetype,
+        \ ['c', 'cpp', 'cuda', 'proto', 'javascript', 'objc', 'objcpp', 'typescript', 'arduino'])
       return 1
     endif
     " Version 3.6 adds support for java
     " http://llvm.org/releases/3.6.0/tools/clang/docs/ReleaseNotes.html
-    return &filetype is# 'java' && s:ClangFormatHasAtLeastVersion([3, 6])
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'java') && s:ClangFormatHasAtLeastVersion([3, 6])
   endfunction
 
   ""

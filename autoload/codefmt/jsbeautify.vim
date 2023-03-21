@@ -70,7 +70,7 @@ function! codefmt#jsbeautify#GetFormatter() abort
     " TODO: Support other compound filetypes like "javascript.*" and "css.*"?
     let l:filetype = substitute(a:filetype, '\m^html\..*', 'html', '')
     for [l:format_name, l:filetypes] in items(self._supported_formats)
-      if index(l:filetypes, l:filetype) >= 0
+      if codefmt#formatterhelpers#FiletypeMatches(l:filetype, l:filetypes)
         return l:format_name
       endif
     endfor

@@ -16,8 +16,11 @@
 let s:plugin = maktaba#plugin#Get('codefmt')
 
 " See https://prettier.io for a list of supported file types.
-let s:supported_filetypes = ['javascript', 'markdown', 'html', 'css', 'yaml',
+if !exists('s:SUPPORTED_FILETYPES')
+  let s:SUPPORTED_FILETYPES = ['javascript', 'markdown', 'html', 'css', 'yaml',
       \ 'jsx', 'less', 'scss', 'mdx', 'vue']
+  lockvar! s:SUPPORTED_FILETYPES
+endif
 
 
 ""
@@ -56,7 +59,7 @@ function! codefmt#prettier#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return index(s:supported_filetypes, &filetype) >= 0
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, s:SUPPORTED_FILETYPES)
   endfunction
 
   ""

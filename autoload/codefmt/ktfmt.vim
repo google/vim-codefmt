@@ -71,7 +71,7 @@ function! codefmt#ktfmt#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'kotlin'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'kotlin')
   endfunction
 
   ""

@@ -31,7 +31,7 @@ function! codefmt#luaformatterfiveone#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'lua'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'lua')
   endfunction
 
   ""

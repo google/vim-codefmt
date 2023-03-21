@@ -36,7 +36,7 @@ function! codefmt#shfmt#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'sh'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'sh')
   endfunction
 
   ""

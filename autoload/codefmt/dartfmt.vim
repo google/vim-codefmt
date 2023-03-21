@@ -30,7 +30,7 @@ function! codefmt#dartfmt#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'dart'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'dart')
   endfunction
 
   ""

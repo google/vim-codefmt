@@ -30,7 +30,7 @@ function! codefmt#isort#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'python'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'python')
   endfunction
 
   ""

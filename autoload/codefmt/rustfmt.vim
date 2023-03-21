@@ -31,7 +31,7 @@ function! codefmt#rustfmt#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'rust'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'rust')
   endfunction
 
   ""

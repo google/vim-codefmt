@@ -16,6 +16,35 @@
 let s:plugin = maktaba#plugin#Get('codefmt')
 
 
+" TODO(google/vim-maktaba#255): Use maktaba's when dropping support for 1.16.0.
+function! s:ValueAsList(Value_or_values) abort
+  return maktaba#value#IsList(a:Value_or_values) ?
+      \ a:Value_or_values : [a:Value_or_values]
+endfunction
+
+
+""
+" @public
+" Checks if the given {filetype} matches {expected} filetype(s).
+"
+" Usage examples: >
+"   if codefmt#formatterhelpers#FiletypeMatches(&filetype, 'c')
+" < >
+"   if codefmt#formatterhelpers#FiletypeMatches(&filetype, ['c', 'cpp'])
+" <
+" @throws WrongType
+function! codefmt#formatterhelpers#FiletypeMatches(filetype, expected) abort
+  call maktaba#ensure#TypeMatchesOneOf(a:expected, ['', ['']])
+  " TODO(#212): Support dot-separated filetype names.
+  let l:expected = s:ValueAsList(a:expected)
+  " TODO(google/vim-maktaba#256): Drop this check when redundant with above.
+  for l:expected_ft in l:expected
+    call maktaba#ensure#IsString(l:expected_ft)
+  endfor
+  return index(l:expected, a:filetype) >= 0
+endfunction
+
+
 ""
 " @public
 " Format lines in the current buffer via a formatter invoked by {cmd}, which
@@ -50,6 +79,7 @@ endfunction
 " code that calls it.
 "
 " @throws ShellError if the {cmd} system call fails
+" @throws WrongType
 function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
     \ startline, endline, cmd) abort
   call maktaba#ensure#IsNumber(a:startline)

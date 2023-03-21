@@ -30,7 +30,7 @@ function! codefmt#ocamlformat#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'ocaml'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'ocaml')
   endfunction
 
   ""

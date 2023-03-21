@@ -31,7 +31,7 @@ function! codefmt#nixpkgs_fmt#GetFormatter() abort
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
-    return &filetype is# 'nix'
+    return codefmt#formatterhelpers#FiletypeMatches(&filetype, 'nix')
   endfunction
 
   ""
