@@ -66,11 +66,8 @@ function! codefmt#jsbeautify#GetFormatter() abort
   endfunction
 
   function l:formatter._GetSupportedFormatName(filetype) dict abort
-    " Simplify compound filetypes like "html.mustache" down to just "html".
-    " TODO: Support other compound filetypes like "javascript.*" and "css.*"?
-    let l:filetype = substitute(a:filetype, '\m^html\..*', 'html', '')
     for [l:format_name, l:filetypes] in items(self._supported_formats)
-      if codefmt#formatterhelpers#FiletypeMatches(l:filetype, l:filetypes)
+      if codefmt#formatterhelpers#FiletypeMatches(a:filetype, l:filetypes)
         return l:format_name
       endif
     endfor

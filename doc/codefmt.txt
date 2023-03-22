@@ -361,6 +361,9 @@ codefmt#formatterhelpers#FiletypeMatches({filetype}, {expected})
                                   *codefmt#formatterhelpers#FiletypeMatches()*
   Checks if the given {filetype} matches {expected} filetype(s).
 
+  When checking a dotted filetype name (like "c.doxygen"), returns true if any
+  piece matches expected filetype(s).
+
   Usage examples:
 >
     if codefmt#formatterhelpers#FiletypeMatches(&filetype, 'c')

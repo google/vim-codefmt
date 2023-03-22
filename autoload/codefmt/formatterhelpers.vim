@@ -27,6 +27,9 @@ endfunction
 " @public
 " Checks if the given {filetype} matches {expected} filetype(s).
 "
+" When checking a dotted filetype name (like "c.doxygen"), returns true if any
+" piece matches expected filetype(s).
+"
 " Usage examples: >
 "   if codefmt#formatterhelpers#FiletypeMatches(&filetype, 'c')
 " < >
@@ -35,13 +38,19 @@ endfunction
 " @throws WrongType
 function! codefmt#formatterhelpers#FiletypeMatches(filetype, expected) abort
   call maktaba#ensure#TypeMatchesOneOf(a:expected, ['', ['']])
-  " TODO(#212): Support dot-separated filetype names.
   let l:expected = s:ValueAsList(a:expected)
   " TODO(google/vim-maktaba#256): Drop this check when redundant with above.
   for l:expected_ft in l:expected
     call maktaba#ensure#IsString(l:expected_ft)
   endfor
-  return index(l:expected, a:filetype) >= 0
+  " Check if filetypes match expected (splitting & looping to help support
+  " dot-separated filetype names).
+  for l:filetype in split(a:filetype, '\m\.', 0)
+    if index(l:expected, l:filetype) >= 0
+      return 1
+    endif
+  endfor
+  return 0
 endfunction
 
 

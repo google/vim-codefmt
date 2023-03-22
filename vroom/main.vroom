@@ -138,6 +138,20 @@ will be used by default for the go filetype.
   ! gofmt .*
   $ f()
 
+This will correctly detect compound dot-separated filetypes (see vim's
+`:help 'filetype'`), so gofmt will still be used for "go.otherft":
+
+  @clear
+  % f()
+  :set filetype=go.otherft
+  :FormatCode
+  ! gofmt .*
+  $ f()
+
+(Be aware though that the order of dotted filetypes doesn't affect which
+formatter wins if the multiple filetypes each have their own formatter, so in
+that case you may need to explicitly choose one instead of relying on defaults.)
+
 You can also configure which formatter to use on a buffer-by-buffer basis via
 b:codefmt_formatter, which will take precedence over the built-in defaulting.
 
