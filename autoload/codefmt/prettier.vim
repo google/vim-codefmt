@@ -18,7 +18,8 @@ let s:plugin = maktaba#plugin#Get('codefmt')
 " See https://prettier.io for a list of supported file types.
 if !exists('s:SUPPORTED_FILETYPES')
   let s:SUPPORTED_FILETYPES = ['javascript', 'markdown', 'html', 'css', 'yaml',
-      \ 'jsx', 'less', 'scss', 'mdx', 'vue']
+      \ 'jsx', 'less', 'scss', 'mdx', 'vue', 'javascriptreact',
+      \ 'typescriptreact']
   lockvar! s:SUPPORTED_FILETYPES
 endif
 
