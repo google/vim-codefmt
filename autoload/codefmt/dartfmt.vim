@@ -43,7 +43,7 @@ function! codefmt#dartfmt#GetFormatter() abort
       " dartfmt does not support range formatting yet:
       " https://github.com/dart-lang/dart_style/issues/92
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-        \ a:startline, a:endline, l:cmd, 0, 0)
+        \ a:startline, a:endline, l:cmd)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

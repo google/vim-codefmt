@@ -72,9 +72,7 @@ function! codefmt#zprint#GetFormatter() abort
     call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
         \ a:startline,
         \ a:endline,
-        \ l:syscall,
-        \ 0,
-        \ 0)
+        \ l:syscall)
   endfunction
 
   return l:formatter

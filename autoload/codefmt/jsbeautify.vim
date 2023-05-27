@@ -62,7 +62,7 @@ function! codefmt#jsbeautify#GetFormatter() abort
     " js-beautify does not support range formatting yet:
     " https://github.com/beautify-web/js-beautify/issues/610
     call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-        \ a:startline, a:endline, l:cmd, 0, 0)
+        \ a:startline, a:endline, l:cmd)
   endfunction
 
   function l:formatter._GetSupportedFormatName(filetype) dict abort

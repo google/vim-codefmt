@@ -41,7 +41,7 @@ function! codefmt#fish_indent#GetFormatter() abort
     " fish_indent does not support range formatting yet:
     " https://github.com/fish-shell/fish-shell/issues/6490
     call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-        \ a:startline, a:endline, l:cmd, 0, 0)
+        \ a:startline, a:endline, l:cmd)
   endfunction
 
   return l:formatter

@@ -43,7 +43,7 @@ function! codefmt#gofmt#GetFormatter() abort
       " gofmt does not support range formatting.
       " TODO: File a feature request with gofmt and link it here.
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-          \ a:startline, a:endline, l:cmd, 0, 0)
+          \ a:startline, a:endline, l:cmd)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

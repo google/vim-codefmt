@@ -59,7 +59,7 @@ function! codefmt#mixformat#GetFormatter() abort
       " mix format doesn't have a line-range option, but does a reasonable job
       " (except for leading indent) when given a full valid expression
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-          \ a:startline, a:endline, l:syscall, 0, 0)
+          \ a:startline, a:endline, l:syscall)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []
