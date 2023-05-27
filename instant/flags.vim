@@ -175,6 +175,10 @@ call s:plugin.Flag('prettier_options', [])
 call s:plugin.Flag('swift_format_executable', 'swift-format')
 
 ""
+" The path to the Rubocop executable.
+call s:plugin.Flag('rubocop_executable', 'rubocop')
+
+""
 " @private
 function s:LookupPrettierExecutable() abort
   return executable('npx') ? ['npx', '--no-install', 'prettier'] : 'prettier'

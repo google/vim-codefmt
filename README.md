@@ -28,6 +28,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * OCaml ([ocamlformat](https://github.com/ocaml-ppx/ocamlformat))
 * Proto (clang-format)
 * Python (Autopep8, Black, or YAPF)
+* Ruby ([rubocop](https://rubocop.org))
 * Rust ([rustfmt](https://github.com/rust-lang/rustfmt))
 * TypeScript (clang-format)
 * Shell (shfmt)
