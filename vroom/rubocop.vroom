@@ -14,7 +14,8 @@ First, set up the vroom environment.
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
 By default, the rubocop executable is called. To use this plugin, rubocop
-must be installed on your system.
+must be installed on your system. (But not for testing; vroom intercepts
+system calls.)
   :FormatCode rubocop
   ! rubocop .*
 

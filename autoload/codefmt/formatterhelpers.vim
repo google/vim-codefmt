@@ -90,18 +90,21 @@ endfunction
 " @throws ShellError if the {cmd} system call fails
 " @throws WrongType
 function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-    \ startline, endline, cmd) abort
+    \ startline, endline, cmd, ignoreerrors, skipfirstnlines) abort
   call maktaba#ensure#IsNumber(a:startline)
   call maktaba#ensure#IsNumber(a:endline)
 
   let l:lines = getline(1, line('$'))
   let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
 
-  let l:result = maktaba#syscall#Create(a:cmd).WithStdin(l:input).Call()
+  let l:result = a:ignoreerrors ?
+      \ maktaba#syscall#Create(a:cmd).WithStdin(l:input).Call(0)
+      \ : maktaba#syscall#Create(a:cmd).WithStdin(l:input).Call() 
   let l:formatted = split(l:result.stdout, "\n")
   " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
   let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-  let l:full_formatted = l:before + l:formatted + l:lines[a:endline :]
+  let l:full_formatted = l:before + l:formatted[a:skipfirstnlines :]
+      \ + l:lines[a:endline :]
 
   call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
 endfunction

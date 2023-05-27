@@ -84,7 +84,7 @@ function! codefmt#ktfmt#GetFormatter() abort
       " TODO(tstone) Switch to using --lines once that arg is added, see
       " https://github.com/facebookincubator/ktfmt/issues/218
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-          \ a:startline, a:endline, l:cmd)
+          \ a:startline, a:endline, l:cmd, 0, 0)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

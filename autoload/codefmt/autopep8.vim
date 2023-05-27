@@ -77,7 +77,9 @@ function! codefmt#autopep8#GetFormatter() abort
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
           \ a:startline,
           \ a:endline,
-          \ [l:executable, '-'])
+          \ [l:executable, '-'],
+          \ 0,
+          \ 0)
     endif
   endfunction
 

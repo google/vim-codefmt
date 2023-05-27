@@ -62,7 +62,9 @@ function! codefmt#shfmt#GetFormatter() abort
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
           \ a:startline,
           \ a:endline,
-          \ l:cmd)
+          \ l:cmd,
+          \ 0,
+          \ 0)
     catch /ERROR(ShellError):/
       " Parse all the errors and stick them in the quickfix list.
       let l:errors = []

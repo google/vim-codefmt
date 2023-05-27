@@ -36,34 +36,28 @@ function! codefmt#rubocop#GetFormatter() abort
   " Reformat the current buffer with rubocop or the binary named in
   " @flag(rubocop_executable), only targeting the range between {startline} and
   " {endline}.
+  "
   " @throws ShellError
   function l:formatter.FormatRange(startline, endline) abort
     " See flag explanations at:
     " https://docs.rubocop.org/rubocop/1.51/usage/basic_usage.html
     let l:cmd = [s:plugin.Flag('rubocop_executable'), '--stdin', @%, '-a', '--no-color', '-fq', '-o', '/dev/null']
 
-    call maktaba#ensure#IsNumber(a:startline)
-    call maktaba#ensure#IsNumber(a:endline)
-
-    let l:lines = getline(1, line('$'))
-    let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
-
     " Rubocop exits with an error condition if there are lint errors, even
     " after successfully formatting. This is annoying for our purpuoses,
     " because we have no way to distinguish lint errors from a 'real' falure.
     " Use Call(0) to suppress maktaba's error handling.
-    let l:result = maktaba#syscall#Create(l:cmd).WithStdin(l:input).Call(0)
-    let l:formatted = split(l:result.stdout, "\n")
+    let l:ignoreerrors = 1
+    " Rubocop is primarily a linter, and by default it outputs lint errors 
+    " first, followed  by a dividing line, and then the formatted result.
+    " '-o /dev/null' in the command line suppresses any lint errors, but the
+    " divider is always printed.
+    let l:skipfirstnlines = 1
 
-    let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-    " Note: l:formatted[1:] trims the first line from the output. Rubocop is
-    " primarily a linter, and by default it outputs lint errors first, followed
-    " by a dividing line, and then the formatted result. '-o /dev/null' in the
-    " command line suppresses any lint errors, but the divider is always
-    " printed.
-    let l:full_formatted = l:before + l:formatted[1:] + l:lines[a:endline :]
-
-        call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
+    " Rubocop does not support range formatting; see bug:
+    " https://github.com/Shopify/ruby-lsp/issues/203
+    call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
+        \ a:startline, a:endline, l:cmd, l:ignoreerrors, l:skipfirstnlines)
   endfunction
 
   return l:formatter
