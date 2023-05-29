@@ -87,31 +87,30 @@ endfunction
 " the tool for range formatting and post a URL for that feature request above
 " code that calls it.
 "
-" vararg0: if truthy, the syscall ignores errors. This can be helpful for
-" formatters that return nonzero results for reasons unrelated to formatting.
-"
-" vararg1: If set to a nonzero number N, skip the first N lines of the
-" formatter output. This can be used to trim always-present headers. 
+" If [ignoreerrors] is nonzero, the syscall ignores errors. This can be helpful
+" for formatters that return nonzero results for reasons unrelated to
+" formatting. If [skipfirstnlines] is set to a nonzero number N, the first
+" N lines of the formatter output are trimmed. This can be used to trim
+" always-present headers.
 "
 " @throws ShellError if the {cmd} system call fails (and vararg0 is not set)
 " @throws WrongType
 function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
-    \ startline, endline, cmd, ...) abort
+    \ startline, endline, cmd, ignoreerrors = 0, skipfirstnlines = 0) abort
   call maktaba#ensure#IsNumber(a:startline)
   call maktaba#ensure#IsNumber(a:endline)
-
-  let l:ignoreerrors = a:0 >= 1 ? a:1 : 0
-  let l:skipfirstnlines = a:0 >= 2 ? a:2 : 0
+  call maktaba#ensure#IsNumber(a:ignoreerrors)
+  call maktaba#ensure#IsNumber(a:skipfirstnlines)
 
   let l:lines = getline(1, line('$'))
   let l:input = join(l:lines[a:startline - 1 : a:endline - 1], "\n")
 
   let l:result =
-      \ maktaba#syscall#Create(a:cmd).WithStdin(l:input).Call(!l:ignoreerrors)
+      \ maktaba#syscall#Create(a:cmd).WithStdin(l:input).Call(!a:ignoreerrors)
   let l:formatted = split(l:result.stdout, "\n")
   " Special case empty slice: neither l:lines[:0] nor l:lines[:-1] is right.
   let l:before = a:startline > 1 ? l:lines[ : a:startline - 2] : []
-  let l:full_formatted = l:before + l:formatted[l:skipfirstnlines :]
+  let l:full_formatted = l:before + l:formatted[a:skipfirstnlines :]
       \ + l:lines[a:endline :]
 
   call maktaba#buffer#Overwrite(1, line('$'), l:full_formatted)
