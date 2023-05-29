@@ -93,7 +93,7 @@ endfunction
 " N lines of the formatter output are trimmed. This can be used to trim
 " always-present headers.
 "
-" @throws ShellError if the {cmd} system call fails (and vararg0 is not set)
+" @throws ShellError if the {cmd} system call fails (and ignoreerrors is 0)
 " @throws WrongType
 function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
     \ startline, endline, cmd, ignoreerrors = 0, skipfirstnlines = 0) abort
