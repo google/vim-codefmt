@@ -45,7 +45,7 @@ function! codefmt#ktfmt#GetFormatter() abort
         let l:success = 0
         try
           let l:result = maktaba#syscall#Create(l:cmd + ['-']).Call()
-          let l:success = v:shell_error != 0
+          let l:success = v:shell_error == 0
         catch /ERROR(ShellError)/
           call maktaba#error#Warn(
                 \ 'ktfmt unavailable, check jar file in `%s -`: %s',
