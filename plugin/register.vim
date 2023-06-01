@@ -44,6 +44,7 @@
 "   * nix: nixpkgs-fmt
 "   * ocaml: ocamlformat
 "   * python: autopep8, black, yapf
+"   * ruby: rubocop
 "   * rust: rustfmt
 "   * sh: shfmt
 "   * swift: swift-format
@@ -80,6 +81,7 @@ call s:registry.AddExtension(codefmt#autopep8#GetFormatter())
 call s:registry.AddExtension(codefmt#isort#GetFormatter())
 call s:registry.AddExtension(codefmt#black#GetFormatter())
 call s:registry.AddExtension(codefmt#yapf#GetFormatter())
+call s:registry.AddExtension(codefmt#rubocop#GetFormatter())
 call s:registry.AddExtension(codefmt#rustfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#swiftformat#GetFormatter())

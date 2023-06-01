@@ -383,7 +383,7 @@ codefmt#formatterhelpers#Format({cmd})     *codefmt#formatterhelpers#Format()*
   Throws ERROR(ShellError) if the {cmd} system call fails
 
 codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
-  {cmd})               *codefmt#formatterhelpers#AttemptFakeRangeFormatting()*
+  {cmd}, {ignoreerrors}, {skipfirstnlines})               *codefmt#formatterhelpers#AttemptFakeRangeFormatting()*
   Attempt to format a range of lines from {startline} to {endline} in the
   current buffer via a formatter that doesn't natively support range
   formatting, which is invoked via {cmd} (a system call represented by either

@@ -1,0 +1,60 @@
+Rubocop is a linter and formatter for ruby.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+First, set up the vroom environment.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+By default, the rubocop executable is called. To use this plugin, rubocop
+must be installed on your system. (But not for testing; vroom intercepts
+system calls.)
+  :FormatCode rubocop
+  ! rubocop .*
+
+
+
+The name and path of the Rubocop executable can be configured with a flag:
+  :Glaive codefmt rubocop_executable=some_other_program
+  :FormatCode rubocop
+  ! some_other_program .*-fq.*
+  :Glaive codefmt rubocop_executable=rubocop
+
+
+
+Rubocop does basic whitespace management. Though because it's primarily a
+linter, it outputs lint errors first, then a separator. Even with the lint
+errors disabled (-fq), you still get the separator.
+
+  % def SomeClass  <CR>  <CR>    end
+  :FormatCode rubocop
+  ! rubocop .*-fq.*
+  $ =========
+  $ def SomeClass
+  $ end
+  def SomeClass
+  end
+
+
+
+Being a linter, Rubocop cares about style as well as formatting.
+When a buffer is stylistically fine, it returns 0, and everything is OK.
+But sometimes it will return 1 even though things have gone well;
+we should still use the output when that happens.
+
+  % def SomeClass  <CR>  <CR>    end
+  :FormatCode rubocop
+  ! rubocop .*
+  $ =========
+  $ def SomeClass
+  $ end
+  $ 1 (status)
+  def SomeClass
+  end
