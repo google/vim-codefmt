@@ -50,6 +50,7 @@ The current list of defaults by filetype is:
   * nix: nixpkgs-fmt
   * ocaml: ocamlformat
   * python: autopep8, black, yapf
+  * ruby: rubocop
   * rust: rustfmt
   * sh: shfmt
   * swift: swift-format
@@ -182,6 +183,10 @@ Default: [] `
                                              *codefmt:swift_format_executable*
 The path to the swift-format executable.
 Default: 'swift-format' `
+
+                                                  *codefmt:rubocop_executable*
+The path to the Rubocop executable.
+Default: 'rubocop' `
 
                                                  *codefmt:prettier_executable*
 The path to the prettier executable. String, list, or callable that takes no
@@ -383,7 +388,8 @@ codefmt#formatterhelpers#Format({cmd})     *codefmt#formatterhelpers#Format()*
   Throws ERROR(ShellError) if the {cmd} system call fails
 
 codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
-  {cmd}, {ignoreerrors}, {skipfirstnlines})               *codefmt#formatterhelpers#AttemptFakeRangeFormatting()*
+  {cmd}, [ignoreerrors], [skipfirstnlines])
+                       *codefmt#formatterhelpers#AttemptFakeRangeFormatting()*
   Attempt to format a range of lines from {startline} to {endline} in the
   current buffer via a formatter that doesn't natively support range
   formatting, which is invoked via {cmd} (a system call represented by either
@@ -396,7 +402,18 @@ codefmt#formatterhelpers#AttemptFakeRangeFormatting({startline}, {endline},
   the tool for range formatting and post a URL for that feature request above
   code that calls it.
 
-  Throws ERROR(ShellError) if the {cmd} system call fails
+  If [ignoreerrors] is nonzero, the syscall ignores errors. This can be
+  helpful for formatters that return nonzero results for reasons unrelated to
+  formatting.
+
+  If [skipfirstnlines] is set to a nonzero number N, the first N lines of the
+  formatter output are trimmed. This can be used to trim always-present
+  headers.
+
+  [ignoreerrors] is 0 if omitted.
+  [skipfirstnlines] is 0 if omitted.
+  Throws ERROR(ShellError) if the {cmd} system call fails (and [ignoreerrors]
+  is 0)
   Throws ERROR(WrongType)
 
 codefmt#formatterhelpers#ResolveFlagToArray({flag_name})

@@ -75,7 +75,6 @@ endfunction
 
 ""
 " @public
-" @usage startline endline cmd \[ignoreerrors] \[skipfirstnlines]
 " Attempt to format a range of lines from {startline} to {endline} in the
 " current buffer via a formatter that doesn't natively support range
 " formatting, which is invoked via {cmd} (a system call represented by either
@@ -90,10 +89,14 @@ endfunction
 "
 " If [ignoreerrors] is nonzero, the syscall ignores errors. This can be helpful
 " for formatters that return nonzero results for reasons unrelated to
-" formatting. If [skipfirstnlines] is set to a nonzero number N, the first
+" formatting.
+"
+" If [skipfirstnlines] is set to a nonzero number N, the first
 " N lines of the formatter output are trimmed. This can be used to trim
 " always-present headers.
 "
+" @default ignoreerrors=0
+" @default skipfirstnlines=0
 " @throws ShellError if the {cmd} system call fails (and [ignoreerrors] is 0)
 " @throws WrongType
 function! codefmt#formatterhelpers#AttemptFakeRangeFormatting(
