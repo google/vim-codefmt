@@ -23,7 +23,7 @@ function! codefmt#dartfmt#GetFormatter() abort
   let l:formatter = {
       \ 'name': 'dartfmt',
       \ 'setup_instructions': 'Install the Dart SDK from ' .
-          \ 'https://www.dartlang.org/tools/sdk/'}
+          \ 'https://github.com/google/vim-codefmt'}
 
   function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('dartfmt_executable'))
@@ -38,7 +38,16 @@ function! codefmt#dartfmt#GetFormatter() abort
   " @flag(dartfmt_executable}, only targetting the range from {startline} to
   " {endline}
   function l:formatter.FormatRange(startline, endline) abort
-    let l:cmd = [ s:plugin.Flag('dartfmt_executable') ]
+    let l:dartfmt_executable = s:plugin.Flag('dartfmt_executable')
+    if type(l:dartfmt_executable) is# type([])
+      let l:cmd = l:dartfmt_executable
+    elseif type(l:dartfmt_executable) is# type('')
+      let l:cmd = [l:dartfmt_executable]
+    else
+      throw maktaba#error#WrongType(
+          \ 'dartfmt_executable flag must be a list or string. Found %s',
+          \ string(l:dartfmt_executable))
+    endif
     try
       " dartfmt does not support range formatting yet:
       " https://github.com/dart-lang/dart_style/issues/92
