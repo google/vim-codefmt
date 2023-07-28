@@ -23,7 +23,7 @@ function! codefmt#dartfmt#GetFormatter() abort
   let l:formatter = {
       \ 'name': 'dartfmt',
       \ 'setup_instructions': 'Install the Dart SDK from ' .
-          \ 'https://github.com/google/vim-codefmt'}
+          \ 'https://dart.dev/get-dart'}
 
   function l:formatter.IsAvailable() abort
     return executable(s:plugin.Flag('dartfmt_executable'))
