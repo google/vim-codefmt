@@ -84,7 +84,7 @@ additionally adjust imports when formatting.
 Default: 'gofmt' `
 
                                                   *codefmt:dartfmt_executable*
-The path to the dartfmt executable. Either a list or string.
+The path to the dartfmt executable. Either a list or a string.
 Default: ['dart', 'format'] `
 
                                               *codefmt:js_beautify_executable*
