@@ -14,33 +14,31 @@ examples.
 
   :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
 
-
-The dartfmt formatter expects the dartfmt executable to be installed on your
+The dart formatter expects the dart executable to be installed on your
 system.
 
   % main(){}
   :FormatCode dartfmt
+  ! dart format .*
+  $ main(){}
+
+The name, path, or list of the dart format command can be configured via the
+dartfmt_executable flag if the default of ["dart", "format"] doesn't work.
+
+  :Glaive codefmt dartfmt_executable='dartfmt'
+  :FormatCode dartfmt
   ! dartfmt .*
   $ main(){}
+  :Glaive codefmt dartfmt_executable=`['dart', 'format']`
 
-The name or path of the dartfmt executable can be configured via the
-dartfmt_executable flag if the default of "dartfmt" doesn't work.
-
-  :Glaive codefmt dartfmt_executable='mydartfmt'
-  :FormatCode dartfmt
-  ! mydartfmt .*
-  $ main(){}
-  :Glaive codefmt dartfmt_executable='dartfmt'
-
-
-You can format any buffer with dartfmt specifying the formatter explicitly.
+You can format any buffer with dart format specifying the formatter explicitly.
 
   @clear
   % main() { print("hello ");<CR>
   |print("world\n");}
 
   :FormatCode dartfmt
-  ! dartfmt .*2>.*
+  ! dart format .*2>.*
   $ main() {
   $ \tprint("hello ");
   $ \tprint("world\\n");
@@ -51,14 +49,14 @@ You can format any buffer with dartfmt specifying the formatter explicitly.
   }
   @end
 
-The dart filetype will use the dartfmt formatter by default.
+The dart filetype will use the dart formatter by default.
 
   @clear
   % main(){}
 
   :set filetype=dart
   :FormatCode
-  ! dartfmt .*
+  ! dart format .*
   $ main(){}
 
   :set filetype=
@@ -70,7 +68,7 @@ It can format specific line ranges of code using :FormatLines.
   |Print("hello "); Print("world\n");}
 
   :1,2FormatLines dartfmt
-  ! dartfmt .*2>.*
+  ! dart format .*2>.*
   $ main() {
   $ \tprint("hello ");
   $ \tprint("world\\n");
@@ -81,5 +79,5 @@ It can format specific line ranges of code using :FormatLines.
   }
   @end
 
-NOTE: the dartfmt formatter does not natively support range formatting, so there
+NOTE: the dart formatter does not natively support range formatting, so there
 are certain limitations like not being able to format misaligned braces.

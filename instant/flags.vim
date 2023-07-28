@@ -73,8 +73,9 @@ call s:plugin.Flag('clang_format_style', 'file')
 call s:plugin.Flag('gofmt_executable', 'gofmt')
 
 ""
-" The path to the dartfmt executable.
-call s:plugin.Flag('dartfmt_executable', 'dartfmt')
+" The path to the dartfmt executable. Either a list or a string.
+call s:plugin.Flag('dartfmt_executable', ['dart', 'format'])
+
 
 ""
 " The path to the js-beautify executable.
