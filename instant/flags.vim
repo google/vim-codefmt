@@ -53,7 +53,7 @@ call s:plugin.flags.autopep8_executable.AddCallback(
 
 ""
 " The path to the clang-format executable. String, list, or callable that
-" takes no args and returns a string or a list.
+" takes no args and returns a string or a list with command line arguments.
 call s:plugin.Flag('clang_format_executable', 'clang-format')
 " Invalidate cache of detected clang-format version when this is changed,
 " regardless of {value} arg.
@@ -73,7 +73,8 @@ call s:plugin.Flag('clang_format_style', 'file')
 call s:plugin.Flag('gofmt_executable', 'gofmt')
 
 ""
-" The path to the dartfmt executable. Either a list or a string.
+" The path to the dartfmt executable. String, list, or callable that takes no
+" args and returns a string or a list with command line arguments.
 call s:plugin.Flag('dartfmt_executable', ['dart', 'format'])
 
 
@@ -82,7 +83,8 @@ call s:plugin.Flag('dartfmt_executable', ['dart', 'format'])
 call s:plugin.Flag('js_beautify_executable', 'js-beautify')
 
 ""
-" The path to the mix executable for Elixir.
+" The path to the mix executable for Elixir. String, list, or callable that
+" takes no args and returns a string or a list with command line arguments.
 call s:plugin.Flag('mix_executable', 'mix')
 
 ""
@@ -143,9 +145,10 @@ call s:plugin.Flag('jsonnetfmt_executable', 'jsonnetfmt')
 call s:plugin.Flag('google_java_executable', 'google-java-format')
 
 ""
-" The path to the ktfmt executable with args, as a list. The default value
-" assumes there is a wrapper script named `ktfmt`. Without such a script, this
-" will generally have the form:
+" The path to the ktfmt executable with args. String, list, or callable that
+" takes no args and returns a string or a list with command line arguments.
+" The default value assumes there is a wrapper script named `ktfmt`. Without
+" such a script, this will generally have the form:
 " `ktfmt_executable=java,-jar,/path/to/ktfmt-VERSION-jar-with-dependencies.jar`
 "
 " Note that range formatting is not fully supported, with a feature request at
@@ -155,15 +158,15 @@ call s:plugin.Flag('google_java_executable', 'google-java-format')
 call s:plugin.Flag('ktfmt_executable', ['ktfmt'])
 
 ""
-" Command line arguments to feed shfmt. Either a list or callable that
-" takes no args and returns a list with command line arguments. By default, uses
-" the Google's style.
+" Command line arguments to feed shfmt. String, list, or callable that
+" takes no args and returns a string or a list with command line arguments.
+" By default, uses the Google style.
 " See https://github.com/mvdan/sh for details.
 call s:plugin.Flag('shfmt_options', ['-i', '2', '-sr', '-ci'])
 
 ""
 " The path to the shfmt executable. String, list, or callable that
-" takes no args and returns a string or a list.
+" takes no args and returns a string or a list with command line arguments.
 call s:plugin.Flag('shfmt_executable', 'shfmt')
 
 ""
@@ -187,8 +190,9 @@ endfunction
 
 ""
 " The path to the prettier executable. String, list, or callable that
-" takes no args and returns a string or a list. The default uses npx if
-" available, so that the repository-local prettier will have priority.
+" takes no args and returns a string or a list with command line arguments.
+" The default uses npx if available, so that the repository-local prettier
+" will have priority.
 call s:plugin.Flag('prettier_executable', function('s:LookupPrettierExecutable'))
 
 " Invalidate cache of detected prettier availability whenever
@@ -214,9 +218,9 @@ function s:ZprintOptions() abort
 endfunction
 
 ""
-" Command line arguments to feed zprint. Either a list or callable that takes no
-" args and returns a list with command line arguments. The default configures
-" zprint with Vim's textwidth.
+" Command line arguments to feed zprint. String, list, or callable that
+" takes no args and returns a string or a list with command line arguments.
+" The default configures zprint with Vim's textwidth.
 call s:plugin.Flag('zprint_options', function('s:ZprintOptions'))
 
 ""
