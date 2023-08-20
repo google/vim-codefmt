@@ -35,6 +35,7 @@ codefmt` if codefmt is installed (and helptags have been generated).
 *   Markdown (prettier)
 *   Nix (nixpkgs-fmt)
 *   OCaml ([ocamlformat](https://github.com/ocaml-ppx/ocamlformat))
+*   Perl ([perltidy](https://perltidy.sourceforge.netx))
 *   Protocol Buffers (clang-format)
 *   Python (Autopep8, Black, isort, or YAPF)
 *   Ruby ([rubocop](https://rubocop.org))
