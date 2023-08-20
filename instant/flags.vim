@@ -106,6 +106,10 @@ call s:plugin.Flag('gn_executable', 'gn')
 call s:plugin.Flag('buildifier_executable', 'buildifier')
 
 ""
+" The path to the perltidy executable.
+call s:plugin.Flag('perltidy_executable', 'perltidy')
+
+""
 " The lint_mode for buildifier. passed to buildifier --lint parameter.
 "
 " Options:

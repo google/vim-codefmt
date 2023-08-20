@@ -43,6 +43,7 @@
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
 "   * ocaml: ocamlformat
+"   * perl: perltidy
 "   * python: autopep8, black, yapf
 "   * ruby: rubocop
 "   * rust: rustfmt
@@ -78,6 +79,7 @@ call s:registry.AddExtension(codefmt#ktfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#luaformatterfiveone#GetFormatter())
 call s:registry.AddExtension(codefmt#nixpkgs_fmt#GetFormatter())
 call s:registry.AddExtension(codefmt#autopep8#GetFormatter())
+call s:registry.AddExtension(codefmt#perltidy#GetFormatter())
 call s:registry.AddExtension(codefmt#isort#GetFormatter())
 call s:registry.AddExtension(codefmt#black#GetFormatter())
 call s:registry.AddExtension(codefmt#yapf#GetFormatter())
