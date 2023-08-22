@@ -68,7 +68,7 @@ Default: 'autopep8' `
 
                                              *codefmt:clang_format_executable*
 The path to the clang-format executable. String, list, or callable that takes
-no args and returns a string or a list.
+no args and returns a string or a list with command line arguments.
 Default: 'clang-format' `
 
                                                   *codefmt:clang_format_style*
@@ -84,7 +84,8 @@ additionally adjust imports when formatting.
 Default: 'gofmt' `
 
                                                   *codefmt:dartfmt_executable*
-The path to the dartfmt executable. Either a list or a string.
+The path to the dartfmt executable. String, list, or callable that takes no
+args and returns a string or a list with command line arguments.
 Default: ['dart', 'format'] `
 
                                               *codefmt:js_beautify_executable*
@@ -92,7 +93,8 @@ The path to the js-beautify executable.
 Default: 'js-beautify' `
 
                                                       *codefmt:mix_executable*
-The path to the mix executable for Elixir.
+The path to the mix executable for Elixir. String, list, or callable that
+takes no args and returns a string or a list with command line arguments.
 Default: 'mix' `
 
                                                      *codefmt:yapf_executable*
@@ -153,9 +155,10 @@ The path to the google-java executable.  Generally, this should have the form:
 Default: 'google-java-format' `
 
                                                     *codefmt:ktfmt_executable*
-The path to the ktfmt executable with args, as a list. The default value
-assumes there is a wrapper script named `ktfmt`. Without such a script, this
-will generally have the form:
+The path to the ktfmt executable with args. String, list, or callable that
+takes no args and returns a string or a list with command line arguments. The
+default value assumes there is a wrapper script named `ktfmt`. Without such a
+script, this will generally have the form:
 `ktfmt_executable=java,-jar,/path/to/ktfmt-VERSION-jar-with-dependencies.jar`
 
 Note that range formatting is not fully supported, with a feature request at
@@ -165,14 +168,14 @@ surrounding blocks.
 Default: ['ktfmt'] `
 
                                                        *codefmt:shfmt_options*
-Command line arguments to feed shfmt. Either a list or callable that takes no
-args and returns a list with command line arguments. By default, uses the
-Google's style. See https://github.com/mvdan/sh for details.
+Command line arguments to feed shfmt. String, list, or callable that takes no
+args and returns a string or a list with command line arguments. By default,
+uses the Google style. See https://github.com/mvdan/sh for details.
 Default: ['-i', '2', '-sr', '-ci'] `
 
                                                     *codefmt:shfmt_executable*
 The path to the shfmt executable. String, list, or callable that takes no args
-and returns a string or a list.
+and returns a string or a list with command line arguments.
 Default: 'shfmt' `
 
                                                     *codefmt:prettier_options*
@@ -190,8 +193,9 @@ Default: 'rubocop' `
 
                                                  *codefmt:prettier_executable*
 The path to the prettier executable. String, list, or callable that takes no
-args and returns a string or a list. The default uses npx if available, so
-that the repository-local prettier will have priority.
+args and returns a string or a list with command line arguments. The default
+uses npx if available, so that the repository-local prettier will have
+priority.
 Default: function('s:LookupPrettierExecutable') `
 
                                                      *codefmt:rustfmt_options*
@@ -204,9 +208,9 @@ The path to the rustfmt executable.
 Default: 'rustfmt' `
 
                                                       *codefmt:zprint_options*
-Command line arguments to feed zprint. Either a list or callable that takes no
-args and returns a list with command line arguments. The default configures
-zprint with Vim's textwidth.
+Command line arguments to feed zprint. String, list, or callable that takes no
+args and returns a string or a list with command line arguments. The default
+configures zprint with Vim's textwidth.
 Default: function('s:ZprintOptions') `
 
                                                    *codefmt:zprint_executable*
