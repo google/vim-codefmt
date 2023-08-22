@@ -26,7 +26,13 @@ function! codefmt#dartfmt#GetFormatter() abort
           \ 'https://dart.dev/get-dart'}
 
   function l:formatter.IsAvailable() abort
-    return executable(s:plugin.Flag('dartfmt_executable'))
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'dartfmt_executable')
+    if !empty(l:cmd) && executable(l:cmd[0])
+      return 1
+    else
+      return 0
+    endif
   endfunction
 
   function l:formatter.AppliesToBuffer() abort
@@ -34,22 +40,14 @@ function! codefmt#dartfmt#GetFormatter() abort
   endfunction
 
   ""
-  " Reformat the current buffer with dartfmt or the binary named in
+  " Reformat the current buffer with dart format or the binary named in
   " @flag(dartfmt_executable}, only targetting the range from {startline} to
   " {endline}
   function l:formatter.FormatRange(startline, endline) abort
-    let l:dartfmt_executable = s:plugin.Flag('dartfmt_executable')
-    if type(l:dartfmt_executable) is# type([])
-      let l:cmd = l:dartfmt_executable
-    elseif type(l:dartfmt_executable) is# type('')
-      let l:cmd = [l:dartfmt_executable]
-    else
-      throw maktaba#error#WrongType(
-          \ 'dartfmt_executable flag must be a list or string. Found %s',
-          \ string(l:dartfmt_executable))
-    endif
+    let l:cmd = codefmt#formatterhelpers#ResolveFlagToArray(
+          \ 'dartfmt_executable')
     try
-      " dartfmt does not support range formatting yet:
+      " dart format does not support range formatting yet:
       " https://github.com/dart-lang/dart_style/issues/92
       call codefmt#formatterhelpers#AttemptFakeRangeFormatting(
         \ a:startline, a:endline, l:cmd)
@@ -86,4 +84,3 @@ function! codefmt#dartfmt#GetFormatter() abort
 
   return l:formatter
 endfunction
-
