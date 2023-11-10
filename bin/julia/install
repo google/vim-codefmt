@@ -1,0 +1,4 @@
+#!/bin/sh
+
+PROJECT=$(dirname $0)
+julia --project="$PROJECT" -e 'using Pkg; Pkg.instantiate(verbose=true)'

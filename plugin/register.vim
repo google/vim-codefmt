@@ -39,6 +39,7 @@
 "   * javascript, json, html, css: js-beautify
 "   * javascript, html, css, markdown: prettier
 "   * json, jsonnet: jsonnetfmt
+"   * julia: JuliaFormatter
 "   * kotlin: ktfmt
 "   * lua: luaformatterfiveone
 "   * nix: nixpkgs-fmt
@@ -74,6 +75,7 @@ call s:registry.AddExtension(codefmt#googlejava#GetFormatter())
 call s:registry.AddExtension(codefmt#jsonnetfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#jsbeautify#GetFormatter())
 call s:registry.AddExtension(codefmt#prettier#GetFormatter())
+call s:registry.AddExtension(codefmt#juliaformatter#GetFormatter())
 call s:registry.AddExtension(codefmt#ktfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#luaformatterfiveone#GetFormatter())
 call s:registry.AddExtension(codefmt#nixpkgs_fmt#GetFormatter())

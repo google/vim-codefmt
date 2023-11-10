@@ -1,0 +1,8 @@
+name = "julia"
+uuid = "f7e72769-0d4f-4e1c-bb39-275b23f83607"
+authors = ["Trevor Stone <github@trevorstone.org>"]
+version = "0.1.0"
+
+[deps]
+ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
