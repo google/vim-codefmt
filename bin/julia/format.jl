@@ -20,8 +20,9 @@
 # on stdin and doesn't support line ranges, both of which are nice features for
 # the vim-codefmt plugin.  The --file-path flag lets this program find
 # .JuliaFormatter.toml files to determine code style preferences.
+
 try
-  using JuliaFormatter
+  @eval using JuliaFormatter
 catch ArgumentError
   println(
     stderr,
@@ -30,7 +31,7 @@ catch ArgumentError
   exit(2)
 end
 try
-  using ArgParse
+  @eval using ArgParse
 catch ArgumentError
   println(
     stderr,
@@ -59,9 +60,6 @@ end
 
 "Entry point to run format.jl.  argv is the command line arguments."
 function main(argv::Vector{<:AbstractString})
-  if length(argv) > 0 && argv[1] == "--check-install"
-    exit(0) # Already successfully imported the necessary modules
-  end
   s = ArgParseSettings(
     "$(basename(PROGRAM_FILE)): format all or part of Julia code read from stdin",
     autofix_names=true
@@ -69,19 +67,25 @@ function main(argv::Vector{<:AbstractString})
   @add_arg_table! s begin
   #! format: off
     "--file_path"
-    help = "file path of the code (default: current working directory)"
-    metavar = "path/to/file.jl"
+      help = "file path of the code (default: current working directory)"
+      metavar = "path/to/file.jl"
     "--lines"
-    help = "line range(s) to format (1-based)"
-    arg_type = LineRange
-    metavar = "first:last"
-    nargs = '*'
+      help = "line range(s) to format (1-based)"
+      arg_type = LineRange
+      metavar = "first:last"
+      nargs = '*'
+    "--check_install"
+      help = "exit with status 0 if dependencies are installed, 2 otherwise"
+      action = :store_true
   #! format: on
   end
   args = parse_args(argv, s, as_symbols=true)
+  if args[:check_install]
+    exit(0) # if we got this far, module import succeeded
+  end
   file_path = let p = args[:file_path]
-    isnothing(p) ? joinpath(pwd(), "file-path-not-specified") :
-    abspath(expanduser(p))
+    fakefile = "file-path-not-specified"
+    isnothing(p) ? joinpath(pwd(), fakefile) : abspath(expanduser(p))
   end
   # Sort line ranges and check for overlap, which would make things complicated
   ranges = sort(args[:lines], by=x -> x.first)
@@ -145,7 +149,7 @@ function formatranges(ranges::Vector{LineRange}, opts)
       line = lines[lnum]
       lnum += 1
       # disable existing formatter directives
-      if (m = match(formatpat, line); !isnothing(m))
+      if (m = match(formatpat, line)) !== nothing
         line = "# disabled:$marker:$line"
         requested = m.captures[1] == "on"
       end
@@ -165,7 +169,7 @@ function formatranges(ranges::Vector{LineRange}, opts)
       # if there's a format:off directive inside the range, respect that;
       # if there's a format:on directive inside the range and formatting had
       # been off, enable it at this point
-      if (m = match(formatpat, line); !isnothing(m))
+      if (m = match(formatpat, line)) !== nothing
         line = "# disabled:$marker:$line"
         if m.captures[1] == "on" && !requested
           requested = true
@@ -186,7 +190,7 @@ function formatranges(ranges::Vector{LineRange}, opts)
   while lnum <= length(lines)
     line = lines[lnum]
     lnum += 1
-    if (m = match(formatpat, line); !isnothing(m))
+    if occursin(formatpat, line)
       line = "# disabled:$marker:$line"
     end
     println(text, line)
@@ -210,15 +214,17 @@ function formatranges(ranges::Vector{LineRange}, opts)
     last = line
     if skipnext
       skipnext = false
-    elseif !isnothing(match(addedpat, line))
+    elseif occursin(addedpat, line)
       skipnext = true
     else
-      if (m = match(disabledpat, line); !isnothing(m))
-        (line,) = m.captures
+      if (m = match(disabledpat, line)) !== nothing
+        line = m.captures[1]
       end
       println(line)
     end
   end
 end
 
-main(ARGS)
+if abspath(PROGRAM_FILE) == @__FILE__
+  main(ARGS)
+end
