@@ -21,7 +21,7 @@ let s:checkedInstall = 0
 " Formatter: JuliaFormatter
 function! codefmt#juliaformatter#GetFormatter() abort
   let l:installer =
-        \ maktaba#path#Join([expand('<sfile>:p:h:h'), 'bin', 'julia', 'install'])
+        \ maktaba#path#Join([s:plugin.location, 'bin', 'julia', 'install'])
   let l:formatter = {
         \ 'name': 'JuliaFormatter', 'setup_instructions': 'Run ' . l:installer}
 
@@ -59,7 +59,8 @@ function! codefmt#juliaformatter#GetFormatter() abort
     endfor
     let l:exec = s:plugin.Flag('julia_format_executable')
     if empty(l:exec)
-      let l:cmd = [expand('<sfile>:h:h/bin/formatjulia.jl')]
+      let l:cmd = [maktaba#path#Join(
+            \ [s:plugin.location, 'bin', 'julia', 'formatjulia.jl'])]
     else
       " Split the command on spaces, unless preceeded by a backslash
       let l:cmd = split(l:exec, '\\\@<! ')
