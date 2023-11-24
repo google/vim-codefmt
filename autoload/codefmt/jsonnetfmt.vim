@@ -27,11 +27,7 @@ function! codefmt#jsonnetfmt#GetFormatter() abort
   " Reformat the current buffer with jsonnetfmt or the binary named in
   " @flag(jsonnetfmt_executable)
   function l:formatter.Format() abort
-    let l:cmd = [ s:plugin.Flag('jsonnetfmt_executable') ]
-    let l:fname = expand('%:p')
-    if !empty(l:fname)
-      let l:cmd += ['-path', l:fname]
-    endif
+    let l:cmd = [ s:plugin.Flag('jsonnetfmt_executable'), '-' ]
 
     try
       " NOTE: Ignores any line ranges given and formats entire buffer.
