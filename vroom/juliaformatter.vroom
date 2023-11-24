@@ -1,0 +1,78 @@
+The built-in JuliaFormatter formatter knows how to format Julia files. If you
+aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The JuliaFormatter formatter uses the bin/julia/format.jl script which is
+bundled with codefmt.  That script will return an error if Julia or the
+JuliaFormatter package are not installed.
+
+  % module Foo bar(x) = x ? "yes" : "no" end
+  :FormatCode JuliaFormatter
+  ! .*/bin/julia/format.jl .*
+  $ module Foo {
+  $ function bar(x)
+  $     if x
+  $       "yes"
+  $     else
+  $       "no"
+  $     end
+  $ end
+  $ end
+
+The name or path of the format.jl script can be configured via the
+julia_format_executable flag if the bundled format.jl doesn't work.
+
+  :Glaive codefmt julia_format_executable='/path/to/myscript'
+  :FormatCode JuliaFormatter
+  ! /path/to/myscript .*
+  $ module Foo
+  $ function bar(x)
+  $     if x
+  $       "yes"
+  $     else
+  $       "no"
+  $     end
+  $ end
+  $ end
+  :let g:format_jl = maktaba#path#Join([expand("$VROOMDIR:h:h"), 'bin', 'julia', 'format.jl'])
+  :Glaive codefmt julia_format_executable=`g:format_jl`
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % module Foo<CR>
+  |function bar(x)<CR>
+  |print(x ? "yes" : "no")<CR>
+  |print(<CR>
+  |x &&<CR>
+  |!x ?<CR>
+  |"impossible" :<CR>
+  |"ok")<CR>
+  |end<CR>
+  |end
+
+  :4,8FormatLines JuliaFormatter
+  ! .*/bin/julia/format.jl .*--lines 4:8.*
+  $ module Foo {
+  $ function bar(x)
+  $ print(x ? "yes" : "no")
+  $   print(if x && !x
+  $             "impossible"
+  $         else
+  $             "ok"
+  $         end)
+  $ end
+  $ end

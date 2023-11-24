@@ -45,6 +45,7 @@ The current list of defaults by filetype is:
   * javascript, json, html, css: js-beautify
   * javascript, html, css, markdown: prettier
   * json, jsonnet: jsonnetfmt
+  * julia: JuliaFormatter
   * kotlin: ktfmt
   * lua: luaformatterfiveone
   * nix: nixpkgs-fmt
@@ -148,6 +149,10 @@ Default: '' `
                                                *codefmt:jsonnetfmt_executable*
 The path to the jsonnetfmt executable.
 Default: 'jsonnetfmt' `
+
+                                             *codefmt:julia_format_executable*
+The path to the Julia formatter script, uses `bin/formatjulia.jl` bundled with
+this plugin.
 
                                               *codefmt:google_java_executable*
 The path to the google-java executable.  Generally, this should have the form:

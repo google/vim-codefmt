@@ -139,6 +139,12 @@ call s:plugin.Flag('buildifier_warnings', '')
 call s:plugin.Flag('jsonnetfmt_executable', 'jsonnetfmt')
 
 ""
+" The path to the Julia formatter script, uses `bin/formatjulia.jl` bundled with
+" this plugin.
+call s:plugin.Flag('julia_format_executable',
+      \ maktaba#path#Join([expand('<sfile>:h:h'), 'bin', 'julia', 'format.jl']))
+
+""
 " The path to the google-java executable.  Generally, this should have the
 " form:
 " `java -jar /path/to/google-java`
