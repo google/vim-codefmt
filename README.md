@@ -26,6 +26,7 @@ helpfiles in the `doc/` directory. The helpfiles are also available via
 * JSON (js-beautify)
 * Kotlin ([ktfmt](https://github.com/facebookincubator/ktfmt))
 * OCaml ([ocamlformat](https://github.com/ocaml-ppx/ocamlformat))
+* Perl ([perltidy](https://perltidy.sourceforge.netx))
 * Proto (clang-format)
 * Python (Autopep8, Black, or YAPF)
 * Ruby ([rubocop](https://rubocop.org))
