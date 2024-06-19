@@ -1,0 +1,39 @@
+Perltidy is a linter and formatter for perl.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+First, set up the vroom environment.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+By default, the perltidy executable is called. To use this plugin, perltidy
+must be installed on your system. (But not for testing; vroom intercepts
+system calls.)
+  :FormatCode perltidy
+  ! perltidy .*
+  $ { "Cursor": 0 }
+
+
+
+The name and path of the Perltidy executable can be configured with a flag:
+  :Glaive codefmt perltidy_executable=some_other_program
+  :FormatCode perltidy
+  ! some_other_program .*
+  :Glaive codefmt perltidy_executable=perltidy
+
+
+
+Perltidy does basic whitespace management.
+  % my @nums = (1 .. 5);<CR>
+  :FormatCode perltidy
+  ! perltidy .*
+  $ =========
+  $ my @nums = ( 1 .. 5 );
+  my @nums = ( 1 .. 5 );
