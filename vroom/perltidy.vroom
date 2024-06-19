@@ -18,6 +18,7 @@ must be installed on your system. (But not for testing; vroom intercepts
 system calls.)
   :FormatCode perltidy
   ! perltidy .*
+  $ { "Cursor": 0 }
 
 
 
