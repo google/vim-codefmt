@@ -41,7 +41,7 @@
 "   * json, jsonnet: jsonnetfmt
 "   * julia: JuliaFormatter
 "   * kotlin: ktfmt
-"   * lua: luaformatterfiveone
+"   * lua: luaformatterfiveone, stylua
 "   * nix: nixpkgs-fmt
 "   * ocaml: ocamlformat
 "   * python: autopep8, black, yapf
@@ -78,6 +78,7 @@ call s:registry.AddExtension(codefmt#prettier#GetFormatter())
 call s:registry.AddExtension(codefmt#juliaformatter#GetFormatter())
 call s:registry.AddExtension(codefmt#ktfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#luaformatterfiveone#GetFormatter())
+call s:registry.AddExtension(codefmt#stylua#GetFormatter())
 call s:registry.AddExtension(codefmt#nixpkgs_fmt#GetFormatter())
 call s:registry.AddExtension(codefmt#autopep8#GetFormatter())
 call s:registry.AddExtension(codefmt#isort#GetFormatter())

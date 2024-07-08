@@ -1,0 +1,55 @@
+stylua is a formatter that knows how to format all lua code
+If you aren't familiar with basic codefmt usage yet, see main.vroom
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+stylua expects the executable to be installed on your system.
+
+  % function hello()<CR>
+  % print("world")<CR>
+  % end
+  :FormatCode stylua
+  ! stylua -i 2> .*
+  $ function hello()
+  $   print("world")
+  $ end
+
+The name or path of the stylua executable can be configured via the
+stylua_executable flag if the default of "buildifier" doesn't work.
+
+  :Glaive codefmt stylua_executable='mystylua'
+  :FormatCode stylua
+  ! mystylelua -i 2> .*
+  $ function hello()
+  $   print("world")
+  $ end
+  :Glaive codefmt stylua_executable='stylua'
+
+Errors are reported using the quickfix list.
+
+  @clear
+  % 13()
+  :FormatCode stylua
+  ! stylua -i 2> (.*)
+  $ 1 (status)
+  $ echo >\1 ' (command)
+  |stylua:Unable to format stdin:\n
+  |[string "isCodeValid"]:1: unexpected symbol near '"'13'"
+  ~ (1 of 1): unexpected symbol near '13'
+  :echomsg line('.') . ',' . col('.')
+  ~ 1,1
+  :echomsg string(map(getqflist(), 'v:val.lnum . "," . v:val.text'))
+  ~ ['1,unexpected symbol near ''13''']
+
