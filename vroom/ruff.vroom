@@ -1,0 +1,71 @@
+The built-in ruff formatter knows how to format python code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :let g:repeat_calls = []
+  :function FakeRepeat(...)<CR>
+  |  call add(g:repeat_calls, a:000)<CR>
+  :endfunction
+  :call maktaba#test#Override('repeat#set', 'FakeRepeat')
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The ruff formatter expects the ruff executable to be installed on your
+system.
+
+  :silent file somefile.py
+  % f()
+  :FormatCode ruff
+  ! ruff format --stdin-filename=somefile.py.*
+  $ f()
+
+The name or path of the ruff executable can be configured via the
+ruff_executable flag if the default of "ruff" doesn't work.
+
+  :Glaive codefmt ruff_executable='/somepath/ruff'
+  :FormatCode ruff
+  ! /somepath/ruff format.*
+  $ f()
+  :Glaive codefmt ruff_executable='ruff'
+
+
+You can format any buffer with ruff specifying the formatter explicitly.
+
+  @clear
+  % if True: pass
+
+  :FormatCode ruff
+  ! ruff format.*
+  $ if True:
+  $     pass
+  if True:
+      pass
+  @end
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % some_tuple=(   1,2, 3,'a'  );<CR>
+  |if bar : bar+=1;  bar=bar* bar<CR>
+  |else: bar-=1;
+
+  :2,3FormatLines ruff
+  ! ruff format .*--range=2:3.*
+  $ some_tuple=(   1,2, 3,'a'  );
+  $ if bar:
+  $     bar += 1
+  $     bar = bar * bar
+  $ else:
+  $     bar -= 1
+  some_tuple=(   1,2, 3,'a'  );
+  if bar:
+      bar += 1
+      bar = bar * bar
+  else:
+      bar -= 1
+  @end

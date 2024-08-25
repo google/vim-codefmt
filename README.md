@@ -36,7 +36,7 @@ codefmt` if codefmt is installed (and helptags have been generated).
 *   Nix (nixpkgs-fmt)
 *   OCaml ([ocamlformat](https://github.com/ocaml-ppx/ocamlformat))
 *   Protocol Buffers (clang-format)
-*   Python (Autopep8, Black, isort, or YAPF)
+*   Python (Autopep8, Black, isort, Ruff, or YAPF)
 *   Ruby ([rubocop](https://rubocop.org))
 *   Rust ([rustfmt](https://github.com/rust-lang/rustfmt))
 *   Shell (shfmt)

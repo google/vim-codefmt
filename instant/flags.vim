@@ -88,6 +88,10 @@ call s:plugin.Flag('js_beautify_executable', 'js-beautify')
 call s:plugin.Flag('mix_executable', 'mix')
 
 ""
+" The path to the ruff executable.
+call s:plugin.Flag('ruff_executable', 'ruff')
+
+""
 " The path to the yapf executable.
 call s:plugin.Flag('yapf_executable', 'yapf')
 

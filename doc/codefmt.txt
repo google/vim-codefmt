@@ -50,7 +50,7 @@ The current list of defaults by filetype is:
   * lua: luaformatterfiveone
   * nix: nixpkgs-fmt
   * ocaml: ocamlformat
-  * python: autopep8, black, yapf
+  * python: autopep8, black, ruff, yapf
   * ruby: rubocop
   * rust: rustfmt
   * sh: shfmt
@@ -97,6 +97,10 @@ Default: 'js-beautify' `
 The path to the mix executable for Elixir. String, list, or callable that
 takes no args and returns a string or a list with command line arguments.
 Default: 'mix' `
+
+                                                     *codefmt:ruff_executable*
+The path to the ruff executable.
+Default: 'ruff' `
 
                                                      *codefmt:yapf_executable*
 The path to the yapf executable.
