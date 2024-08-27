@@ -19,7 +19,7 @@ let s:plugin = maktaba#plugin#Get('codefmt')
 function! s:FormatWithArgs(args) abort
   let l:executable = s:plugin.Flag('ruff_executable')
   let l:lines = getline(1, line('$'))
-  let l:cmd = [l:executable, 'format'] + a:args
+  let l:cmd = [l:executable, 'format'] + a:args + ['-']
   if !empty(@%)
     let l:cmd += ['--stdin-filename=' . @%]
   endif
