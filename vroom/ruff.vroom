@@ -21,7 +21,7 @@ system.
   :silent file somefile.py
   % f()
   :FormatCode ruff
-  ! ruff format --stdin-filename=somefile.py.*
+  ! ruff format - --stdin-filename=somefile.py.*
   $ f()
 
 The name or path of the ruff executable can be configured via the
@@ -29,7 +29,7 @@ ruff_executable flag if the default of "ruff" doesn't work.
 
   :Glaive codefmt ruff_executable='/somepath/ruff'
   :FormatCode ruff
-  ! /somepath/ruff format.*
+  ! /somepath/ruff format -.*
   $ f()
   :Glaive codefmt ruff_executable='ruff'
 
@@ -40,7 +40,7 @@ You can format any buffer with ruff specifying the formatter explicitly.
   % if True: pass
 
   :FormatCode ruff
-  ! ruff format.*
+  ! ruff format -.*
   $ if True:
   $     pass
   if True:
@@ -55,7 +55,7 @@ It can format specific line ranges of code using :FormatLines.
   |else: bar-=1;
 
   :2,3FormatLines ruff
-  ! ruff format .*--range=2:3.*
+  ! ruff format .*--range=2:3 -.*
   $ some_tuple=(   1,2, 3,'a'  );
   $ if bar:
   $     bar += 1
