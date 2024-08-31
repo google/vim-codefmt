@@ -31,7 +31,8 @@ codefmt` if codefmt is installed (and helptags have been generated).
 *   Julia ([JuliaFormatter](https://github.com/domluna/JuliaFormatter.jl))
 *   Kotlin ([ktfmt](https://github.com/facebookincubator/ktfmt))
 *   Lua
-    ([FormatterFiveOne](https://luarocks.org/modules/ElPiloto/formatterfiveone)
+    ([FormatterFiveOne](https://luarocks.org/modules/ElPiloto/formatterfiveone),
+    [StyLua](https://github.com/JohnnyMorganz/StyLua))
 *   Markdown (prettier)
 *   Nix (nixpkgs-fmt)
 *   OCaml ([ocamlformat](https://github.com/ocaml-ppx/ocamlformat))

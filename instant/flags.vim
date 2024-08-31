@@ -250,6 +250,11 @@ call s:plugin.Flag('nixpkgs_fmt_executable', 'nixpkgs-fmt')
 ""
 " The path to the luaformatterfiveone executable.
 call s:plugin.Flag('luaformatterfiveone_executable', 'luaformatterfiveone')
+"
+""
+" The path to the stylua executable.
+call s:plugin.Flag('stylua_executable', 'stylua')
+
 
 ""
 " The path to the cljstyle executable.
