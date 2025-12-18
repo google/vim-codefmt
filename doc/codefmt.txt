@@ -55,6 +55,7 @@ The current list of defaults by filetype is:
   * rust: rustfmt
   * sh: shfmt
   * swift: swift-format
+  * terraform, hcl: terraform-fmt
 
 ==============================================================================
 CONFIGURATION                                                 *codefmt-config*
@@ -251,6 +252,10 @@ Default: 'ormolu' `
                                               *codefmt:ocamlformat_executable*
 The path to the ocamlformat executable.
 Default: 'ocamlformat' `
+
+                                              *codefmt:terraform_executable*
+The path to the terraform executable.
+Default: 'terraform' `
 
                                                     *codefmt:plugin[autocmds]*
 Configures whether plugin/autocmds.vim should be loaded.
