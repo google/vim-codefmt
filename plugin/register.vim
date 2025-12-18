@@ -49,6 +49,7 @@
 "   * rust: rustfmt
 "   * sh: shfmt
 "   * swift: swift-format
+"   * terraform, hcl: terraform-fmt
 
 
 let [s:plugin, s:enter] = maktaba#plugin#Enter(expand('<sfile>:p'))
@@ -90,3 +91,4 @@ call s:registry.AddExtension(codefmt#shfmt#GetFormatter())
 call s:registry.AddExtension(codefmt#swiftformat#GetFormatter())
 call s:registry.AddExtension(codefmt#ormolu#GetFormatter())
 call s:registry.AddExtension(codefmt#ocamlformat#GetFormatter())
+call s:registry.AddExtension(codefmt#terraformfmt#GetFormatter())

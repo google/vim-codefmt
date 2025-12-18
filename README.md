@@ -41,6 +41,7 @@ codefmt` if codefmt is installed (and helptags have been generated).
 *   Rust ([rustfmt](https://github.com/rust-lang/rustfmt))
 *   Shell (shfmt)
 *   Swift ([swift-format](https://github.com/apple/swift-format))
+*   Terraform, HCL (terraform-fmt)
 *   TypeScript (clang-format)
 *   [Vue](http://vuejs.org) (prettier)
 
@@ -118,6 +119,7 @@ augroup autoformat_settings
   autocmd FileType ruby AutoFormatBuffer rubocop
   autocmd FileType rust AutoFormatBuffer rustfmt
   autocmd FileType swift AutoFormatBuffer swift-format
+  autocmd FileType terraform,hcl AutoFormatBuffer terraform-fmt
   autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 ```

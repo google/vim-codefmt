@@ -262,3 +262,7 @@ call s:plugin.Flag('ormolu_executable', 'ormolu')
 ""
 " The path to the ocamlformat executable.
 call s:plugin.Flag('ocamlformat_executable', 'ocamlformat')
+
+""
+" The path to the terraform executable.
+call s:plugin.Flag('terraform_executable', 'terraform')

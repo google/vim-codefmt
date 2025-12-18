@@ -1,0 +1,76 @@
+The built-in terraform-fmt formatter knows how to format terraform and HCL code.
+If you aren't familiar with basic codefmt usage yet, see main.vroom first.
+
+We'll set up codefmt and configure the vroom environment, then jump into some
+examples.
+
+  :source $VROOMDIR/setupvroom.vim
+
+  :call codefmt#SetWhetherToPerformIsAvailableChecksForTesting(0)
+
+
+The terraform-fmt formatter expects the terraform executable to be installed on
+your system.
+
+  % resource "google_compute_instance" "default" {<CR>
+  |name = "test"<CR>
+  |machine_type = "n1-standard-1" }
+  :FormatCode terraform-fmt
+  ! terraform fmt -.*
+  $ resource "google_compute_instance" "default" {
+  $   name         = "test"
+  $   machine_type = "n1-standard-1"
+  $ }
+  resource "google_compute_instance" "default" {
+    name         = "test"
+    machine_type = "n1-standard-1"
+  }
+
+The name or path of the terraform executable can be configured via the
+terraform_executable flag if the default of "terraform" doesn't work.
+
+  :Glaive codefmt terraform_executable='myterraform'
+  :FormatCode terraform-fmt
+  ! myterraform fmt -.*
+  $ f()
+  f()
+  :Glaive codefmt terraform_executable='terraform'
+
+
+The terraform filetype will use the terraform-fmt formatter by default.
+
+  @clear
+  % resource "google_compute_instance" "default" { }
+  :set filetype=terraform
+  :FormatCode
+  ! terraform fmt -.*
+  $ resource "google_compute_instance" "default" {}
+  resource "google_compute_instance" "default" {}
+
+The hcl filetype will also use the terraform-fmt formatter by default.
+
+  @clear
+  % key = "value"
+  :set filetype=hcl
+  :FormatCode
+  ! terraform fmt -.*
+  $ key = "value"
+  key = "value"
+
+  :set filetype=
+
+It can format specific line ranges of code using :FormatLines.
+
+  @clear
+  % resource "google_compute_instance" "default" {<CR>
+  |name = "test"<CR>
+  |machine_type = "n1-standard-1" }<CR>
+  |resource "google_compute_instance" "new-and-improved" {<CR>
+  |name = "other"<CR>
+  |machine_type = "n1-standard-1" }
+  :4,6FormatLines terraform-fmt
+  ! terraform fmt -.*
+  $ resource "google_compute_instance" "new-and-improved" {
+  $   name         = "other"
+  $   machine_type = "n1-standard-1"
+  $ }
